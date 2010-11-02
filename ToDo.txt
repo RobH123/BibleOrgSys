@@ -1,0 +1,35 @@
+# ToDo.txt
+#
+# Last modified: 2010-10-14
+#
+# Top jobs will be done sooner
+#
+
+Bring over BibleChapterVerse.py from BibleNameChecker
+Bring over SFMFile.py from BibleNameChecker
+Bring over USFMFilenames.py from BibleNameChecker
+Bring over USFMBibleMarkers.py from BibleNameChecker
+Bring over BibleReferences.py from BibleNameChecker
+Do USFM scraping
+
+Make versifications into a separate module
+
+Versification mappings
+
+Bible versions with
+    Header
+        language
+        publication date
+    Book orders
+        at the same time it specifies which books are included
+        and long/short book names
+
+Upload to OpenScriptures
+
+List of often left-out verses
+
+List of typical paragraph breaks
+
+List of typical paragraph headings
+
+Go back to working on the BibleNames database and checking program

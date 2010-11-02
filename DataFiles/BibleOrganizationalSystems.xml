@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of available Bible organizational systems including
+    A unique ID number (1..n for processing only)
+    A unique English organizational system name (as a comment only)
+        (This table should be language agnostic although English is used as a meta-language.)
+    A versificationSystemCode field which helps locate the XML file with details of that versification system.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Note that most of the data is supplied as XML elements, not attributes.
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+
+See the supplied ReadMe.txt for more details.
+-->
+
+<!DOCTYPE BibleOrganizationalSystems [
+    <!ELEMENT BibleOrganizationalSystems (header,BibleOrganizationalSystem+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier*,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|cre|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT BibleOrganizationalSystem (id,nameEnglish,name+,versificationSystemCode)>
+            <!ELEMENT id (#PCDATA)>
+            <!ELEMENT nameEnglish (#PCDATA)>
+            <!ELEMENT name (#PCDATA)>
+                <!ATTLIST name language CDATA #REQUIRED>
+            <!ELEMENT versificationSystemCode (#PCDATA)>
+]>
+
+<BibleOrganizationalSystems>
+
+  <header>
+    <work>
+      <version>0.10</version>
+      <date>2010-10-14</date>
+      <title>Bible organizational systems list</title>
+      <contributor role="cre">Robert Hunt</contributor>
+      <rights>Public Domain</rights>
+    </work>
+  </header>
+
+  <BibleOrganizationalSystem>
+    <id>1</id>
+    <nameEnglish>Original organizational system</nameEnglish>
+    <name language="eng">Original organizational system</name>
+    <versificationSystemCode>Original</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>2</id>
+    <nameEnglish>Greek Septuagint organizational system</nameEnglish>
+    <name language="eng">Greek Septuagint organizational system</name>
+    <versificationSystemCode>Septuagint</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>3</id>
+    <nameEnglish>Latin Vulgate organizational system</nameEnglish>
+    <name language="eng">Latin Vulgate organizational system</name>
+    <versificationSystemCode>Vulgate</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>4</id>
+    <nameEnglish>English organizational system</nameEnglish>
+    <name language="eng">English organizational system</name>
+    <versificationSystemCode>English</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>5</id>
+    <nameEnglish>Spanish organizational system</nameEnglish>
+    <name language="eng">Spanish organizational system</name>
+    <versificationSystemCode>Spanish</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>6</id>
+    <nameEnglish>Dutch traditional organizational system</nameEnglish>
+    <name language="eng">Dutch traditional organizational system</name>
+    <versificationSystemCode>DutchTraditional</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>7</id>
+    <nameEnglish>Russian canonical organizational system</nameEnglish>
+    <name language="eng">Russian canonical organizational system</name>
+    <versificationSystemCode>RussianCanonical</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>8</id>
+    <nameEnglish>Russian orthodox organizational system</nameEnglish>
+    <name language="eng">Russian orthodox organizational system</name>
+    <versificationSystemCode>RussianOrthodox</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>9</id>
+    <nameEnglish>Russian Protestant organizational system</nameEnglish>
+    <name language="eng">Russian Protestant organizational system</name>
+    <versificationSystemCode>RussianCanonical</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <id>10</id>
+    <nameEnglish>Staten Bible organizational system</nameEnglish>
+    <name language="eng">Staten Bible organizational system</name>
+    <versificationSystemCode>DutchTraditional</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+</BibleOrganizationalSystems>

@@ -1,0 +1,49 @@
+# BibleVersificationSystem.rnc           Relax NG Compact Syntax schema file
+#   Version 0.50
+#   Last modified: 2010-10-14
+#
+# On Linux, to convert to RNG, use
+#       trang BibleVersificationSystem.rnc ../DerivedFiles/BibleVersificationSystem.rng
+# On Linux, to validate against the .rng file, use (with the proper prefix instead of XXX)
+#       xmllint --noout --relaxng ../DerivedFiles/BibleVersificationSystem.rng XXX_BibleVersificationSystem.xml
+# or to validate against both this and the internal DTD, use (with the proper prefix instead of XXX)
+#       xmllint --noout --relaxng ../DerivedFiles/BibleVersificationSystem.rng --valid XXX_BibleVersificationSystem.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+
+# The root element
+start = BibleVersificationSystem
+
+# A single header, then multiple BibleBookCodes entries
+BibleVersificationSystem = element BibleVersificationSystem
+{   header,
+    BibleBookVersification+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}
+
+BibleBookVersification = element BibleBookVersification
+{   element id { xsd:positiveInteger },
+    element nameEnglish { xsd:string { minLength="3" } },
+    element referenceAbbreviation { xsd:string { length="3" } },
+    element numChapters { xsd:positiveInteger },
+    element numVerses { attribute chapter {xsd:positiveInteger}, xsd:positiveInteger }+
+}
