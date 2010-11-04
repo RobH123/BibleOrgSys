@@ -1,6 +1,6 @@
 # BibleOrganizationalSystems.rnc           Relax NG Compact Syntax schema file
 #   Version 0.10
-#   Last modified: 2010-10-14
+#   Last modified: 2010-11-44
 #
 # On Linux, to convert to RNG, use
 #       trang BibleOrganizationalSystems.rnc ../DerivedFiles/BibleOrganizationalSystems.rng
@@ -41,8 +41,7 @@ work = element work
 }
 
 BibleOrganizationalSystem = element BibleOrganizationalSystem
-{   element id { xsd:positiveInteger },
-    element nameEnglish { xsd:string { minLength="3" } },
+{   element nameEnglish { xsd:string { minLength="3" } },
     element name { attribute language { xsd:string { length="3" }}, xsd:string { minLength="3" } }+,
     element versificationSystemCode { xsd:string { minLength="2" } }
 }

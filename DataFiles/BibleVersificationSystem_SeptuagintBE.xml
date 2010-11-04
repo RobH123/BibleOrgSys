@@ -53,7 +53,7 @@ See the supplied ReadMe.txt for more details.
   </header>
 
   <BibleBookVersification>
-    <nameEnglish>GENESIS</nameEnglish>
+    <nameEnglish>Genesis</nameEnglish>
     <referenceAbbreviation>GEN</referenceAbbreviation>
     <numChapters>50</numChapters>
     <numVerses chapter="1">31</numVerses>
@@ -108,7 +108,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="50">26</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>EXODUS</nameEnglish>
+    <nameEnglish>Exodus</nameEnglish>
     <referenceAbbreviation>EXO</referenceAbbreviation>
     <numChapters>40</numChapters>
     <numVerses chapter="1">22</numVerses>
@@ -153,7 +153,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="40">38</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>LEVITICUS</nameEnglish>
+    <nameEnglish>Leviticus</nameEnglish>
     <referenceAbbreviation>LEV</referenceAbbreviation>
     <numChapters>27</numChapters>
     <numVerses chapter="1">17</numVerses>
@@ -185,7 +185,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="27">34</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>NUMBERS</nameEnglish>
+    <nameEnglish>Numbers</nameEnglish>
     <referenceAbbreviation>NUM</referenceAbbreviation>
     <numChapters>36</numChapters>
     <numVerses chapter="1">54</numVerses>
@@ -265,7 +265,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="34">12</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>JOSHUA</nameEnglish>
+    <nameEnglish>Joshua</nameEnglish>
     <referenceAbbreviation>JOS</referenceAbbreviation>
     <numChapters>24</numChapters>
     <numVerses chapter="1">18</numVerses>
@@ -294,7 +294,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="24">33</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>JUDGES</nameEnglish>
+    <nameEnglish>Judges</nameEnglish>
     <referenceAbbreviation>JDG</referenceAbbreviation>
     <numChapters>21</numChapters>
     <numVerses chapter="1">36</numVerses>
@@ -320,7 +320,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="21">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>RUTH</nameEnglish>
+    <nameEnglish>Ruth</nameEnglish>
     <referenceAbbreviation>RUT</referenceAbbreviation>
     <numChapters>4</numChapters>
     <numVerses chapter="1">22</numVerses>
@@ -329,7 +329,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="4">22</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>1 SAMUEL</nameEnglish>
+    <nameEnglish>1 Samuel</nameEnglish>
     <referenceAbbreviation>SA1</referenceAbbreviation>
     <numChapters>31</numChapters>
     <numVerses chapter="1">28</numVerses>
@@ -365,7 +365,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="31">13</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>2 SAMUEL</nameEnglish>
+    <nameEnglish>2 Samuel</nameEnglish>
     <referenceAbbreviation>SA2</referenceAbbreviation>
     <numChapters>24</numChapters>
     <numVerses chapter="1">27</numVerses>
@@ -394,7 +394,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="24">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>1 KINGS</nameEnglish>
+    <nameEnglish>1 Kings</nameEnglish>
     <referenceAbbreviation>KI1</referenceAbbreviation>
     <numChapters>22</numChapters>
     <numVerses chapter="1">53</numVerses>
@@ -421,7 +421,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="22">54</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>2 KINGS</nameEnglish>
+    <nameEnglish>2 Kings</nameEnglish>
     <referenceAbbreviation>KI2</referenceAbbreviation>
     <numChapters>25</numChapters>
     <numVerses chapter="1">18</numVerses>
@@ -526,7 +526,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="36">23</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>ESTHER</nameEnglish>
+    <nameEnglish>Esther</nameEnglish>
     <referenceAbbreviation>EST</referenceAbbreviation>
     <numChapters>10</numChapters>
     <numVerses chapter="1">22</numVerses>
@@ -541,7 +541,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="10">3</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>JOB</nameEnglish>
+    <nameEnglish>Job</nameEnglish>
     <referenceAbbreviation>JOB</referenceAbbreviation>
     <numChapters>42</numChapters>
     <numVerses chapter="1">22</numVerses>
@@ -588,7 +588,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="42">17</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>PSALMS</nameEnglish>
+    <nameEnglish>Psalms</nameEnglish>
     <referenceAbbreviation>PSA</referenceAbbreviation>
     <numChapters>151</numChapters>
     <numVerses chapter="1">6</numVerses>
@@ -1439,7 +1439,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>HEBREWS</nameEnglish>
+    <nameEnglish>Hebrews</nameEnglish>
     <referenceAbbreviation>HEB</referenceAbbreviation>
     <numChapters>13</numChapters>
     <numVerses chapter="1">14</numVerses>
@@ -1457,7 +1457,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="13">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>JAMES</nameEnglish>
+    <nameEnglish>James</nameEnglish>
     <referenceAbbreviation>JAS</referenceAbbreviation>
     <numChapters>5</numChapters>
     <numVerses chapter="1">27</numVerses>
@@ -1467,7 +1467,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="5">20</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>1 PETER</nameEnglish>
+    <nameEnglish>1 Peter</nameEnglish>
     <referenceAbbreviation>PE1</referenceAbbreviation>
     <numChapters>5</numChapters>
     <numVerses chapter="1">25</numVerses>
@@ -1477,7 +1477,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="5">14</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>2 PETER</nameEnglish>
+    <nameEnglish>2 Peter</nameEnglish>
     <referenceAbbreviation>PE2</referenceAbbreviation>
     <numChapters>3</numChapters>
     <numVerses chapter="1">21</numVerses>
@@ -1485,7 +1485,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="3">18</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>1 JOHN</nameEnglish>
+    <nameEnglish>1 John</nameEnglish>
     <referenceAbbreviation>JN1</referenceAbbreviation>
     <numChapters>5</numChapters>
     <numVerses chapter="1">10</numVerses>
@@ -1495,25 +1495,25 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="5">21</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>2 JOHN</nameEnglish>
+    <nameEnglish>2 John</nameEnglish>
     <referenceAbbreviation>JN2</referenceAbbreviation>
     <numChapters>1</numChapters>
     <numVerses chapter="1">13</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>3 JOHN</nameEnglish>
+    <nameEnglish>3 John</nameEnglish>
     <referenceAbbreviation>JN3</referenceAbbreviation>
     <numChapters>1</numChapters>
     <numVerses chapter="1">15</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>JUDE</nameEnglish>
+    <nameEnglish>Jude</nameEnglish>
     <referenceAbbreviation>JUD</referenceAbbreviation>
     <numChapters>1</numChapters>
     <numVerses chapter="1">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>REVELATION</nameEnglish>
+    <nameEnglish>Revelation</nameEnglish>
     <referenceAbbreviation>REV</referenceAbbreviation>
     <numChapters>22</numChapters>
     <numVerses chapter="1">20</numVerses>

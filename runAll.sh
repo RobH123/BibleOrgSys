@@ -12,8 +12,9 @@ sh checkAll.sh
 
 echo "Running Python modules..."
 
-python3 iso_639_3.py
-python3 BibleBooksCodes.py
+python3 iso_639_3.py --convert
+python3 BibleBooksCodes.py --convert
+python3 BibleOrganizationalSystems.py
 
 echo "Testing .py table files..."
 python3 DerivedFiles/iso_639_3Tables.py

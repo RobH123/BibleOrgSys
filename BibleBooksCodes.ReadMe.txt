@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
 #   Version 0.90
-#   Last modified: 2010-10-14
+#   Last modified: 2010-11-04
 #
 # Abbreviations:
 #   XML = eXtensible Markup Language -- see http://en.wikipedia.org/wiki/XML
@@ -21,22 +21,23 @@
 # Enclosed are three files:
 #
 #   DataFiles/BibleBooksCodes.xml
-#       A UTF-8 XML file encoding SBL, OSIS and UBS Paratext/USFM/OXES Bible books codes
+#       A UTF-8 XML file encoding SBL, OSIS, UBS Paratext/USFM/OXES, CCEL and Sword Bible books codes
+#           The data also includes a new 3-letter UPPER CASE referenceAbbreviation which always starts with a letter and so can be used directly as an XML ID (unlike most of the other fields)
+#           The unique referenceNumber codes are for processing and error messages -- numbers 1..66 are guaranteed to match the normal Protestant Bible.
+#           The English name is included as a comment only and is unimportant.
+            See the comments at the beginning of the file itself for the most up-to-date information on the file contents.
 #       The file also includes an internal DTD. To validate the XML on Linux systems, use
 #           xmllint --noout --valid DataFiles/BibleBooksCodes.xml
 #               (If it gives no output or error messages, then it has validated.)
-#       The data also includes a new 3-letter UPPER CASE referenceAbbreviation which always starts with a letter and so can be used directly as an XML ID (unlike most of the other fields)
-#       The sequential (and thus unique) id codes are for processing and error messages -- numbers 1..66 are guaranteed to match the normal Protestant Bible.
-#       The English name is included as a comment only and is unimportant.
 #       The file includes an OSIS style header record. (See PDF file at http://bibletechnologies.net)
 #           Note though, that we use the xsd:date style with hyphens not with periods as per OSIS.
 #           Note also that you might have to expand the internal DTD and the Relax NG schema if you add additional fields to the header.
-#       The data comes from the SBL Manual of Style, the OSIS 2.1.1 users' manual and from a USFM Bible edited by the UBS Paratext program.
+#       The data comes from the SBL Manual of Style, the OSIS 2.1.1 users' manual and from the VERY HELPFUL http://lc.bfbs.org.uk/request.php?canonicalissuesinparatext.pdf.
 #       While it is a derived work, I don't expect anyone to object to the use of this data. I think it is fair use to offer it as a public domain compilation.
 #
 #
 #   DataFiles/BibleBooksCodes.rnc
-#       A Relax NG Compact Syntax schema file
+#       A RelaxNG Compact Syntax schema file
 #       On Linux, to convert to RNG, use
 #           trang DataFiles/BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
 #       On Linux, to validate against the .rng file, use
@@ -58,4 +59,4 @@
 #
 # Robert Hunt
 # Hunt.Robert@gmail.com
-# October 2010.
+# November 2010.

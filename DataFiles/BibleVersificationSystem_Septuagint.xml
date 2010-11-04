@@ -2,10 +2,9 @@
 
 <!--
 This file gives a table of Bible chapters/verses including
-    An ID number for the book (not necessarily sequential because they match BibleBooksCodes.xml)
     An English book name (as a comment only)
         (This table should be language agnostic although English is used as a meta-language.)
-    A three character reference code (upper case, no spaces, begin with a letter, also matches BibleBooksCodes.xml)
+    A three character reference code (upper case, no spaces, begin with a letter, matches BibleBooksCodes.xml)
     The number of chapters in the book
     The number of verses in each chapter of the book
 All books (including Deutero-canonical/Apocryphal and combined books) should be included even if normally unused.

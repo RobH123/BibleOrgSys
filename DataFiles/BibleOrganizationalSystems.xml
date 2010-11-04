@@ -30,8 +30,7 @@ See the supplied ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleOrganizationalSystem (id,nameEnglish,name+,versificationSystemCode)>
-            <!ELEMENT id (#PCDATA)>
+        <!ELEMENT BibleOrganizationalSystem (nameEnglish,name+,versificationSystemCode)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT name (#PCDATA)>
                 <!ATTLIST name language CDATA #REQUIRED>
@@ -42,8 +41,8 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.10</version>
-      <date>2010-10-14</date>
+      <version>0.11</version>
+      <date>2010-11-04</date>
       <title>Bible organizational systems list</title>
       <contributor role="cre">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -51,70 +50,102 @@ See the supplied ReadMe.txt for more details.
   </header>
 
   <BibleOrganizationalSystem>
-    <id>1</id>
     <nameEnglish>Original organizational system</nameEnglish>
     <name language="eng">Original organizational system</name>
     <versificationSystemCode>Original</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>2</id>
     <nameEnglish>Greek Septuagint organizational system</nameEnglish>
     <name language="eng">Greek Septuagint organizational system</name>
     <versificationSystemCode>Septuagint</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>3</id>
+    <nameEnglish>Greek Septuagint BE organizational system</nameEnglish>
+    <name language="eng">Greek Septuagint BE organizational system</name>
+    <versificationSystemCode>SeptuagintBE</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
     <nameEnglish>Latin Vulgate organizational system</nameEnglish>
     <name language="eng">Latin Vulgate organizational system</name>
     <versificationSystemCode>Vulgate</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>4</id>
-    <nameEnglish>English organizational system</nameEnglish>
-    <name language="eng">English organizational system</name>
-    <versificationSystemCode>English</versificationSystemCode>
+    <nameEnglish>Latin Vulgate2 organizational system</nameEnglish>
+    <name language="eng">Latin Vulgate2 organizational system</name>
+    <versificationSystemCode>Vulgate2</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>5</id>
+    <nameEnglish>KJV organizational system</nameEnglish>
+    <name language="eng">KJV organizational system</name>
+    <versificationSystemCode>KJV</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <nameEnglish>NRSV organizational system</nameEnglish>
+    <name language="eng">NRSV organizational system</name>
+    <versificationSystemCode>NRSV</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <nameEnglish>Catholic organizational system</nameEnglish>
+    <name language="eng">Catholic organizational system</name>
+    <versificationSystemCode>Catholic</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <nameEnglish>Catholic2 organizational system</nameEnglish>
+    <name language="eng">Catholic2 organizational system</name>
+    <versificationSystemCode>Catholic2</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
     <nameEnglish>Spanish organizational system</nameEnglish>
     <name language="eng">Spanish organizational system</name>
     <versificationSystemCode>Spanish</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>6</id>
     <nameEnglish>Dutch traditional organizational system</nameEnglish>
     <name language="eng">Dutch traditional organizational system</name>
     <versificationSystemCode>DutchTraditional</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>7</id>
     <nameEnglish>Russian canonical organizational system</nameEnglish>
     <name language="eng">Russian canonical organizational system</name>
     <versificationSystemCode>RussianCanonical</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>8</id>
     <nameEnglish>Russian orthodox organizational system</nameEnglish>
     <name language="eng">Russian orthodox organizational system</name>
     <versificationSystemCode>RussianOrthodox</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>9</id>
     <nameEnglish>Russian Protestant organizational system</nameEnglish>
     <name language="eng">Russian Protestant organizational system</name>
     <versificationSystemCode>RussianCanonical</versificationSystemCode>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem>
-    <id>10</id>
+    <nameEnglish>Luther Bible organizational system</nameEnglish>
+    <name language="eng">Luther Bible organizational system</name>
+    <versificationSystemCode>Luther</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
+    <nameEnglish>Synodal Bible organizational system</nameEnglish>
+    <name language="eng">Synodal Bible organizational system</name>
+    <versificationSystemCode>Synodal</versificationSystemCode>
+  </BibleOrganizationalSystem>
+
+  <BibleOrganizationalSystem>
     <nameEnglish>Staten Bible organizational system</nameEnglish>
     <name language="eng">Staten Bible organizational system</name>
     <versificationSystemCode>DutchTraditional</versificationSystemCode>

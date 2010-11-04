@@ -1,24 +1,24 @@
-# BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
+# BibleBooksNames.rnc           Relax NG Compact Syntax schema file
 #   Version 0.10
-#   Last modified: 2010-10-14
+#   Last modified: 2010-11-03
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBooksCode.rnc ../DerivedFiles/BibleBooksCodes.rng
+#       trang BibleBooksNames.rnc ../DerivedFiles/BibleBooksNames.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksNames.rng BibleBooksNames.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksNames.rng --valid BibleBooksNames.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
 
 # The root element
-start = BibleBooksCodes
+start = BibleBooksNames
 
-# A single header, then multiple BibleBookCodes entries
-BibleBooksCodes = element BibleBooksCodes
+# A single header, then multiple BibleBookNames entries
+BibleBooksNames = element BibleBooksNames
 {   header,
-    BibleBookCodes+
+    BibleBookNames+
 }
 
 header  = element header
@@ -40,12 +40,8 @@ work = element work
     element rights { xsd:string }
 }
 
-BibleBookCodes = element BibleBookCodes
-{   element id { xsd:positiveInteger },
-    element nameEnglish { xsd:string { minLength="3" } },
-    element referenceAbbreviation { xsd:string { length="3" } },
-    element SBLAbbreviation { xsd:string { minLength="2" } }?,
-    element OSISAbbreviation { xsd:string { minLength="2" } }?,
-    element ParatextAbbreviation { xsd:string { length="3" } }?,
-    element ParatextNumber { xsd:positiveInteger { totalDigits="2" } }?
+BibleBookNames = element BibleBookNames
+{   element defaultName { xsd:string { minLength="3" maxLength="20" } },
+    element defaultLongName { xsd:string { minLength="3" maxLength="25" } },
+    element defaultAbbreviation { xsd:string { minLength="2" maxLength="3" } }
 }

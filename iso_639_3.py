@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# iso_639_3_Convertor.py
+# iso_639_3.py
 #
 # Module handling iso_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-10-14 (also update versionString below)
+#   Last modified: 2010-11-04 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,6 +27,7 @@
 Module handling iso_639_3.xml to produce C and Python data tables.
 """
 
+progName = "ISO 639_3 handler"
 versionString = "0.90"
 
 import logging, os.path
@@ -168,20 +169,15 @@ class iso_639_3_Convertor:
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
             theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
-            for entry in sorted(theDict.keys()):
-                if isinstance( entry, str ):
-                    theFile.write( "  '%s': %s,\n" % ( entry, theDict[entry] ) )
-                elif isinstance( entry, int ):
-                    theFile.write( "  %i: %s,\n" % ( entry, theDict[entry] ) )
-                else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( entry ) )
+            for dictKey in sorted(theDict.keys()):
+                theFile.write( "  %s: %s,\n" % ( repr(dictKey), theDict[dictKey] ) )
             theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
         # end of exportPythonDict
 
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + ".py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()
@@ -214,20 +210,20 @@ class iso_639_3_Convertor:
                 return result
 
             theFile.write( "static struct %s %s[] = {\n  // Fields are %s\n" % ( structName, dictName, fieldsComment ) )
-            for entry in sorted(theDict.keys()):
-                if isinstance( entry, str ):
-                    theFile.write( "  {\"%s\", %s},\n" % ( entry, convertEntry(theDict[entry]) ) )
-                elif isinstance( entry, int ):
-                    theFile.write( "  {%i, %s},\n" % ( entry, convertEntry(theDict[entry]) ) )
+            for dictKey in sorted(theDict.keys()):
+                if isinstance( dictKey, str ):
+                    theFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                elif isinstance( dictKey, int ):
+                    theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( entry ) )
+                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
             theFile.write( "}; // %s\n\n" % ( dictName) )
         # end of exportPythonDict
 
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + ".h" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()
@@ -247,17 +243,25 @@ class iso_639_3_Convertor:
 # end of iso_639_3_Convertor class
 
 
-def demo():
+def main():
     """
-    Demonstrate reading the XML file and outputting C and Python data tables.
+    Main program to handle command line parameters and then run what they want.
     """
-    print( "ISO 639-3 language codes Convertor V%s" % ( versionString ) )
-    stuff = iso_639_3_Convertor()
-    print( stuff )
-    stuff.exportDataToPython()
-    stuff.exportDataToC()
-# end of demo
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser.add_option("-c", "--convert", action="store_true", dest="convert", default=False, help="convert the XML file to .py and .h tables suitable for directly including into other programs")
+    CommandLineOptions, args = parser.parse_args()
+
+    stuff = iso_639_3_Convertor() # Load the XML
+    if CommandLineOptions.convert:
+        stuff.exportDataToPython() # Produce the .py tables
+        stuff.exportDataToC() # Produce the .h tables
+    else: # Must be demo mode
+        print( "%s V%s" % ( progName, versionString ) )
+        print( stuff ) # Just print a summary
+# end of main
 
 if __name__ == '__main__':
-    demo()
-# end of iso_639_3_Convertor.py
+    main()
+# end of iso_639_3.py

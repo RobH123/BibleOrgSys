@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# TrangAll.sh
+# trangAll.sh
 #
 #   Last modified: 2010-11-03 RJH
 #

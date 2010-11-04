@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# BibleBooksCodesConvertor.py
+# BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-10-14 (also update versionString below)
+#   Last modified: 2010-11-04 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,6 +27,7 @@
 Module handling BibleBooksCodes.xml to produce C and Python data tables.
 """
 
+progName = "Bible Books Codes handler"
 versionString = "0.90"
 
 import logging, os.path
@@ -45,8 +46,8 @@ class BibleBooksCodesConvertor:
     compulsoryAttributes = ()
     optionalAttributes = ()
     uniqueAttributes = compulsoryAttributes + optionalAttributes
-    compulsoryElements = ( "id", "nameEnglish", "referenceAbbreviation" )
-    optionalElements = ( "SBLAbbreviation", "OSISAbbreviation", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "swordAbbreviation" )
+    compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
+    optionalElements = ( "SBLAbbreviation", "OSISAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "SwordAbbreviation" )
     #uniqueElements = compulsoryElements + optionalElements
     uniqueElements = compulsoryElements # Relax the checking
 
@@ -86,7 +87,7 @@ class BibleBooksCodesConvertor:
         self.tree = ElementTree().parse ( XMLFilepath )
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
-        if self.tree.tag  == BibleBooksCodesConvertor.treeTag:
+        if self.tree.tag == BibleBooksCodesConvertor.treeTag:
             header = self.tree[0]
             if header.tag == BibleBooksCodesConvertor.headerTag:
                 self.header = header
@@ -151,34 +152,37 @@ class BibleBooksCodesConvertor:
                         uniqueDict[attributeName].append( attributeValue )
 
                 # Check the ascending ID elements
-                ID = int( element.find("id").text )
-                if ID != expectedID: logging.warning( "IDs out of sequence: expected %i but got '%i' (record %i)" % ( expectedID, ID, j ) )
-                expectedID += 1
+                #ID = int( element.find("id").text )
+                #if ID != expectedID: logging.warning( "IDs out of sequence: expected %i but got '%i' (record %i)" % ( expectedID, ID, j ) )
+                #expectedID += 1
+
+                # Get the referenceAbbreviation to use as a record ID
+                ID = element.find("referenceAbbreviation").text
 
                 # Check compulsory elements
                 for elementName in BibleBooksCodesConvertor.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '%s' element is missing in record with ID '%i' (record %i)" % ( elementName, ID, j ) )
-                    if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '%s' element is blank in record with ID '%i' (record %i)" % ( elementName, ID, j ) )
+                        logging.error( "Compulsory '%s' element is missing in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
+                    elif not element.find( elementName ).text:
+                        logging.warning( "Compulsory '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
 
                 # Check optional elements
                 for elementName in BibleBooksCodesConvertor.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '%s' element is blank in record with ID '%i' (record %i)" % ( elementName, ID, j ) )
+                            logging.warning( "Optional '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in BibleBooksCodesConvertor.compulsoryElements and subelement.tag not in BibleBooksCodesConvertor.optionalElements:
-                        logging.warning( "Additional '%s' element ('%s') found in record with ID '%i' (record %i)" % ( subelement.tag, subelement.text, ID, j ) )
+                        logging.warning( "Additional '%s' element ('%s') found in record with ID '%s' (record %i)" % ( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in BibleBooksCodesConvertor.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict[elementName]:
-                            logging.error( "Found '%s' data repeated in '%s' element in record with ID '%i' (record %i)" % ( text, elementName, ID, j ) )
+                            logging.error( "Found '%s' data repeated in '%s' element in record with ID '%s' (record %i)" % ( text, elementName, ID, j ) )
                         uniqueDict[elementName].append( text )
             else:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, j ) )
@@ -192,46 +196,56 @@ class BibleBooksCodesConvertor:
         assert( len ( self.tree ) )
 
         # We'll create a number of dictionaries with different elements as the key
-        myIDDict, myRADict, mySBLDict, myOADict, myPADict, myPNDict, myENDict = OrderedDict(), OrderedDict(), {}, {}, {}, {}, {}
+        myIDDict, myRADict, mySBLDict, myOADict, myCCELDict, myPADict, myPNDict, myENDict, mySwDict = OrderedDict(), OrderedDict(), {}, {}, {}, {}, {},{},{}
         for element in self.tree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
-            ID = element.find("id").text
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             referenceAbbreviation = element.find("referenceAbbreviation").text
+            ID = element.find("referenceNumber").text
+            intID = int( ID )
             # The optional elements are set to None if they don't exist
-            SBLAbbreviation = None if element.find("SBLAbbreviation") is None else  element.find("SBLAbbreviation").text
-            OSISAbbreviation = None if element.find("OSISAbbreviation") is None else  element.find("OSISAbbreviation").text
-            ParatextAbbreviation = None if element.find("ParatextAbbreviation") is None else  element.find("ParatextAbbreviation").text
-            ParatextNumberString = None if element.find("ParatextNumber") is None else  element.find("ParatextNumber").text
+            SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
+            OSISAbbreviation = None if element.find("OSISAbbreviation") is None else element.find("OSISAbbreviation").text
+            CCELNumberString = None if element.find("CCELNumber") is None else element.find("CCELNumber").text
+            CCELNumber = int( CCELNumberString ) if CCELNumberString else -1
+            ParatextAbbreviation = None if element.find("ParatextAbbreviation") is None else element.find("ParatextAbbreviation").text
+            ParatextNumberString = None if element.find("ParatextNumber") is None else element.find("ParatextNumber").text
+            ParatextNumber = int( ParatextNumberString ) if ParatextNumberString else -1
+            SwordAbbreviation = None if element.find("SwordAbbreviation") is None else element.find("SwordAbbreviation").text
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
             #   The referenceAbbreviation is UPPER CASE by definition
-            if "id" in BibleBooksCodesConvertor.compulsoryElements or ID:
-                intID = int( ID )
-                if "id" in BibleBooksCodesConvertor.uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
-                myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish, )
             if "referenceAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or referenceAbbreviation:
                 if "referenceAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
-                myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish, )
+                myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish, )
+            if "referenceNumber" in BibleBooksCodesConvertor.compulsoryElements or ID:
+                if "referenceNumber" in BibleBooksCodesConvertor.uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
+                myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish, )
             if "SBLAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or SBLAbbreviation:
                 if "SBLAbbreviation" in BibleBooksCodesConvertor.uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish, )
+                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish, )
             if "OSISAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or OSISAbbreviation:
                 if "OSISAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish, )
+                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish, )
+            if "CCELNumber" in BibleBooksCodesConvertor.compulsoryElements or CCELNumber:
+                if "CCELNumber" in BibleBooksCodesConvertor.uniqueElements: assert( CCELNumber not in myCCELDict ) # Shouldn't be any duplicates
+                myCCELDict[CCELNumber] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish )
             if "ParatextAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or ParatextAbbreviation:
                 if "ParatextAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextNumberString, nameEnglish )
-            if "ParatextNumber" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumberString:
-                if "ParatextNumber" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
-                myPNDict[ParatextNumberString] = ( intID, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, nameEnglish )
-            if "nameEnglish" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumberString:
+                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextNumber, SwordAbbreviation, nameEnglish )
+            if "ParatextNumber" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumber:
+                if "ParatextNumber" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextNumber not in myPNDict ) # Shouldn't be any duplicates
+                myPNDict[ParatextNumber] = ( intID, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, SwordAbbreviation, nameEnglish )
+            if "SwordAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or SwordAbbreviation:
+                if "SwordAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
+                mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, nameEnglish )
+            if "nameEnglish" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumber:
                 if "nameEnglish" in BibleBooksCodesConvertor.uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
-                myENDict[nameEnglish] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString )
-        return myIDDict, myRADict, mySBLDict, myOADict, myPADict, myPNDict, myENDict # Just throw away any of the dictionaries that you don't need
+                myENDict[nameEnglish] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation )
+        return myIDDict, myRADict, mySBLDict, myOADict, myCCELDict, myPADict, myPNDict, mySwDict, myENDict # Just throw away any of the dictionaries that you don't need
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -240,38 +254,38 @@ class BibleBooksCodesConvertor:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
-            for entry in sorted(theDict.keys()):
-                if isinstance( entry, str ):
-                    theFile.write( "  '%s': %s,\n" % ( entry, theDict[entry] ) )
-                elif isinstance( entry, int ):
-                    theFile.write( "  %i: %s,\n" % ( entry, theDict[entry] ) )
-                else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( entry ) )
-            theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
+            for dictKey in theDict.keys(): # Have to iterate this :(
+                fieldsCount = len( theDict[dictKey] )
+                break # We only check the first (random) entry we get
+            theFile.write( "%s = {\n  # Key is %s\n  # Fields (%i) are: %s\n" % ( dictName, keyComment, fieldsCount, fieldsComment ) )
+            for dictKey in sorted(theDict.keys()):
+                theFile.write( '  %s: %s,\n' % ( repr(dictKey), theDict[dictKey] ) )
+            theFile.write( "}\n# end of %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + ".py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + "Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
-        IDDict, RADict, SBLDict, OADict, PADict, PNDict, ENDict = self.importDataToPython()
+        IDDict, RADict, SBLDict, OADict, CCELDict, PADict, PNDict, SwDict, ENDict = self.importDataToPython()
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodesConvertor.py %s\n#\n" % ( datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodesConvertor.py on %s\n#\n" % ( datetime.now() ) )
             if self.title: myFile.write( "# %s\n" % ( self.title ) )
             if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.tree), BibleBooksCodesConvertor.treeTag ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "id", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "referenceAbbreviation", "id, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "SBLAbbreviation", "id, ReferenceAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "OSISAbbreviation", "id, ReferenceAbbreviation, SBLAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "ParatextAbbreviation", "id, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "ParatextNumberString", "id, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "ENDict", "nameEnglish", "id, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString" )
+            exportPythonDict( myFile, IDDict, "IDDict", "referenceNumber", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, RADict, "RADict", "referenceAbbreviation", "referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SBLDict, "SBLDict", "SBLAbbreviation", "referenceNumber, ReferenceAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, OADict, "OADict", "OSISAbbreviation", "referenceNumber, ReferenceAbbreviation, SBLAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, CCELDict, "CCELDict", "CCELAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PADict, "PADict", "ParatextAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PNDict, "PNDict", "ParatextNumber", "referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SwDict, "SwDict", "SwordAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, nameEnglish (comment only)" )
+            exportPythonDict( myFile, ENDict, "ENDict", "nameEnglish", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation" )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):
@@ -291,55 +305,68 @@ class BibleBooksCodesConvertor:
                     else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
                 return result
 
-            theFile.write( "static struct %s %s[] = {\n  // Fields are %s\n" % ( structName, dictName, fieldsComment ) )
-            for entry in sorted(theDict.keys()):
-                if isinstance( entry, str ):
-                    theFile.write( "  {\"%s\", %s},\n" % ( entry, convertEntry(theDict[entry]) ) )
-                elif isinstance( entry, int ):
-                    theFile.write( "  {%i, %s},\n" % ( entry, convertEntry(theDict[entry]) ) )
+            for dictKey in theDict.keys(): # Have to iterate this :(
+                fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
+                break # We only check the first (random) entry we get
+            theFile.write( "static struct %s\n %s[] = {\n  // Fields (%i) are %s\n" % ( structName, dictName, fieldsCount, fieldsComment ) )
+            for dictKey in sorted(theDict.keys()):
+                if isinstance( dictKey, str ):
+                    theFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                elif isinstance( dictKey, int ):
+                    theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( entry ) )
-            theFile.write( "}; // %s\n\n" % ( dictName) )
+                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
+            theFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + ".h" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + "Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
-        IDDict, RADict, SBLDict, OADict, PADict, PNDict, ENDict = self.importDataToPython()
+        IDDict, RADict, SBLDict, OADict, CCELDict, PADict, PNDict, SwDict, ENDict = self.importDataToPython()
         ifdefName = BibleBooksCodesConvertor.filenameBase.upper() + "_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// %s\n//\n" % ( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by BibleBooksCodesConvertor.py %s\n//\n" % ( datetime.now() ) )
+            myFile.write( "// This UTF-8 file was automatically generated by BibleBooksCodesConvertor.py on %s\n//\n" % ( datetime.now() ) )
             if self.title: myFile.write( "// %s\n" % ( self.title ) )
             if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
             myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.tree), BibleBooksCodesConvertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "{int id; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "id (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int id; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "referenceAbbreviation (sorted), SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int id; char* refAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "SBLAbbreviation (sorted), ReferenceAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int id; char* refAbbrev; char* SBLAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "OSISAbbreviation (sorted), ReferenceAbbreviation, SBLAbbreviation, ParatextAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int id; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTNum; char* EngName;}", "ParatextAbbreviation (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNum; int id; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* EngName;}", "ParatextNumberString (sorted), ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, id, nameEnglish (comment only)" )
+            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "referenceAbbreviation (sorted), SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "SBLAbbreviation (sorted), ReferenceAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "OSISAbbreviation (sorted), ReferenceAbbreviation, SBLAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, CCELDict, "CCELDict", "{int CCELNum; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "CCELNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; int PTNum; char* SwAbbrev; char* EngName;}", "ParatextAbbreviation (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PNDict, "PNDict", "{int PTNum; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* SwAbbrev; char* EngName;}", "ParatextNumber (sorted), ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumber, ParatextAbbreviation, ParatextNumber, nameEnglish (comment only)" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
 # end of BibleBooksCodesConvertor class
 
 
-def demo():
+def main():
     """
-    Demonstrate reading the XML file and outputting C and Python data tables.
+    Main program to handle command line parameters and then run what they want.
     """
-    print( "Bible Books Codes Convertor V%s" % ( versionString ) )
-    bbcc = BibleBooksCodesConvertor()
-    print( bbcc )
-    bbcc.exportDataToPython()
-    bbcc.exportDataToC()
-# end of demo
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser.add_option("-c", "--convert", action="store_true", dest="convert", default=False, help="convert the XML file to .py and .h tables suitable for directly including into other programs")
+    CommandLineOptions, args = parser.parse_args()
+
+    bbcc = BibleBooksCodesConvertor() # Load the XML
+    if CommandLineOptions.convert:
+        bbcc.exportDataToPython() # Produce the .py tables
+        bbcc.exportDataToC() # Produce the .h tables
+    else: # Must be demo mode
+        print( "%s V%s" % ( progName, versionString ) )
+        print( bbcc ) # Just print a summary
+# end of main
 
 if __name__ == '__main__':
-    demo()
-# end of BibleBooksCodesConvertor.py
+    main()
+# end of BibleBooksCodes.py

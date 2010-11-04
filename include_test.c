@@ -1,7 +1,7 @@
 /* include_test.c       This file is just for testing
 /*                      to make sure that the include files compile ok
 /*
-/* Last modified: 2010-10-14
+/* Last modified: 2010-11-03
 /*
 /* The .h files included below are created by xxxConvertor.py programs
 /*
@@ -13,10 +13,10 @@
 
 /*  Include the .h files that we wish to test for errors */
 # 
-#include "DerivedFiles/iso_639_3.h"
-#include "DerivedFiles/BibleBooksCodes.h"
-/*#include "DerivedFiles/BibleBooksNames.h"*/
-#include "DerivedFiles/BibleOrganizationalSystems.h"
+#include "DerivedFiles/iso_639_3Tables.h"
+#include "DerivedFiles/BibleBooksCodesTables.h"
+/*#include "DerivedFiles/BibleBooksNamesTables.h"*/
+#include "DerivedFiles/BibleOrganizationalSystemsTables.h"
 
 /* A dummy main program to keep the compiler happy */
 main() {}

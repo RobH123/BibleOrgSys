@@ -1,6 +1,6 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
 #   Version 0.90
-#   Last modified: 2010-10-14
+#   Last modified: 2010-11-03
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
@@ -32,7 +32,7 @@ revisionDesc = element revisionDesc
 }
 
 work = element work
-{   element version { xsd:decimal { totalDigits="2" } },
+{   element version { xsd:decimal { fractionDigits="2" totalDigits="2" } },
     element date { xsd:date },
     element title { xsd:string },
     element contributor { attribute role {"com"|"edt"}, xsd:string }+,
@@ -41,13 +41,14 @@ work = element work
 }
 
 BibleBookCodes = element BibleBookCodes
-{   element id { xsd:positiveInteger },
-    element nameEnglish { xsd:string { minLength="3" } },
+{   element nameEnglish { xsd:string { minLength="3" maxLength="80" } },
     element referenceAbbreviation { xsd:string { length="3" } },
-    element SBLAbbreviation { xsd:string { minLength="2" } }?,
-    element OSISAbbreviation { xsd:string { minLength="2" } }?,
+    element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="200" } },
+    element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
+    element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
+    element CCELNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="95" } }?,
     element ParatextAbbreviation { xsd:string { length="3" } }?,
-    element ParatextNumber { xsd:positiveInteger { totalDigits="2" } }?,
+    element ParatextNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="107" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
-    element swordAbbreviation { xsd:string { minLength="3" } }?
+    element SwordAbbreviation { xsd:string { minLength="3" maxLength="5" } }?
 }
