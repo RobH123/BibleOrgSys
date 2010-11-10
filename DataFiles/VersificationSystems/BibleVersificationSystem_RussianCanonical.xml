@@ -37,7 +37,9 @@ See the supplied ReadMe.txt for more details.
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT numChapters (#PCDATA)>
             <!ELEMENT numVerses (#PCDATA)>
-                <!ATTLIST numVerses chapter CDATA #REQUIRED>
+                <!ATTLIST numVerses
+                    chapter CDATA #REQUIRED
+                    omittedVerses CDATA #IMPLIED>
 ]>
 
 <BibleVersificationSystem>
@@ -46,7 +48,7 @@ See the supplied ReadMe.txt for more details.
     <work>
       <version>0.20</version>
       <date>2010-11-04</date>
-      <title>Russian orthodox Bible versification system</title>
+      <title>Russian canonical Bible versification system</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
@@ -291,7 +293,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="21">45</numVerses>
     <numVerses chapter="22">34</numVerses>
     <numVerses chapter="23">16</numVerses>
-    <numVerses chapter="24">36</numVerses>
+    <numVerses chapter="24">33</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Judges</nameEnglish>
@@ -487,7 +489,7 @@ See the supplied ReadMe.txt for more details.
   <BibleBookVersification>
     <nameEnglish>2 Chronicles</nameEnglish>
     <referenceAbbreviation>CH2</referenceAbbreviation>
-    <numChapters>37</numChapters>
+    <numChapters>36</numChapters>
     <numVerses chapter="1">17</numVerses>
     <numVerses chapter="2">18</numVerses>
     <numVerses chapter="3">17</numVerses>
@@ -524,7 +526,6 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="34">33</numVerses>
     <numVerses chapter="35">27</numVerses>
     <numVerses chapter="36">23</numVerses>
-    <numVerses chapter="37">12</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Ezra</nameEnglish>
@@ -624,7 +625,7 @@ See the supplied ReadMe.txt for more details.
   <BibleBookVersification>
     <nameEnglish>Psalms</nameEnglish>
     <referenceAbbreviation>PSA</referenceAbbreviation>
-    <numChapters>151</numChapters>
+    <numChapters>150</numChapters>
     <numVerses chapter="1">6</numVerses>
     <numVerses chapter="2">12</numVerses>
     <numVerses chapter="3">9</numVerses>
@@ -738,7 +739,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="111">10</numVerses>
     <numVerses chapter="112">9</numVerses>
     <numVerses chapter="113">26</numVerses>
-    <numVerses chapter="114">8</numVerses>
+    <numVerses chapter="114">9</numVerses>
     <numVerses chapter="115">10</numVerses>
     <numVerses chapter="116">2</numVerses>
     <numVerses chapter="117">29</numVerses>
@@ -775,7 +776,6 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="148">14</numVerses>
     <numVerses chapter="149">9</numVerses>
     <numVerses chapter="150">6</numVerses>
-    <numVerses chapter="151">7</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Proverbs</nameEnglish>
@@ -784,7 +784,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">33</numVerses>
     <numVerses chapter="2">22</numVerses>
     <numVerses chapter="3">35</numVerses>
-    <numVerses chapter="4">29</numVerses>
+    <numVerses chapter="4">27</numVerses>
     <numVerses chapter="5">23</numVerses>
     <numVerses chapter="6">35</numVerses>
     <numVerses chapter="7">27</numVerses>
@@ -793,12 +793,12 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="10">32</numVerses>
     <numVerses chapter="11">31</numVerses>
     <numVerses chapter="12">28</numVerses>
-    <numVerses chapter="13">26</numVerses>
+    <numVerses chapter="13">25</numVerses>
     <numVerses chapter="14">35</numVerses>
     <numVerses chapter="15">33</numVerses>
     <numVerses chapter="16">33</numVerses>
     <numVerses chapter="17">28</numVerses>
-    <numVerses chapter="18">25</numVerses>
+    <numVerses chapter="18">24</numVerses>
     <numVerses chapter="19">29</numVerses>
     <numVerses chapter="20">30</numVerses>
     <numVerses chapter="21">31</numVerses>
@@ -1037,10 +1037,10 @@ See the supplied ReadMe.txt for more details.
   <BibleBookVersification>
     <nameEnglish>Daniel</nameEnglish>
     <referenceAbbreviation>DAN</referenceAbbreviation>
-    <numChapters>14</numChapters>
+    <numChapters>12</numChapters>
     <numVerses chapter="1">21</numVerses>
     <numVerses chapter="2">49</numVerses>
-    <numVerses chapter="3">100</numVerses>
+    <numVerses chapter="3">33</numVerses>
     <numVerses chapter="4">34</numVerses>
     <numVerses chapter="5">31</numVerses>
     <numVerses chapter="6">28</numVerses>
@@ -1050,8 +1050,6 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="10">21</numVerses>
     <numVerses chapter="11">45</numVerses>
     <numVerses chapter="12">13</numVerses>
-    <numVerses chapter="13">64</numVerses>
-    <numVerses chapter="14">42</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Hosea</nameEnglish>

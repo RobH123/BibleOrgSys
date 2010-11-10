@@ -37,7 +37,9 @@ See the supplied ReadMe.txt for more details.
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT numChapters (#PCDATA)>
             <!ELEMENT numVerses (#PCDATA)>
-                <!ATTLIST numVerses chapter CDATA #REQUIRED>
+                <!ATTLIST numVerses
+                    chapter CDATA #REQUIRED
+                    omittedVerses CDATA #IMPLIED>
 ]>
 
 <BibleVersificationSystem>
@@ -46,7 +48,7 @@ See the supplied ReadMe.txt for more details.
     <work>
       <version>0.20</version>
       <date>2010-11-04</date>
-      <title>Original Bible versification system</title>
+      <title>NRSVA Bible versification system</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
@@ -86,8 +88,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="28">22</numVerses>
     <numVerses chapter="29">35</numVerses>
     <numVerses chapter="30">43</numVerses>
-    <numVerses chapter="31">54</numVerses>
-    <numVerses chapter="32">33</numVerses>
+    <numVerses chapter="31">55</numVerses>
+    <numVerses chapter="32">32</numVerses>
     <numVerses chapter="33">20</numVerses>
     <numVerses chapter="34">31</numVerses>
     <numVerses chapter="35">29</numVerses>
@@ -117,8 +119,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="4">31</numVerses>
     <numVerses chapter="5">23</numVerses>
     <numVerses chapter="6">30</numVerses>
-    <numVerses chapter="7">29</numVerses>
-    <numVerses chapter="8">28</numVerses>
+    <numVerses chapter="7">25</numVerses>
+    <numVerses chapter="8">32</numVerses>
     <numVerses chapter="9">35</numVerses>
     <numVerses chapter="10">29</numVerses>
     <numVerses chapter="11">10</numVerses>
@@ -131,8 +133,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="18">27</numVerses>
     <numVerses chapter="19">25</numVerses>
     <numVerses chapter="20">26</numVerses>
-    <numVerses chapter="21">37</numVerses>
-    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="21">36</numVerses>
+    <numVerses chapter="22">31</numVerses>
     <numVerses chapter="23">33</numVerses>
     <numVerses chapter="24">18</numVerses>
     <numVerses chapter="25">40</numVerses>
@@ -160,8 +162,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="2">16</numVerses>
     <numVerses chapter="3">17</numVerses>
     <numVerses chapter="4">35</numVerses>
-    <numVerses chapter="5">26</numVerses>
-    <numVerses chapter="6">23</numVerses>
+    <numVerses chapter="5">19</numVerses>
+    <numVerses chapter="6">30</numVerses>
     <numVerses chapter="7">38</numVerses>
     <numVerses chapter="8">36</numVerses>
     <numVerses chapter="9">24</numVerses>
@@ -203,8 +205,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="13">33</numVerses>
     <numVerses chapter="14">45</numVerses>
     <numVerses chapter="15">41</numVerses>
-    <numVerses chapter="16">35</numVerses>
-    <numVerses chapter="17">28</numVerses>
+    <numVerses chapter="16">50</numVerses>
+    <numVerses chapter="17">13</numVerses>
     <numVerses chapter="18">32</numVerses>
     <numVerses chapter="19">22</numVerses>
     <numVerses chapter="20">29</numVerses>
@@ -212,12 +214,12 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="22">41</numVerses>
     <numVerses chapter="23">30</numVerses>
     <numVerses chapter="24">25</numVerses>
-    <numVerses chapter="25">19</numVerses>
+    <numVerses chapter="25">18</numVerses>
     <numVerses chapter="26">65</numVerses>
     <numVerses chapter="27">23</numVerses>
     <numVerses chapter="28">31</numVerses>
-    <numVerses chapter="29">39</numVerses>
-    <numVerses chapter="30">17</numVerses>
+    <numVerses chapter="29">40</numVerses>
+    <numVerses chapter="30">16</numVerses>
     <numVerses chapter="31">54</numVerses>
     <numVerses chapter="32">42</numVerses>
     <numVerses chapter="33">56</numVerses>
@@ -240,8 +242,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="9">29</numVerses>
     <numVerses chapter="10">22</numVerses>
     <numVerses chapter="11">32</numVerses>
-    <numVerses chapter="12">31</numVerses>
-    <numVerses chapter="13">19</numVerses>
+    <numVerses chapter="12">32</numVerses>
+    <numVerses chapter="13">18</numVerses>
     <numVerses chapter="14">29</numVerses>
     <numVerses chapter="15">23</numVerses>
     <numVerses chapter="16">22</numVerses>
@@ -250,14 +252,14 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="19">21</numVerses>
     <numVerses chapter="20">20</numVerses>
     <numVerses chapter="21">23</numVerses>
-    <numVerses chapter="22">29</numVerses>
-    <numVerses chapter="23">26</numVerses>
+    <numVerses chapter="22">30</numVerses>
+    <numVerses chapter="23">25</numVerses>
     <numVerses chapter="24">22</numVerses>
     <numVerses chapter="25">19</numVerses>
     <numVerses chapter="26">19</numVerses>
     <numVerses chapter="27">26</numVerses>
-    <numVerses chapter="28">69</numVerses>
-    <numVerses chapter="29">28</numVerses>
+    <numVerses chapter="28">68</numVerses>
+    <numVerses chapter="29">29</numVerses>
     <numVerses chapter="30">20</numVerses>
     <numVerses chapter="31">30</numVerses>
     <numVerses chapter="32">52</numVerses>
@@ -352,10 +354,10 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="18">30</numVerses>
     <numVerses chapter="19">24</numVerses>
     <numVerses chapter="20">42</numVerses>
-    <numVerses chapter="21">16</numVerses>
+    <numVerses chapter="21">15</numVerses>
     <numVerses chapter="22">23</numVerses>
-    <numVerses chapter="23">28</numVerses>
-    <numVerses chapter="24">23</numVerses>
+    <numVerses chapter="23">29</numVerses>
+    <numVerses chapter="24">22</numVerses>
     <numVerses chapter="25">44</numVerses>
     <numVerses chapter="26">25</numVerses>
     <numVerses chapter="27">12</numVerses>
@@ -385,8 +387,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="15">37</numVerses>
     <numVerses chapter="16">23</numVerses>
     <numVerses chapter="17">29</numVerses>
-    <numVerses chapter="18">32</numVerses>
-    <numVerses chapter="19">44</numVerses>
+    <numVerses chapter="18">33</numVerses>
+    <numVerses chapter="19">43</numVerses>
     <numVerses chapter="20">26</numVerses>
     <numVerses chapter="21">22</numVerses>
     <numVerses chapter="22">51</numVerses>
@@ -400,8 +402,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">53</numVerses>
     <numVerses chapter="2">46</numVerses>
     <numVerses chapter="3">28</numVerses>
-    <numVerses chapter="4">20</numVerses>
-    <numVerses chapter="5">32</numVerses>
+    <numVerses chapter="4">34</numVerses>
+    <numVerses chapter="5">18</numVerses>
     <numVerses chapter="6">38</numVerses>
     <numVerses chapter="7">51</numVerses>
     <numVerses chapter="8">66</numVerses>
@@ -418,7 +420,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="19">21</numVerses>
     <numVerses chapter="20">43</numVerses>
     <numVerses chapter="21">29</numVerses>
-    <numVerses chapter="22">54</numVerses>
+    <numVerses chapter="22">53</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>2 Kings</nameEnglish>
@@ -434,8 +436,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="8">29</numVerses>
     <numVerses chapter="9">37</numVerses>
     <numVerses chapter="10">36</numVerses>
-    <numVerses chapter="11">20</numVerses>
-    <numVerses chapter="12">22</numVerses>
+    <numVerses chapter="11">21</numVerses>
+    <numVerses chapter="12">21</numVerses>
     <numVerses chapter="13">25</numVerses>
     <numVerses chapter="14">29</numVerses>
     <numVerses chapter="15">38</numVerses>
@@ -458,14 +460,14 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="2">55</numVerses>
     <numVerses chapter="3">24</numVerses>
     <numVerses chapter="4">43</numVerses>
-    <numVerses chapter="5">41</numVerses>
-    <numVerses chapter="6">66</numVerses>
+    <numVerses chapter="5">26</numVerses>
+    <numVerses chapter="6">81</numVerses>
     <numVerses chapter="7">40</numVerses>
     <numVerses chapter="8">40</numVerses>
     <numVerses chapter="9">44</numVerses>
     <numVerses chapter="10">14</numVerses>
     <numVerses chapter="11">47</numVerses>
-    <numVerses chapter="12">41</numVerses>
+    <numVerses chapter="12">40</numVerses>
     <numVerses chapter="13">14</numVerses>
     <numVerses chapter="14">17</numVerses>
     <numVerses chapter="15">29</numVerses>
@@ -488,8 +490,8 @@ See the supplied ReadMe.txt for more details.
     <nameEnglish>2 Chronicles</nameEnglish>
     <referenceAbbreviation>CH2</referenceAbbreviation>
     <numChapters>36</numChapters>
-    <numVerses chapter="1">18</numVerses>
-    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">18</numVerses>
     <numVerses chapter="3">17</numVerses>
     <numVerses chapter="4">22</numVerses>
     <numVerses chapter="5">14</numVerses>
@@ -500,8 +502,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="10">19</numVerses>
     <numVerses chapter="11">23</numVerses>
     <numVerses chapter="12">16</numVerses>
-    <numVerses chapter="13">23</numVerses>
-    <numVerses chapter="14">14</numVerses>
+    <numVerses chapter="13">22</numVerses>
+    <numVerses chapter="14">15</numVerses>
     <numVerses chapter="15">19</numVerses>
     <numVerses chapter="16">14</numVerses>
     <numVerses chapter="17">19</numVerses>
@@ -546,14 +548,14 @@ See the supplied ReadMe.txt for more details.
     <numChapters>13</numChapters>
     <numVerses chapter="1">11</numVerses>
     <numVerses chapter="2">20</numVerses>
-    <numVerses chapter="3">38</numVerses>
-    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="3">32</numVerses>
+    <numVerses chapter="4">23</numVerses>
     <numVerses chapter="5">19</numVerses>
     <numVerses chapter="6">19</numVerses>
-    <numVerses chapter="7">72</numVerses>
+    <numVerses chapter="7">73</numVerses>
     <numVerses chapter="8">18</numVerses>
-    <numVerses chapter="9">37</numVerses>
-    <numVerses chapter="10">40</numVerses>
+    <numVerses chapter="9">38</numVerses>
+    <numVerses chapter="10">39</numVerses>
     <numVerses chapter="11">36</numVerses>
     <numVerses chapter="12">47</numVerses>
     <numVerses chapter="13">31</numVerses>
@@ -616,8 +618,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="37">24</numVerses>
     <numVerses chapter="38">41</numVerses>
     <numVerses chapter="39">30</numVerses>
-    <numVerses chapter="40">32</numVerses>
-    <numVerses chapter="41">26</numVerses>
+    <numVerses chapter="40">24</numVerses>
+    <numVerses chapter="41">34</numVerses>
     <numVerses chapter="42">17</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
@@ -626,26 +628,26 @@ See the supplied ReadMe.txt for more details.
     <numChapters>150</numChapters>
     <numVerses chapter="1">6</numVerses>
     <numVerses chapter="2">12</numVerses>
-    <numVerses chapter="3">9</numVerses>
-    <numVerses chapter="4">9</numVerses>
-    <numVerses chapter="5">13</numVerses>
-    <numVerses chapter="6">11</numVerses>
-    <numVerses chapter="7">18</numVerses>
-    <numVerses chapter="8">10</numVerses>
-    <numVerses chapter="9">21</numVerses>
+    <numVerses chapter="3">8</numVerses>
+    <numVerses chapter="4">8</numVerses>
+    <numVerses chapter="5">12</numVerses>
+    <numVerses chapter="6">10</numVerses>
+    <numVerses chapter="7">17</numVerses>
+    <numVerses chapter="8">9</numVerses>
+    <numVerses chapter="9">20</numVerses>
     <numVerses chapter="10">18</numVerses>
     <numVerses chapter="11">7</numVerses>
-    <numVerses chapter="12">9</numVerses>
+    <numVerses chapter="12">8</numVerses>
     <numVerses chapter="13">6</numVerses>
     <numVerses chapter="14">7</numVerses>
     <numVerses chapter="15">5</numVerses>
     <numVerses chapter="16">11</numVerses>
     <numVerses chapter="17">15</numVerses>
-    <numVerses chapter="18">51</numVerses>
-    <numVerses chapter="19">15</numVerses>
-    <numVerses chapter="20">10</numVerses>
-    <numVerses chapter="21">14</numVerses>
-    <numVerses chapter="22">32</numVerses>
+    <numVerses chapter="18">50</numVerses>
+    <numVerses chapter="19">14</numVerses>
+    <numVerses chapter="20">9</numVerses>
+    <numVerses chapter="21">13</numVerses>
+    <numVerses chapter="22">31</numVerses>
     <numVerses chapter="23">6</numVerses>
     <numVerses chapter="24">10</numVerses>
     <numVerses chapter="25">22</numVerses>
@@ -653,69 +655,69 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="27">14</numVerses>
     <numVerses chapter="28">9</numVerses>
     <numVerses chapter="29">11</numVerses>
-    <numVerses chapter="30">13</numVerses>
-    <numVerses chapter="31">25</numVerses>
+    <numVerses chapter="30">12</numVerses>
+    <numVerses chapter="31">24</numVerses>
     <numVerses chapter="32">11</numVerses>
     <numVerses chapter="33">22</numVerses>
-    <numVerses chapter="34">23</numVerses>
+    <numVerses chapter="34">22</numVerses>
     <numVerses chapter="35">28</numVerses>
-    <numVerses chapter="36">13</numVerses>
+    <numVerses chapter="36">12</numVerses>
     <numVerses chapter="37">40</numVerses>
-    <numVerses chapter="38">23</numVerses>
-    <numVerses chapter="39">14</numVerses>
-    <numVerses chapter="40">18</numVerses>
-    <numVerses chapter="41">14</numVerses>
-    <numVerses chapter="42">12</numVerses>
+    <numVerses chapter="38">22</numVerses>
+    <numVerses chapter="39">13</numVerses>
+    <numVerses chapter="40">17</numVerses>
+    <numVerses chapter="41">13</numVerses>
+    <numVerses chapter="42">11</numVerses>
     <numVerses chapter="43">5</numVerses>
-    <numVerses chapter="44">27</numVerses>
-    <numVerses chapter="45">18</numVerses>
-    <numVerses chapter="46">12</numVerses>
-    <numVerses chapter="47">10</numVerses>
-    <numVerses chapter="48">15</numVerses>
-    <numVerses chapter="49">21</numVerses>
+    <numVerses chapter="44">26</numVerses>
+    <numVerses chapter="45">17</numVerses>
+    <numVerses chapter="46">11</numVerses>
+    <numVerses chapter="47">9</numVerses>
+    <numVerses chapter="48">14</numVerses>
+    <numVerses chapter="49">20</numVerses>
     <numVerses chapter="50">23</numVerses>
-    <numVerses chapter="51">21</numVerses>
-    <numVerses chapter="52">11</numVerses>
-    <numVerses chapter="53">7</numVerses>
-    <numVerses chapter="54">9</numVerses>
-    <numVerses chapter="55">24</numVerses>
-    <numVerses chapter="56">14</numVerses>
-    <numVerses chapter="57">12</numVerses>
-    <numVerses chapter="58">12</numVerses>
-    <numVerses chapter="59">18</numVerses>
-    <numVerses chapter="60">14</numVerses>
-    <numVerses chapter="61">9</numVerses>
-    <numVerses chapter="62">13</numVerses>
-    <numVerses chapter="63">12</numVerses>
-    <numVerses chapter="64">11</numVerses>
-    <numVerses chapter="65">14</numVerses>
+    <numVerses chapter="51">19</numVerses>
+    <numVerses chapter="52">9</numVerses>
+    <numVerses chapter="53">6</numVerses>
+    <numVerses chapter="54">7</numVerses>
+    <numVerses chapter="55">23</numVerses>
+    <numVerses chapter="56">13</numVerses>
+    <numVerses chapter="57">11</numVerses>
+    <numVerses chapter="58">11</numVerses>
+    <numVerses chapter="59">17</numVerses>
+    <numVerses chapter="60">12</numVerses>
+    <numVerses chapter="61">8</numVerses>
+    <numVerses chapter="62">12</numVerses>
+    <numVerses chapter="63">11</numVerses>
+    <numVerses chapter="64">10</numVerses>
+    <numVerses chapter="65">13</numVerses>
     <numVerses chapter="66">20</numVerses>
-    <numVerses chapter="67">8</numVerses>
-    <numVerses chapter="68">36</numVerses>
-    <numVerses chapter="69">37</numVerses>
-    <numVerses chapter="70">6</numVerses>
+    <numVerses chapter="67">7</numVerses>
+    <numVerses chapter="68">35</numVerses>
+    <numVerses chapter="69">36</numVerses>
+    <numVerses chapter="70">5</numVerses>
     <numVerses chapter="71">24</numVerses>
     <numVerses chapter="72">20</numVerses>
     <numVerses chapter="73">28</numVerses>
     <numVerses chapter="74">23</numVerses>
-    <numVerses chapter="75">11</numVerses>
-    <numVerses chapter="76">13</numVerses>
-    <numVerses chapter="77">21</numVerses>
+    <numVerses chapter="75">10</numVerses>
+    <numVerses chapter="76">12</numVerses>
+    <numVerses chapter="77">20</numVerses>
     <numVerses chapter="78">72</numVerses>
     <numVerses chapter="79">13</numVerses>
-    <numVerses chapter="80">20</numVerses>
-    <numVerses chapter="81">17</numVerses>
+    <numVerses chapter="80">19</numVerses>
+    <numVerses chapter="81">16</numVerses>
     <numVerses chapter="82">8</numVerses>
-    <numVerses chapter="83">19</numVerses>
-    <numVerses chapter="84">13</numVerses>
-    <numVerses chapter="85">14</numVerses>
+    <numVerses chapter="83">18</numVerses>
+    <numVerses chapter="84">12</numVerses>
+    <numVerses chapter="85">13</numVerses>
     <numVerses chapter="86">17</numVerses>
     <numVerses chapter="87">7</numVerses>
-    <numVerses chapter="88">19</numVerses>
-    <numVerses chapter="89">53</numVerses>
+    <numVerses chapter="88">18</numVerses>
+    <numVerses chapter="89">52</numVerses>
     <numVerses chapter="90">17</numVerses>
     <numVerses chapter="91">16</numVerses>
-    <numVerses chapter="92">16</numVerses>
+    <numVerses chapter="92">15</numVerses>
     <numVerses chapter="93">5</numVerses>
     <numVerses chapter="94">23</numVerses>
     <numVerses chapter="95">11</numVerses>
@@ -725,13 +727,13 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="99">9</numVerses>
     <numVerses chapter="100">5</numVerses>
     <numVerses chapter="101">8</numVerses>
-    <numVerses chapter="102">29</numVerses>
+    <numVerses chapter="102">28</numVerses>
     <numVerses chapter="103">22</numVerses>
     <numVerses chapter="104">35</numVerses>
     <numVerses chapter="105">45</numVerses>
     <numVerses chapter="106">48</numVerses>
     <numVerses chapter="107">43</numVerses>
-    <numVerses chapter="108">14</numVerses>
+    <numVerses chapter="108">13</numVerses>
     <numVerses chapter="109">31</numVerses>
     <numVerses chapter="110">7</numVerses>
     <numVerses chapter="111">10</numVerses>
@@ -763,9 +765,9 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="137">9</numVerses>
     <numVerses chapter="138">8</numVerses>
     <numVerses chapter="139">24</numVerses>
-    <numVerses chapter="140">14</numVerses>
+    <numVerses chapter="140">13</numVerses>
     <numVerses chapter="141">10</numVerses>
-    <numVerses chapter="142">8</numVerses>
+    <numVerses chapter="142">7</numVerses>
     <numVerses chapter="143">12</numVerses>
     <numVerses chapter="144">15</numVerses>
     <numVerses chapter="145">21</numVerses>
@@ -818,8 +820,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">18</numVerses>
     <numVerses chapter="2">26</numVerses>
     <numVerses chapter="3">22</numVerses>
-    <numVerses chapter="4">17</numVerses>
-    <numVerses chapter="5">19</numVerses>
+    <numVerses chapter="4">16</numVerses>
+    <numVerses chapter="5">20</numVerses>
     <numVerses chapter="6">12</numVerses>
     <numVerses chapter="7">29</numVerses>
     <numVerses chapter="8">17</numVerses>
@@ -837,8 +839,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="3">11</numVerses>
     <numVerses chapter="4">16</numVerses>
     <numVerses chapter="5">16</numVerses>
-    <numVerses chapter="6">12</numVerses>
-    <numVerses chapter="7">14</numVerses>
+    <numVerses chapter="6">13</numVerses>
+    <numVerses chapter="7">13</numVerses>
     <numVerses chapter="8">14</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
@@ -852,8 +854,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="5">30</numVerses>
     <numVerses chapter="6">13</numVerses>
     <numVerses chapter="7">25</numVerses>
-    <numVerses chapter="8">23</numVerses>
-    <numVerses chapter="9">20</numVerses>
+    <numVerses chapter="8">22</numVerses>
+    <numVerses chapter="9">21</numVerses>
     <numVerses chapter="10">34</numVerses>
     <numVerses chapter="11">16</numVerses>
     <numVerses chapter="12">6</numVerses>
@@ -908,7 +910,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="61">11</numVerses>
     <numVerses chapter="62">12</numVerses>
     <numVerses chapter="63">19</numVerses>
-    <numVerses chapter="64">11</numVerses>
+    <numVerses chapter="64">12</numVerses>
     <numVerses chapter="65">25</numVerses>
     <numVerses chapter="66">24</numVerses>
   </BibleBookVersification>
@@ -923,8 +925,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="5">31</numVerses>
     <numVerses chapter="6">30</numVerses>
     <numVerses chapter="7">34</numVerses>
-    <numVerses chapter="8">23</numVerses>
-    <numVerses chapter="9">25</numVerses>
+    <numVerses chapter="8">22</numVerses>
+    <numVerses chapter="9">26</numVerses>
     <numVerses chapter="10">25</numVerses>
     <numVerses chapter="11">23</numVerses>
     <numVerses chapter="12">17</numVerses>
@@ -1002,8 +1004,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="17">24</numVerses>
     <numVerses chapter="18">32</numVerses>
     <numVerses chapter="19">14</numVerses>
-    <numVerses chapter="20">44</numVerses>
-    <numVerses chapter="21">37</numVerses>
+    <numVerses chapter="20">49</numVerses>
+    <numVerses chapter="21">32</numVerses>
     <numVerses chapter="22">31</numVerses>
     <numVerses chapter="23">49</numVerses>
     <numVerses chapter="24">27</numVerses>
@@ -1038,10 +1040,10 @@ See the supplied ReadMe.txt for more details.
     <numChapters>12</numChapters>
     <numVerses chapter="1">21</numVerses>
     <numVerses chapter="2">49</numVerses>
-    <numVerses chapter="3">33</numVerses>
-    <numVerses chapter="4">34</numVerses>
-    <numVerses chapter="5">30</numVerses>
-    <numVerses chapter="6">29</numVerses>
+    <numVerses chapter="3">30</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">31</numVerses>
+    <numVerses chapter="6">28</numVerses>
     <numVerses chapter="7">28</numVerses>
     <numVerses chapter="8">27</numVerses>
     <numVerses chapter="9">27</numVerses>
@@ -1053,8 +1055,8 @@ See the supplied ReadMe.txt for more details.
     <nameEnglish>Hosea</nameEnglish>
     <referenceAbbreviation>HOS</referenceAbbreviation>
     <numChapters>14</numChapters>
-    <numVerses chapter="1">9</numVerses>
-    <numVerses chapter="2">25</numVerses>
+    <numVerses chapter="1">11</numVerses>
+    <numVerses chapter="2">23</numVerses>
     <numVerses chapter="3">5</numVerses>
     <numVerses chapter="4">19</numVerses>
     <numVerses chapter="5">15</numVerses>
@@ -1063,19 +1065,18 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="8">14</numVerses>
     <numVerses chapter="9">17</numVerses>
     <numVerses chapter="10">15</numVerses>
-    <numVerses chapter="11">11</numVerses>
-    <numVerses chapter="12">15</numVerses>
-    <numVerses chapter="13">15</numVerses>
-    <numVerses chapter="14">10</numVerses>
+    <numVerses chapter="11">12</numVerses>
+    <numVerses chapter="12">14</numVerses>
+    <numVerses chapter="13">16</numVerses>
+    <numVerses chapter="14">9</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Joel</nameEnglish>
     <referenceAbbreviation>JOL</referenceAbbreviation>
-    <numChapters>4</numChapters>
+    <numChapters>3</numChapters>
     <numVerses chapter="1">20</numVerses>
-    <numVerses chapter="2">27</numVerses>
-    <numVerses chapter="3">5</numVerses>
-    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="2">32</numVerses>
+    <numVerses chapter="3">21</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Amos</nameEnglish>
@@ -1101,8 +1102,8 @@ See the supplied ReadMe.txt for more details.
     <nameEnglish>Jonah</nameEnglish>
     <referenceAbbreviation>JON</referenceAbbreviation>
     <numChapters>4</numChapters>
-    <numVerses chapter="1">16</numVerses>
-    <numVerses chapter="2">11</numVerses>
+    <numVerses chapter="1">17</numVerses>
+    <numVerses chapter="2">10</numVerses>
     <numVerses chapter="3">10</numVerses>
     <numVerses chapter="4">11</numVerses>
   </BibleBookVersification>
@@ -1113,8 +1114,8 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">16</numVerses>
     <numVerses chapter="2">13</numVerses>
     <numVerses chapter="3">12</numVerses>
-    <numVerses chapter="4">14</numVerses>
-    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="4">13</numVerses>
+    <numVerses chapter="5">15</numVerses>
     <numVerses chapter="6">16</numVerses>
     <numVerses chapter="7">20</numVerses>
   </BibleBookVersification>
@@ -1122,8 +1123,8 @@ See the supplied ReadMe.txt for more details.
     <nameEnglish>Nahum</nameEnglish>
     <referenceAbbreviation>NAM</referenceAbbreviation>
     <numChapters>3</numChapters>
-    <numVerses chapter="1">14</numVerses>
-    <numVerses chapter="2">14</numVerses>
+    <numVerses chapter="1">15</numVerses>
+    <numVerses chapter="2">13</numVerses>
     <numVerses chapter="3">19</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
@@ -1153,8 +1154,8 @@ See the supplied ReadMe.txt for more details.
     <nameEnglish>Zechariah</nameEnglish>
     <referenceAbbreviation>ZEC</referenceAbbreviation>
     <numChapters>14</numChapters>
-    <numVerses chapter="1">17</numVerses>
-    <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="1">21</numVerses>
+    <numVerses chapter="2">13</numVerses>
     <numVerses chapter="3">10</numVerses>
     <numVerses chapter="4">14</numVerses>
     <numVerses chapter="5">11</numVerses>
@@ -1171,10 +1172,304 @@ See the supplied ReadMe.txt for more details.
   <BibleBookVersification>
     <nameEnglish>Malachi</nameEnglish>
     <referenceAbbreviation>MAL</referenceAbbreviation>
-    <numChapters>3</numChapters>
+    <numChapters>4</numChapters>
     <numVerses chapter="1">14</numVerses>
     <numVerses chapter="2">17</numVerses>
+    <numVerses chapter="3">18</numVerses>
+    <numVerses chapter="4">6</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Tobit</nameEnglish>
+    <referenceAbbreviation>TOB</referenceAbbreviation>
+    <numChapters>14</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">14</numVerses>
+    <numVerses chapter="3">17</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">22</numVerses>
+    <numVerses chapter="6">18</numVerses>
+    <numVerses chapter="7">16</numVerses>
+    <numVerses chapter="8">21</numVerses>
+    <numVerses chapter="9">6</numVerses>
+    <numVerses chapter="10">13</numVerses>
+    <numVerses chapter="11">18</numVerses>
+    <numVerses chapter="12">22</numVerses>
+    <numVerses chapter="13">17</numVerses>
+    <numVerses chapter="14">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Judith</nameEnglish>
+    <referenceAbbreviation>JDT</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">28</numVerses>
+    <numVerses chapter="3">10</numVerses>
+    <numVerses chapter="4">15</numVerses>
+    <numVerses chapter="5">24</numVerses>
+    <numVerses chapter="6">21</numVerses>
+    <numVerses chapter="7">32</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">14</numVerses>
+    <numVerses chapter="10">23</numVerses>
+    <numVerses chapter="11">23</numVerses>
+    <numVerses chapter="12">20</numVerses>
+    <numVerses chapter="13">20</numVerses>
+    <numVerses chapter="14">19</numVerses>
+    <numVerses chapter="15">14</numVerses>
+    <numVerses chapter="16">25</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Greek Esther</nameEnglish>
+    <referenceAbbreviation>ESG</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">23</numVerses>
+    <numVerses chapter="3">15</numVerses>
+    <numVerses chapter="4">17</numVerses>
+    <numVerses chapter="5">14</numVerses>
+    <numVerses chapter="6">14</numVerses>
+    <numVerses chapter="7">10</numVerses>
+    <numVerses chapter="8">17</numVerses>
+    <numVerses chapter="9">32</numVerses>
+    <numVerses chapter="10">13</numVerses>
+    <numVerses chapter="11">12</numVerses>
+    <numVerses chapter="12">6</numVerses>
+    <numVerses chapter="13">18</numVerses>
+    <numVerses chapter="14">19</numVerses>
+    <numVerses chapter="15">16</numVerses>
+    <numVerses chapter="16">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Wisdom</nameEnglish>
+    <referenceAbbreviation>WIS</referenceAbbreviation>
+    <numChapters>19</numChapters>
+    <numVerses chapter="1">16</numVerses>
+    <numVerses chapter="2">24</numVerses>
+    <numVerses chapter="3">19</numVerses>
+    <numVerses chapter="4">20</numVerses>
+    <numVerses chapter="5">23</numVerses>
+    <numVerses chapter="6">25</numVerses>
+    <numVerses chapter="7">30</numVerses>
+    <numVerses chapter="8">21</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">26</numVerses>
+    <numVerses chapter="12">27</numVerses>
+    <numVerses chapter="13">19</numVerses>
+    <numVerses chapter="14">31</numVerses>
+    <numVerses chapter="15">19</numVerses>
+    <numVerses chapter="16">29</numVerses>
+    <numVerses chapter="17">21</numVerses>
+    <numVerses chapter="18">25</numVerses>
+    <numVerses chapter="19">22</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Sirach</nameEnglish>
+    <referenceAbbreviation>SIR</referenceAbbreviation>
+    <numChapters>51</numChapters>
+    <numVerses chapter="1">30</numVerses>
+    <numVerses chapter="2">18</numVerses>
+    <numVerses chapter="3">31</numVerses>
+    <numVerses chapter="4">31</numVerses>
+    <numVerses chapter="5">15</numVerses>
+    <numVerses chapter="6">37</numVerses>
+    <numVerses chapter="7">36</numVerses>
+    <numVerses chapter="8">19</numVerses>
+    <numVerses chapter="9">18</numVerses>
+    <numVerses chapter="10">31</numVerses>
+    <numVerses chapter="11">34</numVerses>
+    <numVerses chapter="12">18</numVerses>
+    <numVerses chapter="13">26</numVerses>
+    <numVerses chapter="14">27</numVerses>
+    <numVerses chapter="15">20</numVerses>
+    <numVerses chapter="16">30</numVerses>
+    <numVerses chapter="17">32</numVerses>
+    <numVerses chapter="18">33</numVerses>
+    <numVerses chapter="19">30</numVerses>
+    <numVerses chapter="20">31</numVerses>
+    <numVerses chapter="21">28</numVerses>
+    <numVerses chapter="22">27</numVerses>
+    <numVerses chapter="23">27</numVerses>
+    <numVerses chapter="24">34</numVerses>
+    <numVerses chapter="25">26</numVerses>
+    <numVerses chapter="26">29</numVerses>
+    <numVerses chapter="27">30</numVerses>
+    <numVerses chapter="28">26</numVerses>
+    <numVerses chapter="29">28</numVerses>
+    <numVerses chapter="30">25</numVerses>
+    <numVerses chapter="31">31</numVerses>
+    <numVerses chapter="32">24</numVerses>
+    <numVerses chapter="33">33</numVerses>
+    <numVerses chapter="34">31</numVerses>
+    <numVerses chapter="35">26</numVerses>
+    <numVerses chapter="36">31</numVerses>
+    <numVerses chapter="37">31</numVerses>
+    <numVerses chapter="38">34</numVerses>
+    <numVerses chapter="39">35</numVerses>
+    <numVerses chapter="40">30</numVerses>
+    <numVerses chapter="41">22</numVerses>
+    <numVerses chapter="42">25</numVerses>
+    <numVerses chapter="43">33</numVerses>
+    <numVerses chapter="44">23</numVerses>
+    <numVerses chapter="45">26</numVerses>
+    <numVerses chapter="46">20</numVerses>
+    <numVerses chapter="47">25</numVerses>
+    <numVerses chapter="48">25</numVerses>
+    <numVerses chapter="49">16</numVerses>
+    <numVerses chapter="50">29</numVerses>
+    <numVerses chapter="51">30</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Baruch</nameEnglish>
+    <referenceAbbreviation>BAR</referenceAbbreviation>
+    <numChapters>6</numChapters>
+    <numVerses chapter="1">22</numVerses>
+    <numVerses chapter="2">35</numVerses>
+    <numVerses chapter="3">37</numVerses>
+    <numVerses chapter="4">37</numVerses>
+    <numVerses chapter="5">9</numVerses>
+    <numVerses chapter="6">73</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Prayer of Azariah</nameEnglish>
+    <referenceAbbreviation>PAZ</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">68</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Susanna</nameEnglish>
+    <referenceAbbreviation>SUS</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">64</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Bel and the Dragon</nameEnglish>
+    <referenceAbbreviation>BEL</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">42</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA1</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">64</numVerses>
+    <numVerses chapter="2">70</numVerses>
+    <numVerses chapter="3">60</numVerses>
+    <numVerses chapter="4">61</numVerses>
+    <numVerses chapter="5">68</numVerses>
+    <numVerses chapter="6">63</numVerses>
+    <numVerses chapter="7">50</numVerses>
+    <numVerses chapter="8">32</numVerses>
+    <numVerses chapter="9">73</numVerses>
+    <numVerses chapter="10">89</numVerses>
+    <numVerses chapter="11">74</numVerses>
+    <numVerses chapter="12">53</numVerses>
+    <numVerses chapter="13">53</numVerses>
+    <numVerses chapter="14">49</numVerses>
+    <numVerses chapter="15">41</numVerses>
+    <numVerses chapter="16">24</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA2</referenceAbbreviation>
+    <numChapters>15</numChapters>
+    <numVerses chapter="1">36</numVerses>
+    <numVerses chapter="2">32</numVerses>
+    <numVerses chapter="3">40</numVerses>
+    <numVerses chapter="4">50</numVerses>
+    <numVerses chapter="5">27</numVerses>
+    <numVerses chapter="6">31</numVerses>
+    <numVerses chapter="7">42</numVerses>
+    <numVerses chapter="8">36</numVerses>
+    <numVerses chapter="9">29</numVerses>
+    <numVerses chapter="10">38</numVerses>
+    <numVerses chapter="11">38</numVerses>
+    <numVerses chapter="12">45</numVerses>
+    <numVerses chapter="13">26</numVerses>
+    <numVerses chapter="14">46</numVerses>
+    <numVerses chapter="15">39</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>1 Esdras</nameEnglish>
+    <referenceAbbreviation>ES1</referenceAbbreviation>
+    <numChapters>9</numChapters>
+    <numVerses chapter="1">58</numVerses>
+    <numVerses chapter="2">30</numVerses>
     <numVerses chapter="3">24</numVerses>
+    <numVerses chapter="4">63</numVerses>
+    <numVerses chapter="5">73</numVerses>
+    <numVerses chapter="6">34</numVerses>
+    <numVerses chapter="7">15</numVerses>
+    <numVerses chapter="8">96</numVerses>
+    <numVerses chapter="9">55</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Prayer of Manasses</nameEnglish>
+    <referenceAbbreviation>MAN</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Additional Psalm</nameEnglish>
+    <referenceAbbreviation>PSS</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">7</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>3 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA3</referenceAbbreviation>
+    <numChapters>7</numChapters>
+    <numVerses chapter="1">29</numVerses>
+    <numVerses chapter="2">33</numVerses>
+    <numVerses chapter="3">30</numVerses>
+    <numVerses chapter="4">21</numVerses>
+    <numVerses chapter="5">51</numVerses>
+    <numVerses chapter="6">41</numVerses>
+    <numVerses chapter="7">23</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>2 Esdras</nameEnglish>
+    <referenceAbbreviation>ES2</referenceAbbreviation>
+    <numChapters>16</numChapters>
+    <numVerses chapter="1">40</numVerses>
+    <numVerses chapter="2">48</numVerses>
+    <numVerses chapter="3">36</numVerses>
+    <numVerses chapter="4">52</numVerses>
+    <numVerses chapter="5">56</numVerses>
+    <numVerses chapter="6">59</numVerses>
+    <numVerses chapter="7">140</numVerses>
+    <numVerses chapter="8">63</numVerses>
+    <numVerses chapter="9">47</numVerses>
+    <numVerses chapter="10">59</numVerses>
+    <numVerses chapter="11">46</numVerses>
+    <numVerses chapter="12">51</numVerses>
+    <numVerses chapter="13">58</numVerses>
+    <numVerses chapter="14">48</numVerses>
+    <numVerses chapter="15">63</numVerses>
+    <numVerses chapter="16">78</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>4 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA4</referenceAbbreviation>
+    <numChapters>18</numChapters>
+    <numVerses chapter="1">35</numVerses>
+    <numVerses chapter="2">24</numVerses>
+    <numVerses chapter="3">21</numVerses>
+    <numVerses chapter="4">26</numVerses>
+    <numVerses chapter="5">38</numVerses>
+    <numVerses chapter="6">35</numVerses>
+    <numVerses chapter="7">23</numVerses>
+    <numVerses chapter="8">29</numVerses>
+    <numVerses chapter="9">32</numVerses>
+    <numVerses chapter="10">21</numVerses>
+    <numVerses chapter="11">27</numVerses>
+    <numVerses chapter="12">19</numVerses>
+    <numVerses chapter="13">27</numVerses>
+    <numVerses chapter="14">20</numVerses>
+    <numVerses chapter="15">32</numVerses>
+    <numVerses chapter="16">25</numVerses>
+    <numVerses chapter="17">24</numVerses>
+    <numVerses chapter="18">24</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Matthew</nameEnglish>
@@ -1307,7 +1602,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="16">40</numVerses>
     <numVerses chapter="17">34</numVerses>
     <numVerses chapter="18">28</numVerses>
-    <numVerses chapter="19">40</numVerses>
+    <numVerses chapter="19">41</numVerses>
     <numVerses chapter="20">38</numVerses>
     <numVerses chapter="21">40</numVerses>
     <numVerses chapter="22">30</numVerses>
@@ -1376,7 +1671,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="10">18</numVerses>
     <numVerses chapter="11">33</numVerses>
     <numVerses chapter="12">21</numVerses>
-    <numVerses chapter="13">13</numVerses>
+    <numVerses chapter="13">14</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Galatians</nameEnglish>
@@ -1545,7 +1840,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="1">25</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
-    <nameEnglish>Revelation</nameEnglish>
+    <nameEnglish>Revelation of John</nameEnglish>
     <referenceAbbreviation>REV</referenceAbbreviation>
     <numChapters>22</numChapters>
     <numVerses chapter="1">20</numVerses>

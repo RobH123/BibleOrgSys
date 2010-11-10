@@ -1,17 +1,20 @@
 # ToDo.txt
 #
-# Last modified: 2010-11-04
+# Last modified: 2010-11-08
 #
 # Top jobs will be done sooner
 #
 
-Bring over BibleChaptersVerses.py from BibleNameChecker and separate versificationSystems out of BibleOrganizationlSystems.py
+Add BibleBookOrders
+Fix BibleOrganizationalSystems.py
 
-Bring over SFMFile.py from BibleNameChecker
-Bring over USFMFilenames.py from BibleNameChecker
-Bring over USFMBibleMarkers.py from BibleNameChecker
 Bring over BibleReferences.py from BibleNameChecker
-Do USFM scraping of versifications
+
+Load Sword modules
+Load e-Sword modules
+Load Zephania
+Load Biola modules
+    Do scraping of versifications
 
 Start Versification mappings
 
@@ -23,7 +26,7 @@ Bible versions with
         at the same time it specifies which books are included
         and long/short book names
 
-List of often left-out verses
+List of often left-out verses -- these need to be added to the various BibleVersification schemes (or at least be able to map into them)
 
 List of typical paragraph breaks
 

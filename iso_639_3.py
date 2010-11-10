@@ -4,7 +4,7 @@
 # iso_639_3.py
 #
 # Module handling iso_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-11-04 (also update versionString below)
+#   Last modified: 2010-11-05 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -250,11 +250,11 @@ def main():
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v%s" % ( versionString ) )
-    parser.add_option("-c", "--convert", action="store_true", dest="convert", default=False, help="convert the XML file to .py and .h tables suitable for directly including into other programs")
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     CommandLineOptions, args = parser.parse_args()
 
     stuff = iso_639_3_Convertor() # Load the XML
-    if CommandLineOptions.convert:
+    if CommandLineOptions.export:
         stuff.exportDataToPython() # Produce the .py tables
         stuff.exportDataToC() # Produce the .h tables
     else: # Must be demo mode

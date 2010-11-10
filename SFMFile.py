@@ -3,6 +3,7 @@
 # SFMFile.py
 #
 # SFM (Standard Format Marker) data file reader
+#   Last modified: 2010-11-09 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -58,8 +59,7 @@ class SFMLines:
         """
         result = ""
         for line in self.lines:
-            if result: result += '\n'
-            result += str( line )
+            result += ('\n' if result else '') + str( line )
         return result
 
     def read( self, sfm_filename, ignoreSFMs=None, encoding='utf-8' ):
@@ -76,9 +76,7 @@ class SFMLines:
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
 
-        result = []
-        lastLine = ''
-        lineCount = 0
+        lastLine, lineCount, result = '', 0, []
         with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
             try:
                 for line in myFile:
@@ -106,13 +104,20 @@ class SFMLines:
                                 #print ("Adding", line, "to", oldmarker, oldtext)
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
-                    if ' ' in line:
-                        si = line.index(' ')
-                        marker = line[1:si] #Marker is from after backslash and before the space
-                        text = line[si+1:] # All the rest is the text field
-                    else: # line contains no spaces
-                        marker = line[1:] # The marker is the entire line (after skipping the backslash)
+
+                    lineAfterBackslash = line[1:]
+                    si1 = lineAfterBackslash.find( ' ' )
+                    si2 = lineAfterBackslash.find( '\\' )
+                    if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
+                        marker = lineAfterBackslash[:si2]
+                        text = lineAfterBackslash[si2:]
+                    elif si1!=-1: # Marker stops at a space
+                        marker = lineAfterBackslash[:si1]
+                        text = lineAfterBackslash[si1+1:] # We drop the space
+                    else: # The line is only the marker
+                        marker = lineAfterBackslash
                         text = ''
+
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
             except:
@@ -147,8 +152,7 @@ class SFMRecords:
         for record in self.records:
             if result: result += '\n' # Blank line between records
             for line in record:
-                if result: result += '\n'
-                result += str( line )
+                result += ('\n' if result else '') + str( line )
         return result
 
 
@@ -179,10 +183,7 @@ class SFMRecords:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
 
-        result = []
-        record = []
-        lastLine = ''
-        lineCount = 0
+        lastLine, lastCount, record, result = '', 0, [], []
         with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
             try:
                 for line in myFile:
@@ -206,14 +207,21 @@ class SFMRecords:
                             oldmarker, oldtext = record.pop()
                             record.append( (oldmarker, oldtext+' '+line) )
                             continue
-                    if ' ' in line: # Break into SFM marker (before space) and text (after space)
-                        si = line.index(' ')
-                        marker = changeMarker( line[1:si], changePairs ) #Marker is from after backslash and before the space
-                        text = line[si+1:] # All the rest (if any) is the text field
-                    else: # line contains no spaces
-                        marker = changeMarker( line[1:], changePairs ) # The marker is the entire line (after skipping the backslash)
+
+                    lineAfterBackslash = line[1:]
+                    si1 = lineAfterBackslash.find( ' ' )
+                    si2 = lineAfterBackslash.find( '\\' )
+                    if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
+                        marker = changeMarker( lineAfterBackslash[:si2], changePairs )
+                        text = lineAfterBackslash[si2:]
+                    elif si1!=-1: # Marker stops at a space
+                        marker = changeMarker( lineAfterBackslash[:si1], changePairs )
+                        text = lineAfterBackslash[si1+1:] # We drop the space
+                    else: # The line is only the marker
+                        marker = changeMarker( lineAfterBackslash, changePairs )
                         text = ''
                         if marker==key: print ("Warning: Have a blank key field after", record)
+
                     if not key and marker not in ignoreSFMs:
                         print ('    Assuming', marker, 'to be the SFM key for', sfm_filename)
                         key = marker
@@ -253,8 +261,7 @@ def demo():
     """
 
     import os
-    folder = '/mnt/Data/SFM2Web/SFM2Web-Hg-Repo/SampleData/Lexicon'
-    filename = os.path.join(folder, 'Matigsalug Dictionary A.sfm')
+    filename = os.path.join( '/mnt/Data/SFM2Web/SFM2Web-Hg-Repo/SampleData/Lexicon', 'Matigsalug Dictionary A.sfm' )
 
     linesDB = SFMLines()
     linesDB.read( filename, ignoreSFMs=('mn','aMU','aMW','cu','cp'))
