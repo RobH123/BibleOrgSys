@@ -2,7 +2,7 @@
 #
 # checkAll.sh
 #
-#   Last modified: 2010-11-10 RJH
+#   Last modified: 2010-11-12 RJH
 #
 # Run xmllint on all the XML files in the DataFiles folder
 #
@@ -58,4 +58,4 @@ xmllint --noout --relaxng DerivedFiles/BibleBookOrder.rng --valid DataFiles/Book
 xmllint --noout --relaxng DerivedFiles/BibleBookOrder.rng --valid DataFiles/BookOrders/BibleBookOrder_SyriacNT.xml
 xmllint --noout --relaxng DerivedFiles/BibleBookOrder.rng --valid DataFiles/BookOrders/BibleBookOrder_Vulgate.xml
 
-xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BibleBooksNames_eng.xml
+xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BookNames/BibleBooksNames_eng_traditional.xml

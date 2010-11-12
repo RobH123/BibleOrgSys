@@ -1033,19 +1033,19 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>88</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Syriac Psalms 152-155</nameEnglish>
-    <referenceAbbreviation>PS3</referenceAbbreviation>
-    <referenceNumber>101</referenceNumber>
-    <ParatextAbbreviation>Ps3</ParatextAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
     <nameEnglish>Psalm 151</nameEnglish>
     <referenceAbbreviation>PS2</referenceAbbreviation>
-    <referenceNumber>102</referenceNumber>
+    <referenceNumber>101</referenceNumber>
     <OSISAbbreviation>Ps151</OSISAbbreviation>
     <CCELNumber>86</CCELNumber>
     <ParatextAbbreviation>Ps2</ParatextAbbreviation>
     <ParatextNumber>85</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Syriac Psalms 152-155</nameEnglish>
+    <referenceAbbreviation>PS3</referenceAbbreviation>
+    <referenceNumber>102</referenceNumber>
+    <ParatextAbbreviation>Ps3</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Additional Psalms of Solomon</nameEnglish>
