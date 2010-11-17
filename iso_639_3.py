@@ -4,7 +4,7 @@
 # iso_639_3.py
 #
 # Module handling iso_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-11-05 (also update versionString below)
+#   Last modified: 2010-11-16 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -177,7 +177,7 @@ class iso_639_3_Convertor:
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "Tables.py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "_Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()
@@ -223,7 +223,7 @@ class iso_639_3_Convertor:
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "Tables.h" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "_Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()

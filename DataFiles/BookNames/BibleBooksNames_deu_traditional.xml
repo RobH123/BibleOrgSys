@@ -47,9 +47,9 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.12</version>
+      <version>0.11</version>
       <date>2010-11-17</date>
-      <title>Traditional English Bible books names list</title>
+      <title>Traditional German Bible books names list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
@@ -57,9 +57,10 @@ See the supplied ReadMe.txt for more details.
 
 
   <BibleDivisionNames>
-    <defaultName>Old Testament</defaultName>
-    <defaultAbbreviation>OT</defaultAbbreviation>
-    <inputAbbreviation>Old Tstmnt</inputAbbreviation>
+    <defaultName>Das Alte Testament</defaultName>
+    <defaultAbbreviation>AT</defaultAbbreviation>
+    <inputAbbreviation>Alte Testament</inputAbbreviation>
+    <inputAbbreviation>Alte Tstmnt</inputAbbreviation>
     <includesBook>GEN</includesBook>
     <includesBook>EXO</includesBook>
     <includesBook>LEV</includesBook>
@@ -116,6 +117,64 @@ See the supplied ReadMe.txt for more details.
     <includesBook>DEU</includesBook>
   </BibleDivisionNames>
   <BibleDivisionNames>
+    <defaultName>Geschichtbücher</defaultName>
+    <defaultAbbreviation>Geschicht</defaultAbbreviation>
+    <inputAbbreviation>Geschichtbucher</inputAbbreviation>
+    <inputAbbreviation>Gschchtbchr</inputAbbreviation>
+    <includesBook>GEN</includesBook>
+    <includesBook>EXO</includesBook>
+    <includesBook>LEV</includesBook>
+    <includesBook>NUM</includesBook>
+    <includesBook>DEU</includesBook>
+    <includesBook>JOS</includesBook>
+    <includesBook>JDG</includesBook>
+    <includesBook>RUT</includesBook>
+    <includesBook>SA1</includesBook>
+    <includesBook>SA2</includesBook>
+    <includesBook>KI1</includesBook>
+    <includesBook>KI2</includesBook>
+    <includesBook>CH1</includesBook>
+    <includesBook>CH2</includesBook>
+    <includesBook>EZR</includesBook>
+    <includesBook>NEH</includesBook>
+    <includesBook>EST</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
+    <defaultName>Lehrbücher und Psalmen</defaultName>
+    <defaultAbbreviation>LuP</defaultAbbreviation>
+    <inputAbbreviation>Lehrbucher und Psalmen</inputAbbreviation>
+    <inputAbbreviation>Lehrbücher Psalmen</inputAbbreviation>
+    <inputAbbreviation>Lhrbchr und Pslmn</inputAbbreviation>
+    <includesBook>JOB</includesBook>
+    <includesBook>PSA</includesBook>
+    <includesBook>PRO</includesBook>
+    <includesBook>ECC</includesBook>
+    <includesBook>SNG</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
+    <defaultName>Prophetenbücher</defaultName>
+    <defaultAbbreviation>Prop</defaultAbbreviation>
+    <inputAbbreviation>Prophetenbucher</inputAbbreviation>
+    <inputAbbreviation>Prphtnbchr</inputAbbreviation>
+    <includesBook>ISA</includesBook>
+    <includesBook>JER</includesBook>
+    <includesBook>LAM</includesBook>
+    <includesBook>EZK</includesBook>
+    <includesBook>DAN</includesBook>
+    <includesBook>HOS</includesBook>
+    <includesBook>JOL</includesBook>
+    <includesBook>AMO</includesBook>
+    <includesBook>OBA</includesBook>
+    <includesBook>JON</includesBook>
+    <includesBook>MIC</includesBook>
+    <includesBook>NHM</includesBook>
+    <includesBook>HAB</includesBook>
+    <includesBook>ZEP</includesBook>
+    <includesBook>HAG</includesBook>
+    <includesBook>ZEC</includesBook>
+    <includesBook>MAL</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
     <defaultName>Major Prophets</defaultName>
     <defaultAbbreviation>MajProps</defaultAbbreviation>
     <inputAbbreviation>Mjr Prphts</inputAbbreviation>
@@ -144,9 +203,10 @@ See the supplied ReadMe.txt for more details.
     <includesBook>MAL</includesBook>
   </BibleDivisionNames>
   <BibleDivisionNames>
-    <defaultName>New Testament</defaultName>
+    <defaultName>Das Neue Testament</defaultName>
     <defaultAbbreviation>NT</defaultAbbreviation>
-    <inputAbbreviation>Nw Tstmnt</inputAbbreviation>
+    <inputAbbreviation>Neue Testament</inputAbbreviation>
+    <inputAbbreviation>Neue Tstmnt</inputAbbreviation>
     <includesBook>MAT</includesBook>
     <includesBook>MRK</includesBook>
     <includesBook>LUK</includesBook>
@@ -173,6 +233,46 @@ See the supplied ReadMe.txt for more details.
     <includesBook>JN2</includesBook>
     <includesBook>JN3</includesBook>
     <includesBook>JUD</includesBook>
+    <includesBook>REV</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
+    <defaultName>Geschichtbücher</defaultName>
+    <defaultAbbreviation>NTGesch</defaultAbbreviation>
+    <inputAbbreviation>Geschichtbucher</inputAbbreviation>
+    <includesBook>MAT</includesBook>
+    <includesBook>MRK</includesBook>
+    <includesBook>LUK</includesBook>
+    <includesBook>JHN</includesBook>
+    <includesBook>ACT</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
+    <defaultName>Briefe</defaultName>
+    <defaultAbbreviation>Brf</defaultAbbreviation>
+    <includesBook>CO1</includesBook>
+    <includesBook>CO2</includesBook>
+    <includesBook>GAL</includesBook>
+    <includesBook>EPH</includesBook>
+    <includesBook>PHP</includesBook>
+    <includesBook>COL</includesBook>
+    <includesBook>TH1</includesBook>
+    <includesBook>TH2</includesBook>
+    <includesBook>TI1</includesBook>
+    <includesBook>TI2</includesBook>
+    <includesBook>TIT</includesBook>
+    <includesBook>PHM</includesBook>
+    <includesBook>PE1</includesBook>
+    <includesBook>PE2</includesBook>
+    <includesBook>JN1</includesBook>
+    <includesBook>JN2</includesBook>
+    <includesBook>JN3</includesBook>
+    <includesBook>HEB</includesBook>
+    <includesBook>JAS</includesBook>
+    <includesBook>JUD</includesBook>
+  </BibleDivisionNames>
+  <BibleDivisionNames>
+    <defaultName>Prophetisches Buch</defaultName>
+    <defaultAbbreviation>PB</defaultAbbreviation>
+    <inputAbbreviation>Prphtschs Bch</inputAbbreviation>
     <includesBook>REV</includesBook>
   </BibleDivisionNames>
   <BibleDivisionNames>
@@ -214,37 +314,37 @@ See the supplied ReadMe.txt for more details.
 
   <BibleBooknameLeaders standardLeader="1">
     <inputAbbreviation>I</inputAbbreviation>
-    <inputAbbreviation>First</inputAbbreviation>
+    <inputAbbreviation>Erste</inputAbbreviation>
     <inputAbbreviation>Frst</inputAbbreviation>
     <inputAbbreviation>1st</inputAbbreviation>
-    <inputAbbreviation>One</inputAbbreviation>
+    <inputAbbreviation>Ein</inputAbbreviation>
   </BibleBooknameLeaders>
   <BibleBooknameLeaders standardLeader="2">
     <inputAbbreviation>II</inputAbbreviation>
-    <inputAbbreviation>Second</inputAbbreviation>
-    <inputAbbreviation>Scnd</inputAbbreviation>
+    <inputAbbreviation>Zweite</inputAbbreviation>
+    <inputAbbreviation>Zwte</inputAbbreviation>
     <inputAbbreviation>2nd</inputAbbreviation>
-    <inputAbbreviation>Two</inputAbbreviation>
+    <inputAbbreviation>Zwei</inputAbbreviation>
   </BibleBooknameLeaders>
   <BibleBooknameLeaders standardLeader="3">
     <inputAbbreviation>III</inputAbbreviation>
-    <inputAbbreviation>Third</inputAbbreviation>
-    <inputAbbreviation>Thrd</inputAbbreviation>
+    <inputAbbreviation>Dritte</inputAbbreviation>
+    <inputAbbreviation>Drtte</inputAbbreviation>
     <inputAbbreviation>3rd</inputAbbreviation>
-    <inputAbbreviation>Three</inputAbbreviation>
+    <inputAbbreviation>Drei</inputAbbreviation>
   </BibleBooknameLeaders>
   <BibleBooknameLeaders standardLeader="4">
     <inputAbbreviation>IV</inputAbbreviation>
-    <inputAbbreviation>Fourth</inputAbbreviation>
-    <inputAbbreviation>Forth</inputAbbreviation>
-    <inputAbbreviation>Frth</inputAbbreviation>
+    <inputAbbreviation>Vierte</inputAbbreviation>
+    <inputAbbreviation>Vrte</inputAbbreviation>
     <inputAbbreviation>4th</inputAbbreviation>
     <inputAbbreviation>Four</inputAbbreviation>
   </BibleBooknameLeaders>
   <BibleBooknameLeaders standardLeader="5">
     <inputAbbreviation>V</inputAbbreviation>
-    <inputAbbreviation>Fifth</inputAbbreviation>
-    <inputAbbreviation>Ffth</inputAbbreviation>
+    <inputAbbreviation>Fünfte</inputAbbreviation>
+    <inputAbbreviation>Funfte</inputAbbreviation>
+    <inputAbbreviation>Fnfte</inputAbbreviation>
     <inputAbbreviation>5th</inputAbbreviation>
     <inputAbbreviation>Five</inputAbbreviation>
   </BibleBooknameLeaders>
@@ -255,63 +355,56 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>6th</inputAbbreviation>
     <inputAbbreviation>Six</inputAbbreviation>
   </BibleBooknameLeaders>
-  <BibleBooknameLeaders standardLeader="Saint">
-    <inputAbbreviation>Snt</inputAbbreviation>
-    <inputAbbreviation>St</inputAbbreviation>
-    <inputAbbreviation>Snt.</inputAbbreviation>
-    <inputAbbreviation>St.</inputAbbreviation>
-  </BibleBooknameLeaders>
 
 
   <BibleBookNames referenceAbbreviation="GEN">
-    <defaultName>Genesis</defaultName>
-    <defaultAbbreviation>Gen</defaultAbbreviation>
-    <inputAbbreviation>Gnss</inputAbbreviation>
-    <inputAbbreviation>1 Moses</inputAbbreviation>
+    <defaultName>1 Moses</defaultName>
+    <defaultAbbreviation>1 Mos</defaultAbbreviation>
     <inputAbbreviation>1 Mss</inputAbbreviation>
+    <inputAbbreviation>Genesis</inputAbbreviation>
+    <inputAbbreviation>Gns</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EXO">
-    <defaultName>Exodus</defaultName>
-    <defaultAbbreviation>Exo</defaultAbbreviation>
-    <inputAbbreviation>Exds</inputAbbreviation>
-    <inputAbbreviation>2 Moses</inputAbbreviation>
+    <defaultName>2 Moses</defaultName>
+    <defaultAbbreviation>2 Mos</defaultAbbreviation>
     <inputAbbreviation>2 Mss</inputAbbreviation>
+    <inputAbbreviation>Exodus</inputAbbreviation>
+    <inputAbbreviation>Exds</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LEV">
-    <defaultName>Leviticus</defaultName>
-    <defaultAbbreviation>Lev</defaultAbbreviation>
-    <inputAbbreviation>Lvtcs</inputAbbreviation>
-    <inputAbbreviation>3 Moses</inputAbbreviation>
+    <defaultName>3 Moses</defaultName>
+    <defaultAbbreviation>3 Mos</defaultAbbreviation>
     <inputAbbreviation>3 Mss</inputAbbreviation>
+    <inputAbbreviation>Levitikus</inputAbbreviation>
+    <inputAbbreviation>Lvtks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NUM">
-    <defaultName>Numbers</defaultName>
-    <defaultAbbreviation>Num</defaultAbbreviation>
-    <inputAbbreviation>Nmbrs</inputAbbreviation>
-    <inputAbbreviation>4 Moses</inputAbbreviation>
+    <defaultName>4 Moses</defaultName>
+    <defaultAbbreviation>4 Mos</defaultAbbreviation>
     <inputAbbreviation>4 Mss</inputAbbreviation>
+    <inputAbbreviation>Numeri</inputAbbreviation>
+    <inputAbbreviation>Nmr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="DEU">
-    <defaultName>Deuteronomy</defaultName>
-    <defaultAbbreviation>Deu</defaultAbbreviation>
-    <inputAbbreviation>Dtrnmy</inputAbbreviation>
-    <inputAbbreviation>5 Moses</inputAbbreviation>
+    <defaultName>5 Moses</defaultName>
+    <defaultAbbreviation>5 Mos</defaultAbbreviation>
     <inputAbbreviation>5 Mss</inputAbbreviation>
+    <inputAbbreviation>Deuteronomium</inputAbbreviation>
+    <inputAbbreviation>Dtrnmm</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JOS">
-    <defaultName>Joshua</defaultName>
-    <defaultAbbreviation>Josh</defaultAbbreviation>
-    <inputAbbreviation>Jsh</inputAbbreviation>
+    <defaultName>Josua</defaultName>
+    <defaultAbbreviation>Jos</defaultAbbreviation>
+    <inputAbbreviation>Js</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JDG">
-    <defaultName>Judges</defaultName>
-    <defaultAbbreviation>Jdg</defaultAbbreviation>
-    <inputAbbreviation>Jdgs</inputAbbreviation>
+    <defaultName>Richter</defaultName>
+    <defaultAbbreviation>Rchtr</defaultAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="RUT">
-    <defaultName>Ruth</defaultName>
+    <defaultName>Rut</defaultName>
     <defaultAbbreviation>Rut</defaultAbbreviation>
-    <inputAbbreviation>Rth</inputAbbreviation>
+    <inputAbbreviation>Rt</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SA1">
     <defaultName>1 Samuel</defaultName>
@@ -324,92 +417,94 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>2 Sml</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI1">
-    <defaultName>1 Kings</defaultName>
-    <defaultAbbreviation>1 Kgs</defaultAbbreviation>
-    <inputAbbreviation>1 Kngs</inputAbbreviation>
+    <defaultName>1 Könige</defaultName>
+    <defaultAbbreviation>1 Kng</defaultAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI2">
-    <defaultName>2 Kings</defaultName>
-    <defaultAbbreviation>2 Kgs</defaultAbbreviation>
-    <inputAbbreviation>2 Kngs</inputAbbreviation>
+    <defaultName>2 Könige</defaultName>
+    <defaultAbbreviation>2 Kng</defaultAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CH1">
-    <defaultName>1 Chronicles</defaultName>
+    <defaultName>1 Chronik</defaultName>
     <defaultAbbreviation>1 Chr</defaultAbbreviation>
-    <inputAbbreviation>1 Chrnc</inputAbbreviation>
-    <inputAbbreviation>1 Cronic</inputAbbreviation>
-    <inputAbbreviation>1 Crnc</inputAbbreviation>
+    <inputAbbreviation>1 Chrnk</inputAbbreviation>
+    <inputAbbreviation>1 Cronik</inputAbbreviation>
+    <inputAbbreviation>1 Crnk</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CH2">
-    <defaultName>2 Chronicles</defaultName>
+    <defaultName>2 Chronik</defaultName>
     <defaultAbbreviation>2 Chr</defaultAbbreviation>
-    <inputAbbreviation>2 Chrnc</inputAbbreviation>
-    <inputAbbreviation>2 Cronic</inputAbbreviation>
-    <inputAbbreviation>2 Crnc</inputAbbreviation>
+    <inputAbbreviation>2 Chrnk</inputAbbreviation>
+    <inputAbbreviation>2 Cronik</inputAbbreviation>
+    <inputAbbreviation>2 Crnk</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EZR">
-    <defaultName>Ezra</defaultName>
-    <defaultAbbreviation>Ezr</defaultAbbreviation>
+    <defaultName>Esra</defaultName>
+    <defaultAbbreviation>Esr</defaultAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NEH">
-    <defaultName>Nehemiah</defaultName>
+    <defaultName>Nehemia</defaultName>
     <defaultAbbreviation>Neh</defaultAbbreviation>
-    <inputAbbreviation>Nhmh</inputAbbreviation>
+    <inputAbbreviation>Nhmia</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EST">
-    <defaultName>Esther</defaultName>
+    <defaultName>Ester</defaultName>
     <defaultAbbreviation>Est</defaultAbbreviation>
-    <inputAbbreviation>Esthr</inputAbbreviation>
     <inputAbbreviation>Estr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JOB">
-    <defaultName>Job</defaultName>
-    <defaultAbbreviation>Job</defaultAbbreviation>
+    <defaultName>Hiob</defaultName>
+    <defaultAbbreviation>Hiob</defaultAbbreviation>
+    <inputAbbreviation>Hb</inputAbbreviation>
     <inputAbbreviation>Jb</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PSA">
-    <defaultName>Psalms</defaultName>
+    <defaultName>Psalter</defaultName>
     <defaultAbbreviation>Psa</defaultAbbreviation>
-    <inputAbbreviation>Pslms</inputAbbreviation>
+    <inputAbbreviation>Psltr</inputAbbreviation>
+    <inputAbbreviation>Psalm</inputAbbreviation>
+    <inputAbbreviation>Pslm</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PRO">
-    <defaultName>Proverbs</defaultName>
-    <defaultAbbreviation>Pro</defaultAbbreviation>
-    <inputAbbreviation>Prvrbs</inputAbbreviation>
-    <inputAbbreviation>Prvbs</inputAbbreviation>
+    <defaultName>Sprüche</defaultName>
+    <defaultAbbreviation>Spr</defaultAbbreviation>
+    <inputAbbreviation>Sprch</inputAbbreviation>
+    <inputAbbreviation>Sprichwörter</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ECC">
-    <defaultName>Ecclesiastes</defaultName>
-    <defaultAbbreviation>Ecc</defaultAbbreviation>
-    <inputAbbreviation>Ecclsts</inputAbbreviation>
+    <defaultName>Prediger</defaultName>
+    <defaultAbbreviation>Pred</defaultAbbreviation>
+    <inputAbbreviation>Prdgr</inputAbbreviation>
+    <inputAbbreviation>Kohelet</inputAbbreviation>
+    <inputAbbreviation>Khlt</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SNG">
-    <defaultName>Song of Solomon</defaultName>
-    <defaultAbbreviation>Sng</defaultAbbreviation>
-    <inputAbbreviation>Sng of Slmn</inputAbbreviation>
-    <inputAbbreviation>Song of Songs</inputAbbreviation>
-    <inputAbbreviation>Sng of Sngs</inputAbbreviation>
-    <inputAbbreviation>SoS</inputAbbreviation>
-    <inputAbbreviation>SS</inputAbbreviation>
+    <defaultName>Hoheslied</defaultName>
+    <defaultAbbreviation>Hoh</defaultAbbreviation>
+    <inputAbbreviation>Hohelied Salomos</inputAbbreviation>
+    <inputAbbreviation>Hhld</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ISA">
-    <defaultName>Isaiah</defaultName>
-    <defaultAbbreviation>Isa</defaultAbbreviation>
+    <defaultName>Jesaja</defaultName>
+    <defaultAbbreviation>Jes</defaultAbbreviation>
+    <inputAbbreviation>Jsj</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JER">
-    <defaultName>Jeremiah</defaultName>
+    <defaultName>Jeremia</defaultName>
     <defaultAbbreviation>Jer</defaultAbbreviation>
-    <inputAbbreviation>Jrmh</inputAbbreviation>
+    <inputAbbreviation>Jrm</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LAM">
-    <defaultName>Lamentations</defaultName>
-    <defaultAbbreviation>Lam</defaultAbbreviation>
-    <inputAbbreviation>Lmnts</inputAbbreviation>
+    <defaultName>Klagelieder</defaultName>
+    <defaultAbbreviation>Klag</defaultAbbreviation>
+    <inputAbbreviation>Klgldr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EZK">
-    <defaultName>Ezekiel</defaultName>
-    <defaultAbbreviation>Eze</defaultAbbreviation>
-    <inputAbbreviation>Ezkl</inputAbbreviation>
+    <defaultName>Hesekiel</defaultName>
+    <defaultAbbreviation>Hes</defaultAbbreviation>
+    <inputAbbreviation>Hskl</inputAbbreviation>
+    <inputAbbreviation>Ezechiel</inputAbbreviation>
+    <inputAbbreviation>Ezchl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="DAN">
     <defaultName>Daniel</defaultName>
@@ -432,21 +527,19 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Ams</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="OBA">
-    <defaultName>Obadiah</defaultName>
+    <defaultName>Obadja</defaultName>
     <defaultAbbreviation>Oba</defaultAbbreviation>
-    <inputAbbreviation>Obdh</inputAbbreviation>
+    <inputAbbreviation>Obdj</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JON">
-    <defaultName>Jonah</defaultName>
+    <defaultName>Jona</defaultName>
     <defaultAbbreviation>Jon</defaultAbbreviation>
-    <inputAbbreviation>Jnh</inputAbbreviation>
+    <inputAbbreviation>Jna</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MIC">
-    <defaultName>Micah</defaultName>
+    <defaultName>Micha</defaultName>
     <defaultAbbreviation>Mic</defaultAbbreviation>
-    <inputAbbreviation>Mcah</inputAbbreviation>
-    <inputAbbreviation>Mich</inputAbbreviation>
-    <inputAbbreviation>Mch</inputAbbreviation>
+    <inputAbbreviation>Mcha</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NAM">
     <defaultName>Nahum</defaultName>
@@ -456,21 +549,14 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Nhm</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="HAB">
-    <defaultName>Habakkuk</defaultName>
+    <defaultName>Habakuk</defaultName>
     <defaultAbbreviation>Hab</defaultAbbreviation>
     <inputAbbreviation>Hbkk</inputAbbreviation>
-    <!-- Include mispellings -->
-    <inputAbbreviation>Habbakkuk</inputAbbreviation>
-    <inputAbbreviation>Habbakuk</inputAbbreviation>
-    <inputAbbreviation>Habakuk</inputAbbreviation>
-    <inputAbbreviation>Hbbkk</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ZEP">
-    <defaultName>Zephaniah</defaultName>
-    <defaultAbbreviation>Zep</defaultAbbreviation>
-    <inputAbbreviation>Zphnh</inputAbbreviation>
-    <inputAbbreviation>Zefaniah</inputAbbreviation>
-    <inputAbbreviation>Zfnh</inputAbbreviation>
+    <defaultName>Zefanja</defaultName>
+    <defaultAbbreviation>Zef</defaultAbbreviation>
+    <inputAbbreviation>Zfnja</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="HAG">
     <defaultName>Haggai</defaultName>
@@ -479,133 +565,104 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Hagai</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ZEC">
-    <defaultName>Zechariah</defaultName>
-    <defaultAbbreviation>Zec</defaultAbbreviation>
-    <inputAbbreviation>Zchrh</inputAbbreviation>
+    <defaultName>Sacharja</defaultName>
+    <defaultAbbreviation>Sach</defaultAbbreviation>
+    <inputAbbreviation>Schrja</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MAL">
-    <defaultName>Malachi</defaultName>
+    <defaultName>Maleachi</defaultName>
     <defaultAbbreviation>Mal</defaultAbbreviation>
     <inputAbbreviation>Mlchi</inputAbbreviation>
   </BibleBookNames>
 
   <BibleBookNames referenceAbbreviation="MAT">
-    <defaultName>Matthew</defaultName>
+    <defaultName>Matthäus</defaultName>
     <defaultAbbreviation>Mat</defaultAbbreviation>
-    <inputAbbreviation>Mtthw</inputAbbreviation>
-    <inputAbbreviation>Mthw</inputAbbreviation>
-    <inputAbbreviation>Mtw</inputAbbreviation>
-    <inputAbbreviation>Mw</inputAbbreviation>
-    <inputAbbreviation>Saint Matthew</inputAbbreviation>
-    <inputAbbreviation>Saint Mtthw</inputAbbreviation>
-    <inputAbbreviation>Saint Mthw</inputAbbreviation>
-    <inputAbbreviation>Saint Mtw</inputAbbreviation>
-    <inputAbbreviation>Saint Mw</inputAbbreviation>
+    <inputAbbreviation>Matthaus</inputAbbreviation>
+    <inputAbbreviation>Mtths</inputAbbreviation>
+    <inputAbbreviation>Mths</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MRK">
-    <defaultName>Mark</defaultName>
+    <defaultName>Markus</defaultName>
     <defaultAbbreviation>Mrk</defaultAbbreviation>
-    <inputAbbreviation>Mrk</inputAbbreviation>
-    <inputAbbreviation>Mk</inputAbbreviation>
-    <inputAbbreviation>Saint Mark</inputAbbreviation>
-    <inputAbbreviation>Saint Mrk</inputAbbreviation>
-    <inputAbbreviation>Saint Mk</inputAbbreviation>
+    <inputAbbreviation>Mrks</inputAbbreviation>
+    <inputAbbreviation>Mks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LUK">
-    <defaultName>Luke</defaultName>
+    <defaultName>Lukas</defaultName>
     <defaultAbbreviation>Luk</defaultAbbreviation>
-    <inputAbbreviation>Lk</inputAbbreviation>
-    <inputAbbreviation>Saint Luke</inputAbbreviation>
-    <inputAbbreviation>Saint Lk</inputAbbreviation>
+    <inputAbbreviation>Lks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JHN">
-    <defaultName>John</defaultName>
+    <defaultName>Johannes</defaultName>
     <defaultAbbreviation>Jhn</defaultAbbreviation>
-    <inputAbbreviation>Jhn</inputAbbreviation>
+    <inputAbbreviation>Jhnns</inputAbbreviation>
     <inputAbbreviation>Jn</inputAbbreviation>
-    <inputAbbreviation>Saint John</inputAbbreviation>
-    <inputAbbreviation>Saint Jhn</inputAbbreviation>
-    <inputAbbreviation>Saint Jn</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ACT">
-    <defaultName>Acts</defaultName>
-    <defaultAbbreviation>Act</defaultAbbreviation>
-    <inputAbbreviation>Ats</inputAbbreviation>
+    <defaultName>Apostelgeschichte</defaultName>
+    <defaultAbbreviation>Apst</defaultAbbreviation>
+    <inputAbbreviation>Apstlgschchte</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ROM">
-    <defaultName>Romans</defaultName>
-    <defaultAbbreviation>Rom</defaultAbbreviation>
-    <inputAbbreviation>Rmns</inputAbbreviation>
+    <defaultName>Römer</defaultName>
+    <defaultAbbreviation>Röm</defaultAbbreviation>
+    <inputAbbreviation>Romer</inputAbbreviation>
+    <inputAbbreviation>Rmr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CO1">
-    <defaultName>1 Corinthians</defaultName>
-    <defaultAbbreviation>1 Cor</defaultAbbreviation>
-    <inputAbbreviation>1 Crnthns</inputAbbreviation>
+    <defaultName>1 Korinther</defaultName>
+    <defaultAbbreviation>1 Kor</defaultAbbreviation>
+    <inputAbbreviation>1 Krnthr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CO2">
-    <defaultName>2 Corinthians</defaultName>
-    <defaultAbbreviation>2 Cor</defaultAbbreviation>
-    <inputAbbreviation>2 Crnthns</inputAbbreviation>
+    <defaultName>2 Korinther</defaultName>
+    <defaultAbbreviation>2 Kor</defaultAbbreviation>
+    <inputAbbreviation>2 Krnthr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="GAL">
-    <defaultName>Galatians</defaultName>
+    <defaultName>Galater</defaultName>
     <defaultAbbreviation>Gal</defaultAbbreviation>
-    <inputAbbreviation>Gltns</inputAbbreviation>
+    <inputAbbreviation>Gltr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EPH">
-    <defaultName>Ephesians</defaultName>
+    <defaultName>Epheser</defaultName>
     <defaultAbbreviation>Eph</defaultAbbreviation>
-    <inputAbbreviation>Ephsns</inputAbbreviation>
-    <inputAbbreviation>Efsns</inputAbbreviation>
+    <inputAbbreviation>Ephsr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PHP">
-    <defaultName>Philippians</defaultName>
+    <defaultName>Philipper</defaultName>
     <defaultAbbreviation>Php</defaultAbbreviation>
-    <inputAbbreviation>Phlppns</inputAbbreviation>
-    <inputAbbreviation>Phlpns</inputAbbreviation>
-    <inputAbbreviation>Flppns</inputAbbreviation>
-    <inputAbbreviation>Flpns</inputAbbreviation>
+    <inputAbbreviation>Phlppr</inputAbbreviation>
+    <inputAbbreviation>Phlpr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="COL">
-    <defaultName>Colossians</defaultName>
-    <defaultAbbreviation>Col</defaultAbbreviation>
-    <inputAbbreviation>Clssns</inputAbbreviation>
-    <inputAbbreviation>Clsns</inputAbbreviation>
-    <inputAbbreviation>Cllssns</inputAbbreviation>
-    <!-- Include mispellings -->
-    <inputAbbreviation>Collosians</inputAbbreviation>
-    <inputAbbreviation>Collossians</inputAbbreviation>
-    <inputAbbreviation>Colosians</inputAbbreviation>
+    <defaultName>Kolosser</defaultName>
+    <defaultAbbreviation>Kol</defaultAbbreviation>
+    <inputAbbreviation>Klssr</inputAbbreviation>
+    <inputAbbreviation>Klsr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TH1">
-    <defaultName>1 Thessalonians</defaultName>
+    <defaultName>1 Thessalonicher</defaultName>
     <defaultAbbreviation>1 Thess</defaultAbbreviation>
-    <inputAbbreviation>1 Thsslns</inputAbbreviation>
-    <inputAbbreviation>1 Thslns</inputAbbreviation>
-    <!-- Include mispellings -->
-    <inputAbbreviation>1 Thesallonians</inputAbbreviation>
-    <inputAbbreviation>1 Thessallonians</inputAbbreviation>
-    <inputAbbreviation>1 Thesalonians</inputAbbreviation>
+    <inputAbbreviation>1 Thsslchr</inputAbbreviation>
+    <inputAbbreviation>1 Thslchr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TH2">
-    <defaultName>2 Thessalonians</defaultName>
+    <defaultName>2 Thessalonicher</defaultName>
     <defaultAbbreviation>2 Thess</defaultAbbreviation>
-    <inputAbbreviation>2 Thsslns</inputAbbreviation>
-    <inputAbbreviation>2 Thslns</inputAbbreviation>
-    <!-- Include mispellings -->
-    <inputAbbreviation>2 Thesallonians</inputAbbreviation>
-    <inputAbbreviation>2 Thessallonians</inputAbbreviation>
-    <inputAbbreviation>2 Thesalonians</inputAbbreviation>
+    <inputAbbreviation>2 Thsslchr</inputAbbreviation>
+    <inputAbbreviation>2 Thslchr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TI1">
-    <defaultName>1 Timothy</defaultName>
+    <defaultName>1 Timotheus</defaultName>
     <defaultAbbreviation>1 Tim</defaultAbbreviation>
-    <inputAbbreviation>1 Tmthy</inputAbbreviation>
+    <inputAbbreviation>1 Tmths</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TI2">
-    <defaultName>2 Timothy</defaultName>
+    <defaultName>2 Timotheus</defaultName>
     <defaultAbbreviation>2 Tim</defaultAbbreviation>
-    <inputAbbreviation>2 Tmthy</inputAbbreviation>
+    <inputAbbreviation>2 Tmths</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TIT">
     <defaultName>Titus</defaultName>
@@ -616,58 +673,72 @@ See the supplied ReadMe.txt for more details.
     <defaultName>Philemon</defaultName>
     <defaultAbbreviation>Phm</defaultAbbreviation>
     <inputAbbreviation>Phlmn</inputAbbreviation>
-    <inputAbbreviation>Flmn</inputAbbreviation>
-  </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="HEB">
-    <defaultName>Hebrew</defaultName>
-    <defaultAbbreviation>Heb</defaultAbbreviation>
-    <inputAbbreviation>Hbrws</inputAbbreviation>
-  </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="JAS">
-    <defaultName>James</defaultName>
-    <defaultAbbreviation>Jam</defaultAbbreviation>
-    <inputAbbreviation>Jms</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PE1">
-    <defaultName>1 Peter</defaultName>
+    <defaultName>1 Petrus</defaultName>
     <defaultAbbreviation>1 Pet</defaultAbbreviation>
-    <inputAbbreviation>1 Ptr</inputAbbreviation>
+    <inputAbbreviation>1 Ptrs</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PE2">
-    <defaultName>2 Peter</defaultName>
+    <defaultName>2 Petrus</defaultName>
     <defaultAbbreviation>2 Pet</defaultAbbreviation>
-    <inputAbbreviation>2 Ptr</inputAbbreviation>
+    <inputAbbreviation>2 Ptrs</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JN1">
-    <defaultName>1 John</defaultName>
+    <defaultName>1 Johannes</defaultName>
     <defaultAbbreviation>1 Jn</defaultAbbreviation>
-    <inputAbbreviation>1 Jhn</inputAbbreviation>
-    <inputAbbreviation>1 Jn</inputAbbreviation>
+    <inputAbbreviation>1 Jhnns</inputAbbreviation>
+    <inputAbbreviation>1 Jns</inputAbbreviation>
+    <!-- Include mispellings -->
+    <inputAbbreviation>1 Johanes</inputAbbreviation>
+    <inputAbbreviation>1 Johhanes</inputAbbreviation>
+    <inputAbbreviation>1 Johhannes</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JN2">
-    <defaultName>2 John</defaultName>
+    <defaultName>2 Johannes</defaultName>
     <defaultAbbreviation>2 Jn</defaultAbbreviation>
-    <inputAbbreviation>2 Jhn</inputAbbreviation>
-    <inputAbbreviation>2 Jn</inputAbbreviation>
+    <inputAbbreviation>2 Jhnns</inputAbbreviation>
+    <inputAbbreviation>2 Jns</inputAbbreviation>
+    <!-- Include mispellings -->
+    <inputAbbreviation>2 Johanes</inputAbbreviation>
+    <inputAbbreviation>2 Johhanes</inputAbbreviation>
+    <inputAbbreviation>2 Johhannes</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JN3">
-    <defaultName>3 John</defaultName>
+    <defaultName>3 Johannes</defaultName>
     <defaultAbbreviation>3 Jn</defaultAbbreviation>
-    <inputAbbreviation>3 Jhn</inputAbbreviation>
-    <inputAbbreviation>3 Jn</inputAbbreviation>
+    <inputAbbreviation>3 Jhnns</inputAbbreviation>
+    <inputAbbreviation>3 Jns</inputAbbreviation>
+    <!-- Include mispellings -->
+    <inputAbbreviation>3 Johanes</inputAbbreviation>
+    <inputAbbreviation>3 Johhanes</inputAbbreviation>
+    <inputAbbreviation>3 Johhannes</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="HEB">
+    <defaultName>Hebräer</defaultName>
+    <defaultAbbreviation>Heb</defaultAbbreviation>
+    <inputAbbreviation>Hebraer</inputAbbreviation>
+    <inputAbbreviation>Hbrr</inputAbbreviation>
+  </BibleBookNames>
+  <BibleBookNames referenceAbbreviation="JAS">
+    <defaultName>Jakobus</defaultName>
+    <defaultAbbreviation>Jak</defaultAbbreviation>
+    <inputAbbreviation>Jkbs</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JUD">
-    <defaultName>Jude</defaultName>
+    <defaultName>Judas</defaultName>
     <defaultAbbreviation>Jud</defaultAbbreviation>
-    <inputAbbreviation>Jde</inputAbbreviation>
+    <inputAbbreviation>Jds</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="REV">
-    <defaultName>Revelation</defaultName>
-    <defaultAbbreviation>Rev</defaultAbbreviation>
-    <inputAbbreviation>Rvltn</inputAbbreviation>
-    <inputAbbreviation>Rvln</inputAbbreviation>
+    <defaultName>Offenbarung</defaultName>
+    <defaultAbbreviation>Off</defaultAbbreviation>
+    <inputAbbreviation>Offnbrng</inputAbbreviation>
+    <inputAbbreviation>Ofnbrng</inputAbbreviation>
   </BibleBookNames>
 
+  <!-- The following haven't been switched from English to German yet :(
+        Just remember: Don't alter the referenceAbbreviation fields! -->
   <BibleBookNames referenceAbbreviation="BAR">
     <defaultName>Baruch</defaultName>
     <defaultAbbreviation>Bar</defaultAbbreviation>

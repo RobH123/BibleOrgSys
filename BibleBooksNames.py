@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-12 (also update versionString below)
+#   Last modified: 2010-11-15 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.11"
+versionString = "0.15"
 
 
 import os, logging
@@ -45,12 +45,12 @@ class BibleBooksNamesSystemsConvertor:
     treeTag = "BibleBooksNames"
     headerTag = "header"
     mainElementTags = ( "BibleDivisionNames", "BibleBooknameLeaders", "BibleBookNames" )
-    compulsoryAttributes = { 0:("startsWith",), 1:("standardLeader",), 2:("referenceAbbreviation",) }
+    compulsoryAttributes = { 0:(), 1:("standardLeader",), 2:("referenceAbbreviation",) }
     optionalAttributes = { 0:(), 1:(), 2:() }
     uniqueAttributes = {}
     for key in compulsoryAttributes.keys():
         uniqueAttributes[key] = compulsoryAttributes[key] + optionalAttributes[key]
-    compulsoryElements = { 0:("defaultName","defaultAbbreviation",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation",) }
+    compulsoryElements = { 0:("defaultName","defaultAbbreviation","includesBook",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation",) }
     optionalElements =  { 0:("inputAbbreviation",), 1:(), 2:("inputAbbreviation",) }
     uniqueElements = {}
     for key in compulsoryElements.keys():
@@ -61,7 +61,7 @@ class BibleBooksNamesSystemsConvertor:
         Constructor.
         """
         self.ISO639Dict, self.BibleBooksCodesDict = ISO639Dict, BibleBooksCodesDict
-        self.systems, self.importedSystems = {}, {}
+        self.systems, self.importedSystems, self.expandedInputSystems = {}, {}, {}
     # end of __init__
 
     def __str__( self ):
@@ -212,7 +212,7 @@ class BibleBooksNamesSystemsConvertor:
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in BibleBooksNamesSystemsConvertor.compulsoryElements[index] and subelement.tag not in BibleBooksNamesSystemsConvertor.optionalElements[index]:
-                        logging.warning( "Additional '%s' element ('%s') found (record %i) in %s" % ( subelement.tag, subelement.text, k, systemName ) )
+                        logging.warning( "Additional '%s' element ('%s') found (record %i) in %s %s" % ( subelement.tag, subelement.text, k, systemName, element.tag ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in BibleBooksNamesSystemsConvertor.uniqueElements[index]:
@@ -237,9 +237,6 @@ class BibleBooksNamesSystemsConvertor:
             myDivisionsNamesList, myBooknameLeadersDict, myBookNamesDict = [], {}, {}
             for element in self.systems[booksNamesSystemCode]["tree"]:
                 if element.tag == "BibleDivisionNames":
-                    startsWith = element.get("startsWith")
-                    if self.BibleBooksCodesDict and startsWith not in self.BibleBooksCodesDict:
-                        logging.error( "Unrecognized '%s' book abbreviation BibleDivisionNames in '%s' booksNames system" % ( startsWith, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ]
@@ -249,10 +246,16 @@ class BibleBooksNamesSystemsConvertor:
                         if subelement.text in inputFields:
                             logging.warning( "Superfluous '%s' entry in inputAbbreviation field for %s division in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: inputFields.append( subelement.text )
-                    myDivisionsNamesList.append( {"startsWith":startsWith, "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields } )
+                    includedBooks = []
+                    for subelement in element.findall("includesBook"):
+                        BBB = subelement.text
+                        if BBB in includedBooks:
+                            logging.error( "Duplicate '%s' entry in includesBook field for '%s' division in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
+                        else: includedBooks.append( BBB )
+                    myDivisionsNamesList.append( {"includedBooks":includedBooks, "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields } )
                 elif element.tag == "BibleBooknameLeaders":
                     standardLeader = element.get("standardLeader")
-                    inputFields = [ standardLeader+' ' ]
+                    inputFields = [] # Don't include the standard leader here
                     for subelement in element.findall("inputAbbreviation"):
                         adjField = subelement.text + ' '
                         if adjField in inputFields:
@@ -265,7 +268,7 @@ class BibleBooksNamesSystemsConvertor:
                         logging.error( "Unrecognized '%s' book abbreviation BibleBookNames in '%s' booksNames system" % ( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
-                    inputFields = [ defaultName ]
+                    inputFields = [ defaultName ] # Add the default name to the allowed input fields
                     if not defaultName.startswith( defaultAbbreviation ):
                         inputFields.append( defaultAbbreviation )
                     for subelement in element.findall("inputAbbreviation"):
@@ -281,109 +284,133 @@ class BibleBooksNamesSystemsConvertor:
     def expandInputs ( self ):
         """
         Expand the inputAbbreviation fields to include all unambiguous shorter abbreviations.
+
+        Would it be better to do this for a specific publication since there will be less ambiguities if there are less actual books included???
         """
+        def expandAbbrevs( UCString, value, originalDict, tempDict, theAmbigSet ):
+            """
+            Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
+                trying to find unambiguous shortcuts which the user could use.
+            """
+            # Now drop off final letters and remove internal spaces
+            tempString = UCString[:-1] # Drop off the last letter
+            while( tempString ):
+                if tempString[-1] != ' ':
+                    if tempString in originalDict:
+                        if originalDict[tempString] == value:
+                            #print( "'%s' is superfluous: won't add to tempDict" % tempString )
+                            ambigSet.add( tempString )
+                        else: # it's a different value
+                            #print( "'%s' is ambiguous: won't add to tempDict" % tempString )
+                            ambigSet.add( tempString )
+                    elif tempString in tempDict and tempDict[tempString]!=value:
+                        #print( "'%s' is ambiguous: will remove from tempDict" % tempString )
+                        ambigSet.add( tempString )
+                    else:
+                        tempDict[tempString] = value
+                    tempTempString = tempString
+                    while ' ' in tempTempString:
+                        tempTempString = tempTempString.replace( " ", "", 1 ) # Remove the first space
+                        if tempTempString in originalDict:
+                            if originalDict[tempTempString] == value:
+                                #print( "'%s' is superfluous: won't add to tempDict" % tempTempString )
+                                ambigSet.add( tempTempString )
+                            else: # it's a different value
+                                #print( "'%s' is ambiguous: won't add to tempDict" % tempTempString )
+                                ambigSet.add( tempTempString )
+                        elif tempTempString in tempDict and tempDict[tempTempString]!=value:
+                            #print( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempString )
+                            ambigSet.add( tempTempString )
+                        else:
+                            tempDict[tempTempString] = value
+                tempString = tempString[:-1] # Drop off another letter
+        # end of expandAbbrevs
+
         assert( self.importedSystems )
         for systemName in self.importedSystems:
             print( "Expanding %s..." % ( systemName ) )
             divisionsNamesList, booknameLeadersDict, bookNamesDict = self.importedSystems[systemName]
 
-            # First make a set of the given allowed names
-            divNameDict, bkNameDict, unambigSet, ambigSet = {}, {}, set(), set()
+            # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
+            UCBNLeadersDict = {}
+            for leader in booknameLeadersDict:
+                UCLeader = leader.upper()
+                assert( UCLeader not in UCBNLeadersDict )
+                UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
+            #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
+
+            # Secondly make a set of the given allowed names
+            divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
             for k,entryDict in enumerate(divisionsNamesList):
                 for field in entryDict["inputFields"]:
                     UCField = field.upper()
-                    if UCField in unambigSet:
+                    if UCField in divNameInputDict or UCField in bkNameInputDict:
                         logging.error( "Have duplicate entries of '%s' in divisionsNames for %s" % ( UCField, systemName ) )
-                    unambigSet.add( UCField )
-                    divNameDict[UCField] = k # Store the index into divisionsNamesList
+                        ambigSet.add( UCField )
+                    divNameInputDict[UCField] = k # Store the index into divisionsNamesList
             for refAbbrev in bookNamesDict.keys():
                 for field in bookNamesDict[refAbbrev]["inputFields"]:
                     UCField = field.upper()
-                    if UCField in unambigSet:
+                    if UCField in divNameInputDict or UCField in bkNameInputDict:
                         logging.error( "Have duplicate entries of '%s' in divisions and book names for %s" % ( UCField, systemName ) )
-                    unambigSet.add( UCField )
-                    bkNameDict[UCField] = refAbbrev # Store the index to the book
-            print( 'unam', len(unambigSet), unambigSet )
+                        ambigSet.add( UCField )
+                    bkNameInputDict[UCField] = refAbbrev # Store the index to the book
+            #print( 'amb', len(ambigSet), ambigSet )
 
             # Now expand the divisions names
-            tempDict = {}
-            for k,entryDict in enumerate(divisionsNamesList):
-                for field in entryDict["inputFields"]:
-                    UCField = field.upper()
-                    tempField = UCField[:-1] # Drop off the last letter
-                    while( tempField ):
-                        if tempField[-1] != ' ':
-                            if tempField in tempDict and tempDict[tempField]!=k:
-                                print( "'%s' is ambiguous: will remove from tempDict" % tempField )
-                                ambigSet.add( tempField )
-                            elif tempField in divNameDict:
-                                print( "'%s' is already in main dict -- not added" % tempField )
-                                pass
-                            else:
-                                tempDict[tempField] = k
-                            if ' ' in tempField:
-                                tempTempName = tempField.replace( " ", "" ) # Remove the space
-                                if tempTempName in tempDict and tempDict[tempTempName]!=k:
-                                    print( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempName )
-                                    ambigSet.add( tempName )
-                                elif tempTempName in divNameDict:
-                                    print( "'%s' (spaces removed) is already in main dict -- not added" % tempTempName )
-                                    pass
-                                else:
-                                    tempDict[tempTempName] = k
-                        tempField = tempField[:-1] # Drop off another letter
-            print( 'amb', len(ambigSet), ambigSet )
-            for name in ambigSet:
-                if name in divNameDict:
-                    print( "Ambiguous '%s' name is in main dictionary" % name )
-                print( "Removing ambiguous '%s' name" % name )
-                del tempDict[name]
-            print( 'tmp', len(tempDict), sorted(tempDict) )
-            # Add the shortcuts and abbreviations
-            for UCName, k in tempDict.items():
-                assert( UCName not in divNameDict )
-                divNameDict[UCName] = k
-            print( 'dnD', len(divNameDict), sorted(divNameDict) )
+            #
+            # We do this by replacing "2 " with alternatives like "II " and "Saint" with "Snt" and "St" (as entered in the XML file)
+            #   At the same time, we progressively drop letters off the end until the (UPPER CASE) name becomes ambiguous
+            #       We also remove internal spaces
+            #
+            # We add all unambiguous names to tempDict
+            # We list ambiguous names in ambigSet so that they can be removed from tempDict after all entries have been processed
+            #   (This is because we might not discover the ambiguity until later in processing the list)
+            #
+            # NOTE: In this code, division names and book names share a common ambiguous list
+            #           If they are only ever entered into separate fields, the ambiguous list could be split into two
+            #               i.e., they wouldn't be ambiguous in context
+            #
+            #print( "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
+            tempDNDict = {}
+            for UCField in divNameInputDict.keys():
+                expandAbbrevs( UCField, divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet  )
+                for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
+                    if UCField.startswith( leader ):
+                        for replacementLeader in UCBNLeadersDict[leader]:
+                            expandAbbrevs( UCField.replace(leader,replacementLeader), divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet )
+            #print ( '\ntempDN', len(tempDNDict), tempDNDict )
+            #print( '\namb2', len(ambigSet), ambigSet )
 
-            # Now expand the book names
-            tempDict = {}
-            for k,entryDict in enumerate(bkNameDict.keys()):
-                for field in entryDict["inputFields"]:
-                    UCField = field.upper()
-                    tempField = UCField[:-1] # Drop off the last letter
-                    while( tempField ):
-                        if tempField[-1] != ' ':
-                            if tempField in tempDict and tempDict[tempField]!=k:
-                                print( "'%s' is ambiguous: will remove from tempDict" % tempField )
-                                ambigSet.add( tempField )
-                            elif tempField in divNameDict:
-                                print( "'%s' is already in main dict -- not added" % tempField )
-                                pass
-                            else:
-                                tempDict[tempField] = k
-                            if ' ' in tempField:
-                                tempTempName = tempField.replace( " ", "" ) # Remove the space
-                                if tempTempName in tempDict and tempDict[tempTempName]!=k:
-                                    print( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempName )
-                                    ambigSet.add( tempName )
-                                elif tempTempName in divNameDict:
-                                    print( "'%s' (spaces removed) is already in main dict -- not added" % tempTempName )
-                                    pass
-                                else:
-                                    tempDict[tempTempName] = k
-                        tempField = tempField[:-1] # Drop off another letter
-            print( 'amb', len(ambigSet), ambigSet )
-            for name in ambigSet:
-                if name in divNameDict:
-                    print( "Ambiguous '%s' name is in main dictionary" % name )
-                print( "Removing ambiguous '%s' name" % name )
-                del tempDict[name]
-            print( 'tmp', len(tempDict), sorted(tempDict) )
-            # Add the shortcuts and abbreviations
-            for UCName, k in tempDict.items():
-                assert( UCName not in divNameDict )
-                divNameDict[UCName] = k
-            print( 'dnD', len(divNameDict), sorted(divNameDict) )
+            #print( "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
+            tempBNDict = {}
+            for UCField in bkNameInputDict.keys():
+                expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
+                for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
+                    if UCField.startswith( leader ):
+                        for replacementLeader in UCBNLeadersDict[leader]:
+                            expandAbbrevs( UCField.replace(leader,replacementLeader), bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet )
+            #print ( '\ntempBN', len(tempBNDict) )
+            #print( '\namb3', len(ambigSet), ambigSet )
+
+            # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
+            for field in tempDNDict:
+                if field not in ambigSet:
+                    assert( field not in divNameInputDict )
+                    divNameInputDict[field] = tempDNDict[field]
+            #print( "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
+            for field in tempBNDict:
+                if field not in ambigSet:
+                    assert( field not in bkNameInputDict )
+                    bkNameInputDict[field] = tempBNDict[field]
+            #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
+
+            # Now sort both dictionaries to be longest string first
+            sortedDNDict = OrderedDict( sorted(divNameInputDict.items(), key=lambda s: -len(s[0])) )
+            sortedBNDict = OrderedDict( sorted( bkNameInputDict.items(), key=lambda s: -len(s[0])) )
+
+            # Finally, save the expanded input fields
+            self.expandedInputSystems[systemName] = sortedDNDict, sortedBNDict
     # end of expandInputs
 
     def exportDataToPython( self, filepath=None ):
@@ -394,8 +421,16 @@ class BibleBooksNamesSystemsConvertor:
             """Exports theDict to theFile."""
             theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '  %s: %s,\n' % ( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
+                theFile.write( '  %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "} # (%i entries)\n# end of %s\n\n" % ( len(theDict), dictName ) )
+        # end of exportPythonDict
+
+        def exportPythonOrderedDict( theFile, theDict, dictName, keyComment, fieldsComment ):
+            """Exports theDict to theFile."""
+            theFile.write( "%s = OrderedDict([\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            for dictKey in theDict.keys():
+                theFile.write( '  (%s, %s),\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "]) # (%i entries)\n# end of %s\n\n" % ( len(theDict), dictName ) )
         # end of exportPythonDict
 
         def exportPythonList( theFile, theList, listName, fieldsComment ):
@@ -403,13 +438,13 @@ class BibleBooksNamesSystemsConvertor:
             theFile.write( "%s = [\n  # Fields are: %s\n" % ( listName, fieldsComment ) )
             for j,entry in enumerate(theList):
                 theFile.write( '  %s, # %i\n' % ( repr(entry), j ) )
-            theFile.write( "]\n# end of %s\n\n" % ( listName ) )
+            theFile.write( "] # (%i entries)\n# end of %s\n\n" % ( len(theList), listName ) )
         # end of exportPythonList
 
         from datetime import datetime
 
         assert( self.importedSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "Tables.py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "_Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
         # Split into three lists/dictionaries
@@ -424,10 +459,15 @@ class BibleBooksNamesSystemsConvertor:
             myFile.write( "from collections import OrderedDict\n" )
             for systemName in self.importedSystems:
                 divisionsNamesList, booknameLeadersDict, bookNamesDict = self.importedSystems[systemName]
-                myFile.write( "#\n# %s\n" % ( systemName ) )
+                myFile.write( "\n\n#\n# %s\n#\n\n" % ( systemName ) )
                 exportPythonList( myFile, divisionsNamesList, "divisionNamesList", "startsWith( string), defaultName (string), defaultAbbreviation (string), inputFields (list of strings) all in a dictionary" )
                 exportPythonDict( myFile, booknameLeadersDict, "booknameLeadersDict", "standardLeader (all fields include a trailing space)", "inputAlternatives (list of strings)" )
                 exportPythonDict( myFile, bookNamesDict, "bookNamesDict", "referenceAbbreviation", "defaultName (string), defaultAbbreviation (string), inputAbbreviations (list of strings) all in a dictionary" )
+                if systemName in self.expandedInputSystems:
+                    divisionsNamesInputDict, bookNamesInputDict = self.expandedInputSystems[systemName]
+                    #myFile.write( "#\n# %s\n" % ( systemName ) )
+                    exportPythonOrderedDict( myFile, divisionsNamesInputDict, "divisionsNamesInputDict", "UpperCaseInputString", "index (into divisionNamesList above)" )
+                    exportPythonOrderedDict( myFile, bookNamesInputDict, "bookNamesInputDict", "UpperCaseInputString", "referenceAbbreviation (string)" )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):
@@ -462,10 +502,10 @@ class BibleBooksNamesSystemsConvertor:
         from datetime import datetime
 
         assert( self.importedSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "Tables.h" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "_Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
-        ifdefName = BibleBooksNamesSystemsConvertor.filenameBase.upper() + "_h"
+        ifdefName = BibleBooksNamesSystemsConvertor.filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// %s\n//\n" % ( filepath ) )
             myFile.write( "// This UTF-8 file was automatically generated by BibleBooksNamesSystemsConvertor.py V%s %s\n//\n" % ( versionString, datetime.now() ) )
@@ -492,9 +532,7 @@ def main():
     from optparse import OptionParser
     global CommandLineOptions
     parser = OptionParser( version="v%s" % ( versionString ) )
-    #parser.add_option("-c", "--convert", action="store_true", dest="convert", default=False, help="convert the XML file to .py and .h tables suitable for directly including into other programs")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
-    parser.add_option("-s", "--scrape", action="store_true", dest="scrape", default=False, help="scrape other booksNames systems (requires other software installed -- the paths are built into this program)")
     parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="display extra debugging information")
     CommandLineOptions, args = parser.parse_args()
 

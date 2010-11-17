@@ -89,7 +89,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.90</version>
-      <date>2010-11-08</date>
+      <date>2010-11-17</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -1268,22 +1268,28 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>184</referenceNumber>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
-    <!-- Note that Paratext uses Ezr for either Ezra or Ezra-Nehemiah -->
+    <!-- Note that Paratext uses Ezr ambiguously for either Ezra or Ezra-Nehemiah -->
     <ParatextAbbreviation>Ezr</ParatextAbbreviation>
     <ParatextNumber>15</ParatextNumber>
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
+    <!-- Is this duplication of Testaments of the Twelve Patriarchs ??? -->
     <nameEnglish>Twelve Prophets</nameEnglish>
     <referenceAbbreviation>P12</referenceAbbreviation>
     <referenceNumber>185</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish> Prayer of Azaraiah and Song of the three young men</nameEnglish>
+    <nameEnglish>Prayer of Azaraiah and Song of the three young men</nameEnglish>
     <referenceAbbreviation>PAS</referenceAbbreviation>
     <referenceNumber>186</referenceNumber>
     <ParatextAbbreviation>S3Y</ParatextAbbreviation>
     <ParatextNumber>75</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Luke-Acts</nameEnglish>
+    <referenceAbbreviation>LKA</referenceAbbreviation>
+    <referenceNumber>187</referenceNumber>
   </BibleBookCodes>
 
 <!-- referenceNumbers 200..255 are reserved for user defined books -->
