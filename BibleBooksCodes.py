@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-11-16 (also update versionString below)
+#   Last modified: 2010-11-23 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -375,14 +375,14 @@ class BibleBooksCodesConvertor:
             if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
             myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.tree), BibleBooksCodesConvertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "referenceAbbreviation (sorted), SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "SBLAbbreviation (sorted), ReferenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "OSISAbbreviation (sorted), ReferenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, CCELDict, "CCELDict", "{int CCELNum; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; int PTNum; char* SwAbbrev; char* EngName;}", "CCELNumberString (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; int PTNum; char* SwAbbrev; char* EngName;}", "ParatextAbbreviation (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "{int PTNum; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* SwAbbrev; char* EngName;}", "ParatextNumberString (sorted), ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; int CCELNum; char* PTAbbrev; int PTNum; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
+            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char* EngName;}", "referenceAbbreviation (sorted), referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char* EngName;}", "SBLAbbreviation (sorted), referenceNumber, referenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char* EngName;}", "OSISAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, CCELDict, "CCELDict", "{char* CCELNum; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* SwAbbrev; char* EngName;}", "CCELNumberString (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTNum; char* SwAbbrev; char* EngName;}", "ParatextAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNum; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* SwAbbrev; char* EngName;}", "ParatextNumberString (sorted), referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
 # end of BibleBooksCodesConvertor class
@@ -406,8 +406,8 @@ def main():
         print( "%s V%s" % ( progName, versionString ) )
         print( bbcc ) # Just print a summary
         #print( bbcc.getAllParatextBooksCodes() )
-        print( bbcc.getAllParatextBooksCodeNumberTriples() )
-        print( bbcc.getEnglishName( "JN3" ) )
+        #print( bbcc.getAllParatextBooksCodeNumberTriples() )
+        #print( bbcc.getEnglishName( "JN3" ) )
 # end of main
 
 if __name__ == '__main__':

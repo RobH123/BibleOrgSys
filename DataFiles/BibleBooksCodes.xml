@@ -15,8 +15,8 @@ these three compulsory fields:
             i.e., they will not change or be reused for different books.
         Can be used as a unique ID instead of the reference code if you prefer an integer.
         1..66 are guaranteed to match the common Protestant Bible book orders.
-        200..255 are reserved for user defined books.
-and then these optional fields (optional because not all systems handle the less common books)
+        240..255 are reserved for user defined books.
+and then these optional fields (optional because not all systems handle the less common or more disputed books)
     The SBL abbreviation (can include spaces)
     The OSIS abbrevation (no spaces but may begin with a digit)
     The 1-2 digit CCEL id number
@@ -24,26 +24,26 @@ and then these optional fields (optional because not all systems handle the less
     The two-digit Paratext number
     The three-character NET Bible abbreviation
     The Sword abbreviation
-All of the above fields should individually be unique,
-    i.e., there should never be a duplicate entry for any given data field
-        although there may be duplicates across differently named fields.
+Most of the above fields should individually be unique, but there are some many-to-one mappings.
+    e.g., Paratext uses the same code for Ezra as for Ezra-Nehemiah. (We make available separate codes.)
 
-Deutero-canonical/Apocryphal and less common books are included.
+Deutero-canonical/Apocryphal and less common books are included, even pseudegrapha.
 "Combined" books are included.
+This table does not infer any information about the quality or theological usefulness of any particular book.
 This table does not infer any information about the presence or the order of the books within any particular Bible version.
 This table does not infer any information about the number of chapters (or verses) in any given book.
 There should be exactly one entry for each possible Bible book which is printed separately in some publications
     and one entry for each possible combination of those Bible books.
 For example:
-    If Ezra and Nehemiah are sometimes published as invididual books, and sometimes combined, there should be 3 entries in this database.
-    If Hebrew Esther and Greek Esther are sometimes published as invididual books, and sometimes combined, there should be 3 entries in this database.
+    If Ezra and Nehemiah are sometimes published as individual books, and sometimes combined, there should be three entries in this database.
+    If Hebrew Esther and Greek Esther are sometimes published as individual books, and sometimes combined, there should be 3 entries in this database.
         However, if Greek Esther was never published singly, but only in combination with Hebrew Esther, there would only be 2 entries (Hebrew Esther and Combined Esther).
     If some publications include Ps.151 as an extra chapter, that is not a reason to include a book for 151 chapters of Psalms here (we can just regard it as a chapter variation)
         but if some publications publish it as a separate book, we would need to include 3 entries here (150 Psalms, Ps 151 only, 151 Psalms).
-    This is because mappings between Bible books in different publication will be dependent on this file.
-        (If it's JUST chapter mapping, that's handled elsewhere).
+    This is because mappings between/across Bible books in different publications will be dependent on this file.
+        (If it's JUST chapter mapping within a book, that's handled elsewhere).
     If a book is a translation of another book, that is not usually a good enough reason to include multiple entries here
-        (unless say, both the Hebrew and the Greek versions were published in the same "Bible").
+        (unless say, both the original and a translation were published in the same "Bible").
 
 This file can never adequately represent all possible historical Bible books codes (and their mappings),
     especially since it attempts to avoid including historic codes which were not consistent or logical.
@@ -55,6 +55,8 @@ Note that the data is supplied as XML elements (not attributes).
 Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
 
 See the supplied BibleBooksCodes.ReadMe.txt for more details.
+
+Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
 -->
 
 <!DOCTYPE BibleBooksCodes [
@@ -88,8 +90,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.90</version>
-      <date>2010-11-17</date>
+      <version>0.91</version>
+      <date>2010-11-23</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -234,7 +236,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>2Ki</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>1 Chronicles/Paralipomenon</nameEnglish>
+    <nameEnglish>1 Chronicles / 1 Paralipomenon</nameEnglish>
     <referenceAbbreviation>CH1</referenceAbbreviation>
     <referenceNumber>13</referenceNumber>
     <SBLAbbreviation>1 Chr</SBLAbbreviation>
@@ -245,7 +247,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>1Ch</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>2 Chronicles/Paralipomenon</nameEnglish>
+    <nameEnglish>2 Chronicles / 2 Paralipomenon</nameEnglish>
     <referenceAbbreviation>CH2</referenceAbbreviation>
     <referenceNumber>14</referenceNumber>
     <SBLAbbreviation>2 Chr</SBLAbbreviation>
@@ -257,7 +259,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Don't use this for combined Ezra-Nehemiah (use EZN) -->
-    <nameEnglish>Ezra</nameEnglish>
+    <nameEnglish>Ezra / 1 Esdras</nameEnglish>
     <referenceAbbreviation>EZR</referenceAbbreviation>
     <referenceNumber>15</referenceNumber>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
@@ -268,7 +270,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Nehemiah</nameEnglish>
+    <nameEnglish>Nehemiah / 2 Esdras</nameEnglish>
     <referenceAbbreviation>NEH</referenceAbbreviation>
     <referenceNumber>16</referenceNumber>
     <SBLAbbreviation>Neh</SBLAbbreviation>
@@ -312,6 +314,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
+    <!-- Proverbs in the Ethiopian canon is shorter than in the European canon -->
     <nameEnglish>Proverbs</nameEnglish>
     <referenceAbbreviation>PRO</referenceAbbreviation>
     <referenceNumber>20</referenceNumber>
@@ -323,7 +326,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Pro</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Ecclesiastes/Qoholeth</nameEnglish>
+    <nameEnglish>Ecclesiastes / Qoholeth</nameEnglish>
     <referenceAbbreviation>ECC</referenceAbbreviation>
     <referenceNumber>21</referenceNumber>
     <SBLAbbreviation>Eccl</SBLAbbreviation>
@@ -367,7 +370,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Lamentations</nameEnglish>
+    <nameEnglish>Lamentations of Jeremiah</nameEnglish>
     <referenceAbbreviation>LAM</referenceAbbreviation>
     <referenceNumber>25</referenceNumber>
     <SBLAbbreviation>Lam</SBLAbbreviation>
@@ -445,7 +448,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Jonah</nameEnglish>
-    <referenceAbbreviation>JON</referenceAbbreviation>
+    <referenceAbbreviation>JNA</referenceAbbreviation>
     <referenceNumber>32</referenceNumber>
     <SBLAbbreviation>Jonah</SBLAbbreviation>
     <OSISAbbreviation>Jonah</OSISAbbreviation>
@@ -467,7 +470,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Nahum</nameEnglish>
-    <referenceAbbreviation>NAM</referenceAbbreviation>
+    <referenceAbbreviation>NAH</referenceAbbreviation>
     <referenceNumber>34</referenceNumber>
     <SBLAbbreviation>Nah</SBLAbbreviation>
     <OSISAbbreviation>Nah</OSISAbbreviation>
@@ -810,7 +813,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Jude</nameEnglish>
-    <referenceAbbreviation>JUD</referenceAbbreviation>
+    <referenceAbbreviation>JDE</referenceAbbreviation>
     <referenceNumber>65</referenceNumber>
     <SBLAbbreviation>Jude</SBLAbbreviation>
     <OSISAbbreviation>Jude</OSISAbbreviation>
@@ -831,86 +834,11 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Rev</NETBibleAbbreviation>
   </BibleBookCodes>
 
-<!-- Catholic Deuterocanonical (Protestant Apocryphal) books -->
+<!-- Books from above which have quite different Hebrew and Greek versions. Sometimes printed separately, sometimes combined. -->
   <BibleBookCodes>
-    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
-    <!-- 5 chapters -->
-    <referenceAbbreviation>BAR</referenceAbbreviation>
-    <referenceNumber>70</referenceNumber>
-    <SBLAbbreviation>Bar</SBLAbbreviation>
-    <OSISAbbreviation>Bar</OSISAbbreviation>
-    <CCELNumber>74</CCELNumber>
-    <ParatextAbbreviation>Bar</ParatextAbbreviation>
-    <ParatextNumber>73</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Greek Daniel / Additions to Daniel</nameEnglish>
-    <referenceAbbreviation>DAG</referenceAbbreviation>
-    <referenceNumber>71</referenceNumber>
-    <SBLAbbreviation>Add Dan</SBLAbbreviation>
-    <OSISAbbreviation>AddDan</OSISAbbreviation>
-    <ParatextAbbreviation>Dag</ParatextAbbreviation>
-    <ParatextNumber>89</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Prayer of Azariah</nameEnglish>
-    <referenceAbbreviation>PAZ</referenceAbbreviation>
-    <referenceNumber>72</referenceNumber>
-    <SBLAbbreviation>Pr Azar</SBLAbbreviation>
-    <OSISAbbreviation>PrAzar</OSISAbbreviation>
-    <CCELNumber>76</CCELNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Bel and the dragon</nameEnglish>
-    <referenceAbbreviation>BEL</referenceAbbreviation>
-    <referenceNumber>73</referenceNumber>
-    <SBLAbbreviation>Bel</SBLAbbreviation>
-    <OSISAbbreviation>Bel</OSISAbbreviation>
-    <CCELNumber>78</CCELNumber>
-    <ParatextAbbreviation>Bel</ParatextAbbreviation>
-    <ParatextNumber>77</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Song of the three young men</nameEnglish>
-    <referenceAbbreviation>S3Y</referenceAbbreviation>
-    <referenceNumber>74</referenceNumber>
-    <SBLAbbreviation>Sg Three</SBLAbbreviation>
-    <OSISAbbreviation>SgThree</OSISAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Susanna</nameEnglish>
-    <referenceAbbreviation>SUS</referenceAbbreviation>
-    <referenceNumber>75</referenceNumber>
-    <SBLAbbreviation>Sus</SBLAbbreviation>
-    <OSISAbbreviation>Sus</OSISAbbreviation>
-    <CCELNumber>77</CCELNumber>
-    <ParatextAbbreviation>Sus</ParatextAbbreviation>
-    <ParatextNumber>76</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>1 Esdras / Ezra-Nehemiah</nameEnglish>
-    <referenceAbbreviation>ES1</referenceAbbreviation>
-    <referenceNumber>76</referenceNumber>
-    <SBLAbbreviation>1 Esd</SBLAbbreviation>
-    <OSISAbbreviation>1Esd</OSISAbbreviation>
-    <CCELNumber>81</CCELNumber>
-    <ParatextAbbreviation>1Es</ParatextAbbreviation>
-    <ParatextNumber>82</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>2 Esdras / Latin Esdras</nameEnglish>
-    <referenceAbbreviation>ES2</referenceAbbreviation>
-    <referenceNumber>77</referenceNumber>
-    <SBLAbbreviation>2 Esd</SBLAbbreviation>
-    <OSISAbbreviation>2Esd</OSISAbbreviation>
-    <CCELNumber>83</CCELNumber>
-    <ParatextAbbreviation>2Es</ParatextAbbreviation>
-    <ParatextNumber>83</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Greek Esther / Additions to Esther</nameEnglish>
+    <nameEnglish>Greek Esther</nameEnglish>
     <referenceAbbreviation>ESG</referenceAbbreviation>
-    <referenceNumber>78</referenceNumber>
+    <referenceNumber>70</referenceNumber>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
     <CCELNumber>95</CCELNumber>
@@ -918,9 +846,100 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>70</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Epistle of Jeremiah / Lamentations of Jeremiah / Letter of Jeremiah</nameEnglish>
+    <nameEnglish>Greek additions to Esther</nameEnglish>
+    <referenceAbbreviation>ESA</referenceAbbreviation>
+    <referenceNumber>71</referenceNumber>
+    <SBLAbbreviation>Add Esth</SBLAbbreviation>
+    <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <CCELNumber>95</CCELNumber>
+    <ParatextAbbreviation>EsG</ParatextAbbreviation>
+    <ParatextNumber>70</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Combined Hebrew/Greek Esther</nameEnglish>
+    <referenceAbbreviation>ESC</referenceAbbreviation>
+    <referenceNumber>72</referenceNumber>
+    <SBLAbbreviation>Add Esth</SBLAbbreviation>
+    <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <CCELNumber>95</CCELNumber>
+    <ParatextAbbreviation>EsG</ParatextAbbreviation>
+    <ParatextNumber>70</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Greek Daniel</nameEnglish>
+    <referenceAbbreviation>DAG</referenceAbbreviation>
+    <referenceNumber>73</referenceNumber>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <ParatextAbbreviation>DaG</ParatextAbbreviation>
+    <ParatextNumber>89</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Greek additions to Daniel</nameEnglish>
+    <referenceAbbreviation>DAA</referenceAbbreviation>
+    <referenceNumber>74</referenceNumber>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <ParatextAbbreviation>DaG</ParatextAbbreviation>
+    <ParatextNumber>89</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Combined Hebrew/Greek Daniel</nameEnglish>
+    <referenceAbbreviation>DAC</referenceAbbreviation>
+    <referenceNumber>75</referenceNumber>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <ParatextAbbreviation>DaG</ParatextAbbreviation>
+    <ParatextNumber>89</ParatextNumber>
+  </BibleBookCodes>
+
+<!-- Catholic Deuterocanonical (Protestant Apocryphal) books -->
+  <BibleBookCodes>
+    <nameEnglish>Bel and the dragon</nameEnglish>
+    <referenceAbbreviation>BEL</referenceAbbreviation>
+    <referenceNumber>80</referenceNumber>
+    <SBLAbbreviation>Bel</SBLAbbreviation>
+    <OSISAbbreviation>Bel</OSISAbbreviation>
+    <CCELNumber>78</CCELNumber>
+    <ParatextAbbreviation>Bel</ParatextAbbreviation>
+    <ParatextNumber>77</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Susanna</nameEnglish>
+    <referenceAbbreviation>SUS</referenceAbbreviation>
+    <referenceNumber>81</referenceNumber>
+    <SBLAbbreviation>Sus</SBLAbbreviation>
+    <OSISAbbreviation>Sus</OSISAbbreviation>
+    <CCELNumber>77</CCELNumber>
+    <ParatextAbbreviation>Sus</ParatextAbbreviation>
+    <ParatextNumber>76</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Neil Rees says: 1 Esdras is a Greek paraphrase of Hebrew Ezra. I refer to it as Greek Esdras. It is also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon. In the Catholic tradition it is called 3 Esdras/Ezra. -->
+    <nameEnglish>Greek Esdras / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras</nameEnglish>
+    <referenceAbbreviation>GES</referenceAbbreviation>
+    <referenceNumber>82</referenceNumber>
+    <SBLAbbreviation>1 Esd</SBLAbbreviation>
+    <OSISAbbreviation>1Esd</OSISAbbreviation>
+    <CCELNumber>81</CCELNumber>
+    <ParatextAbbreviation>1Es</ParatextAbbreviation>
+    <ParatextNumber>82</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Neil Rees says: 2 Esdras is what I call Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition. It is called 3 Esdras in the Russian and Georgian traditions I believe. -->
+    <nameEnglish>Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra</nameEnglish>
+    <referenceAbbreviation>LES</referenceAbbreviation>
+    <referenceNumber>83</referenceNumber>
+    <SBLAbbreviation>2 Esd</SBLAbbreviation>
+    <OSISAbbreviation>2Esd</OSISAbbreviation>
+    <CCELNumber>83</CCELNumber>
+    <ParatextAbbreviation>2Es</ParatextAbbreviation>
+    <ParatextNumber>83</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Epistle of Jeremiah / Letter of Jeremiah</nameEnglish>
     <referenceAbbreviation>LJE</referenceAbbreviation>
-    <referenceNumber>79</referenceNumber>
+    <referenceNumber>84</referenceNumber>
     <SBLAbbreviation>Ep Jer</SBLAbbreviation>
     <OSISAbbreviation>EpJer</OSISAbbreviation>
     <CCELNumber>75</CCELNumber>
@@ -930,7 +949,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Judith</nameEnglish>
     <referenceAbbreviation>JDT</referenceAbbreviation>
-    <referenceNumber>80</referenceNumber>
+    <referenceNumber>85</referenceNumber>
     <SBLAbbreviation>Jdt</SBLAbbreviation>
     <OSISAbbreviation>Jdt</OSISAbbreviation>
     <CCELNumber>70</CCELNumber>
@@ -939,8 +958,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Manasses / Prayer of Manasseh</nameEnglish>
+    <!-- Part of Odes, part of 2 Chronicles in the Ethiopian Orthodox Bible -->
     <referenceAbbreviation>MAN</referenceAbbreviation>
-    <referenceNumber>81</referenceNumber>
+    <referenceNumber>86</referenceNumber>
     <SBLAbbreviation>Pr Man</SBLAbbreviation>
     <OSISAbbreviation>PrMan</OSISAbbreviation>
     <CCELNumber>82</CCELNumber>
@@ -948,9 +968,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>84</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Sirach/Qoholeth/Ecclesiasticus</nameEnglish>
+    <nameEnglish>Sirach / Ecclesiasticus</nameEnglish>
     <referenceAbbreviation>SIR</referenceAbbreviation>
-    <referenceNumber>82</referenceNumber>
+    <referenceNumber>87</referenceNumber>
     <SBLAbbreviation>Sir</SBLAbbreviation>
     <OSISAbbreviation>Sir</OSISAbbreviation>
     <CCELNumber>94</CCELNumber>
@@ -958,9 +978,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>72</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Tobit/Tobias</nameEnglish>
+    <nameEnglish>Tobit / Tobias</nameEnglish>
     <referenceAbbreviation>TOB</referenceAbbreviation>
-    <referenceNumber>83</referenceNumber>
+    <referenceNumber>88</referenceNumber>
     <SBLAbbreviation>Tob</SBLAbbreviation>
     <OSISAbbreviation>Tob</OSISAbbreviation>
     <CCELNumber>69</CCELNumber>
@@ -968,20 +988,35 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>68</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Wisdom of Solomon</nameEnglish>
+    <nameEnglish>Wisdom / Wisdom of Solomon</nameEnglish>
     <referenceAbbreviation>WIS</referenceAbbreviation>
-    <referenceNumber>84</referenceNumber>
+    <referenceNumber>89</referenceNumber>
     <SBLAbbreviation>Wis</SBLAbbreviation>
     <OSISAbbreviation>Wis</OSISAbbreviation>
     <CCELNumber>72</CCELNumber>
     <ParatextAbbreviation>Wis</ParatextAbbreviation>
     <ParatextNumber>71</ParatextNumber>
   </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Azariah</nameEnglish>
+    <referenceAbbreviation>PAZ</referenceAbbreviation>
+    <referenceNumber>90</referenceNumber>
+    <SBLAbbreviation>Pr Azar</SBLAbbreviation>
+    <OSISAbbreviation>PrAzar</OSISAbbreviation>
+    <CCELNumber>76</CCELNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Song of the three young men</nameEnglish>
+    <referenceAbbreviation>S3Y</referenceAbbreviation>
+    <referenceNumber>91</referenceNumber>
+    <SBLAbbreviation>Sg Three</SBLAbbreviation>
+    <OSISAbbreviation>SgThree</OSISAbbreviation>
+  </BibleBookCodes>
 
   <BibleBookCodes>
     <nameEnglish>1 Maccabees</nameEnglish>
     <referenceAbbreviation>MA1</referenceAbbreviation>
-    <referenceNumber>90</referenceNumber>
+    <referenceNumber>100</referenceNumber>
     <SBLAbbreviation>1 Macc</SBLAbbreviation>
     <OSISAbbreviation>1Macc</OSISAbbreviation>
     <CCELNumber>79</CCELNumber>
@@ -991,7 +1026,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>2 Maccabees</nameEnglish>
     <referenceAbbreviation>MA2</referenceAbbreviation>
-    <referenceNumber>91</referenceNumber>
+    <referenceNumber>101</referenceNumber>
     <SBLAbbreviation>2 Macc</SBLAbbreviation>
     <OSISAbbreviation>2Macc</OSISAbbreviation>
     <CCELNumber>80</CCELNumber>
@@ -1000,8 +1035,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 Maccabees</nameEnglish>
+    <!-- Part of Eastern Orthodox and Armenian Bibles -->
     <referenceAbbreviation>MA3</referenceAbbreviation>
-    <referenceNumber>92</referenceNumber>
+    <referenceNumber>102</referenceNumber>
     <SBLAbbreviation>3 Macc</SBLAbbreviation>
     <OSISAbbreviation>3Macc</OSISAbbreviation>
     <CCELNumber>84</CCELNumber>
@@ -1010,8 +1046,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>4 Maccabees</nameEnglish>
+    <!-- Part of the Georgian Bible and the Greek Appendix -->
     <referenceAbbreviation>MA4</referenceAbbreviation>
-    <referenceNumber>93</referenceNumber>
+    <referenceNumber>103</referenceNumber>
     <SBLAbbreviation>4 Macc</SBLAbbreviation>
     <OSISAbbreviation>4Macc</OSISAbbreviation>
     <CCELNumber>85</CCELNumber>
@@ -1024,18 +1061,38 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>94</referenceNumber>
   </BibleBookCodes>
 
+  <BibleBookCodes>
+    <nameEnglish>1 Meqabyan/Makabian / Mekabis of Benjamin</nameEnglish>
+    <referenceAbbreviation>MQ1</referenceAbbreviation>
+    <referenceNumber>95</referenceNumber>
+    <ParatextAbbreviation>1Mq</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Meqabyan/Makabian / Mekabis of Moab</nameEnglish>
+    <referenceAbbreviation>MQ2</referenceAbbreviation>
+    <referenceNumber>96</referenceNumber>
+    <ParatextAbbreviation>2Mq</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Meqabyan/Makabian</nameEnglish>
+    <referenceAbbreviation>MQ3</referenceAbbreviation>
+    <referenceNumber>97</referenceNumber>
+    <ParatextAbbreviation>3Mq</ParatextAbbreviation>
+  </BibleBookCodes>
+
 <!-- Other books -->
   <BibleBookCodes>
     <nameEnglish>Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms</nameEnglish>
     <referenceAbbreviation>PSB</referenceAbbreviation>
-    <referenceNumber>100</referenceNumber>
+    <referenceNumber>110</referenceNumber>
     <ParatextAbbreviation>PsB</ParatextAbbreviation>
     <ParatextNumber>88</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalm 151</nameEnglish>
+    <!-- The 151st Psalm that is in the LXX, included in Orthodox Bibles translated from the Septuagint -->
     <referenceAbbreviation>PS2</referenceAbbreviation>
-    <referenceNumber>101</referenceNumber>
+    <referenceNumber>111</referenceNumber>
     <OSISAbbreviation>Ps151</OSISAbbreviation>
     <CCELNumber>86</CCELNumber>
     <ParatextAbbreviation>Ps2</ParatextAbbreviation>
@@ -1044,13 +1101,14 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Syriac Psalms 152-155</nameEnglish>
     <referenceAbbreviation>PS3</referenceAbbreviation>
-    <referenceNumber>102</referenceNumber>
+    <referenceNumber>112</referenceNumber>
     <ParatextAbbreviation>Ps3</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Additional Psalms of Solomon</nameEnglish>
+    <!-- Not printed in any canonical tradition, but in some Syriac and LXX manuscripts -->
     <referenceAbbreviation>PSS</referenceAbbreviation>
-    <referenceNumber>103</referenceNumber>
+    <referenceNumber>113</referenceNumber>
     <ParatextAbbreviation>PsS</ParatextAbbreviation>
     <ParatextNumber>87</ParatextNumber>
     <SwordAbbreviation>AddPs</SwordAbbreviation>
@@ -1059,100 +1117,102 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Letter to the Laodiceans</nameEnglish>
     <referenceAbbreviation>LAO</referenceAbbreviation>
-    <referenceNumber>110</referenceNumber>
+    <referenceNumber>120</referenceNumber>
     <ParatextAbbreviation>Lao</ParatextAbbreviation>
     <SwordAbbreviation>EpLao</SwordAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Odes/Odae</nameEnglish>
+    <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->
+    <nameEnglish>Odes / Odae</nameEnglish>
     <referenceAbbreviation>ODE</referenceAbbreviation>
-    <referenceNumber>111</referenceNumber>
-    <!-- ParatextAbbreviation was Oda -->
+    <referenceNumber>121</referenceNumber>
+    <!-- ParatextAbbreviation used to be Oda -->
     <ParatextAbbreviation>Ode</ParatextAbbreviation>
     <ParatextNumber>86</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Solomon</nameEnglish>
     <referenceAbbreviation>PSO</referenceAbbreviation>
-    <referenceNumber>112</referenceNumber>
+    <referenceNumber>122</referenceNumber>
     <ParatextAbbreviation>PSo</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Jeremiah</nameEnglish>
     <referenceAbbreviation>PJE</referenceAbbreviation>
-    <referenceNumber>113</referenceNumber>
+    <referenceNumber>123</referenceNumber>
     <ParatextAbbreviation>PJe</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Words of Sirach</nameEnglish>
     <referenceAbbreviation>WSI</referenceAbbreviation>
-    <referenceNumber>114</referenceNumber>
+    <referenceNumber>124</referenceNumber>
     <ParatextAbbreviation>WSi</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Letter of the Corinthians to Paul</nameEnglish>
     <referenceAbbreviation>COP</referenceAbbreviation>
-    <referenceNumber>115</referenceNumber>
+    <referenceNumber>125</referenceNumber>
     <ParatextAbbreviation>CoP</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 Corinthians</nameEnglish>
     <referenceAbbreviation>CO3</referenceAbbreviation>
-    <referenceNumber>116</referenceNumber>
+    <referenceNumber>126</referenceNumber>
     <ParatextAbbreviation>3Co</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Euthalius</nameEnglish>
     <referenceAbbreviation>EUT</referenceAbbreviation>
-    <referenceNumber>117</referenceNumber>
+    <referenceNumber>127</referenceNumber>
     <ParatextAbbreviation>Eut</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Dormition of John</nameEnglish>
     <referenceAbbreviation>DOJ</referenceAbbreviation>
-    <referenceNumber>118</referenceNumber>
+    <referenceNumber>128</referenceNumber>
     <ParatextAbbreviation>DoJ</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Testaments of the Twelve Patriarchs</nameEnglish>
     <referenceAbbreviation>TTP</referenceAbbreviation>
-    <referenceNumber>119</referenceNumber>
+    <referenceNumber>129</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Jubilees</nameEnglish>
     <referenceAbbreviation>JUB</referenceAbbreviation>
-    <referenceNumber>120</referenceNumber>
+    <referenceNumber>130</referenceNumber>
     <ParatextAbbreviation>Jub</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Enoch</nameEnglish>
     <referenceAbbreviation>ENO</referenceAbbreviation>
-    <referenceNumber>121</referenceNumber>
+    <referenceNumber>131</referenceNumber>
     <ParatextAbbreviation>Eno</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Enoch</nameEnglish>
     <referenceAbbreviation>EN2</referenceAbbreviation>
-    <referenceNumber>122</referenceNumber>
+    <referenceNumber>132</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel</nameEnglish>
+    <!-- Historic 12 chapter Ezra Apocalypse used in the Armenian, Syriac and Ethiopian traditions -->
     <referenceAbbreviation>EZA</referenceAbbreviation>
-    <referenceNumber>123</referenceNumber>
+    <referenceNumber>133</referenceNumber>
     <ParatextAbbreviation>EzA</ParatextAbbreviation>
     <ParatextNumber>105</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>5 Ezra / 3 Esdras / 5 Esdras</nameEnglish>
     <referenceAbbreviation>EZ5</referenceAbbreviation>
-    <referenceNumber>124</referenceNumber>
+    <referenceNumber>134</referenceNumber>
     <ParatextAbbreviation>5Ez</ParatextAbbreviation>
     <ParatextNumber>106</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>6 Ezra / 5 Esdras / 6 Esdras</nameEnglish>
     <referenceAbbreviation>EZ6</referenceAbbreviation>
-    <referenceNumber>125</referenceNumber>
+    <referenceNumber>135</referenceNumber>
     <ParatextAbbreviation>6Ez</ParatextAbbreviation>
     <ParatextNumber>107</ParatextNumber>
   </BibleBookCodes>
@@ -1160,56 +1220,48 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <nameEnglish>Reproof</nameEnglish>
     <!-- Proverbs 25-31 -->
     <referenceAbbreviation>REP</referenceAbbreviation>
-    <referenceNumber>126</referenceNumber>
+    <referenceNumber>136</referenceNumber>
     <ParatextAbbreviation>Rep</ParatextAbbreviation>
   </BibleBookCodes>
 
   <BibleBookCodes>
-    <nameEnglish>1 Meqabyan/Makabian / Mekabis of Benjamin</nameEnglish>
-    <referenceAbbreviation>MQ1</referenceAbbreviation>
-    <referenceNumber>130</referenceNumber>
-    <ParatextAbbreviation>1Mq</ParatextAbbreviation>
+    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
+    <!-- 5 chapters -->
+    <referenceAbbreviation>BAR</referenceAbbreviation>
+    <referenceNumber>140</referenceNumber>
+    <SBLAbbreviation>Bar</SBLAbbreviation>
+    <OSISAbbreviation>Bar</OSISAbbreviation>
+    <CCELNumber>74</CCELNumber>
+    <ParatextAbbreviation>Bar</ParatextAbbreviation>
+    <ParatextNumber>73</ParatextNumber>
   </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>2 Meqabyan/Makabian / Mekabis of Moab</nameEnglish>
-    <referenceAbbreviation>MQ2</referenceAbbreviation>
-    <referenceNumber>131</referenceNumber>
-    <ParatextAbbreviation>2Mq</ParatextAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>3 Meqabyan/Makabian</nameEnglish>
-    <referenceAbbreviation>MQ3</referenceAbbreviation>
-    <referenceNumber>132</referenceNumber>
-    <ParatextAbbreviation>3Mq</ParatextAbbreviation>
-  </BibleBookCodes>
-
   <BibleBookCodes>
     <nameEnglish>2 Baruch / Apocalypse of Baruch</nameEnglish>
     <referenceAbbreviation>BA2</referenceAbbreviation>
-    <referenceNumber>140</referenceNumber>
+    <referenceNumber>141</referenceNumber>
     <ParatextAbbreviation>2Ba</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 Baruch</nameEnglish>
     <referenceAbbreviation>BA3</referenceAbbreviation>
-    <referenceNumber>141</referenceNumber>
+    <referenceNumber>142</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Rest of the Words of Baruch</nameEnglish>
     <referenceAbbreviation>BA4</referenceAbbreviation>
-    <referenceNumber>142</referenceNumber>
+    <referenceNumber>143</referenceNumber>
     <ParatextAbbreviation>4Ba</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Letter of Baruch</nameEnglish>
     <referenceAbbreviation>LBA</referenceAbbreviation>
-    <referenceNumber>143</referenceNumber>
+    <referenceNumber>144</referenceNumber>
     <ParatextAbbreviation>LBa</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Letter/Epistle of Jeremiah with Baruch</nameEnglish>
     <referenceAbbreviation>LJB</referenceAbbreviation>
-    <referenceNumber>144</referenceNumber>
+    <referenceNumber>145</referenceNumber>
     <SBLAbbreviation>Ep Jer</SBLAbbreviation>
     <OSISAbbreviation>EpJer</OSISAbbreviation>
     <ParatextAbbreviation>LJe</ParatextAbbreviation>
@@ -1241,31 +1293,138 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Did</ParatextAbbreviation>
   </BibleBookCodes>
 
+<!-- Apocryphal gosels -->
+  <BibleBookCodes>
+    <nameEnglish>Gospel of the Hebrews</nameEnglish>
+    <referenceAbbreviation>GHE</referenceAbbreviation>
+    <referenceNumber>160</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Truth</nameEnglish>
+    <referenceAbbreviation>GTR</referenceAbbreviation>
+    <referenceNumber>161</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Mary</nameEnglish>
+    <referenceAbbreviation>GMA</referenceAbbreviation>
+    <referenceNumber>162</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Marcion</nameEnglish>
+    <referenceAbbreviation>GMC</referenceAbbreviation>
+    <referenceNumber>163</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of the Twelve</nameEnglish>
+    <referenceAbbreviation>GTW</referenceAbbreviation>
+    <referenceNumber>164</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Philip</nameEnglish>
+    <referenceAbbreviation>GPH</referenceAbbreviation>
+    <referenceNumber>165</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Thomas</nameEnglish>
+    <referenceAbbreviation>GTH</referenceAbbreviation>
+    <referenceNumber>166</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Judas</nameEnglish>
+    <referenceAbbreviation>GJU</referenceAbbreviation>
+    <referenceNumber>167</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Bartholomew</nameEnglish>
+    <referenceAbbreviation>GBA</referenceAbbreviation>
+    <referenceNumber>168</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Aprcrypha of James</nameEnglish>
+    <referenceAbbreviation>AJA</referenceAbbreviation>
+    <referenceNumber>169</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>The Wisdom of Jesus Christ</nameEnglish>
+    <referenceAbbreviation>WJC</referenceAbbreviation>
+    <referenceNumber>170</referenceNumber>
+  </BibleBookCodes>
+
+<!-- More Pseudepigrapha -->
+  <BibleBookCodes>
+    <nameEnglish>Testament of Adam</nameEnglish>
+    <referenceAbbreviation>TAD</referenceAbbreviation>
+    <referenceNumber>180</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Assumption of Moses</nameEnglish>
+    <referenceAbbreviation>ASS</referenceAbbreviation>
+    <referenceNumber>181</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apocrypha of Ezekiel</nameEnglish>
+    <referenceAbbreviation>AEZ</referenceAbbreviation>
+    <referenceNumber>182</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Revelation of Ezra</nameEnglish>
+    <referenceAbbreviation>RVE</referenceAbbreviation>
+    <referenceNumber>183</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Solomon</nameEnglish>
+    <referenceAbbreviation>TSO</referenceAbbreviation>
+    <referenceNumber>184</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Pseudo of Eupolemus</nameEnglish>
+    <referenceAbbreviation>PEU</referenceAbbreviation>
+    <referenceNumber>185</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Eupolemus</nameEnglish>
+    <referenceAbbreviation>EUP</referenceAbbreviation>
+    <referenceNumber>186</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Vision of Ezra</nameEnglish>
+    <referenceAbbreviation>VEZ</referenceAbbreviation>
+    <referenceNumber>187</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Martyrdom and Ascension of Isaiah</nameEnglish>
+    <referenceAbbreviation>MAI</referenceAbbreviation>
+    <referenceNumber>188</referenceNumber>
+  </BibleBookCodes>
+
 <!-- Combinations of books -->
   <BibleBookCodes>
     <nameEnglish>Books of Moses</nameEnglish>
     <referenceAbbreviation>MOS</referenceAbbreviation>
-    <referenceNumber>180</referenceNumber>
+    <referenceNumber>190</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
+    <!-- Samuel is just one book in the Hebrew -->
     <nameEnglish>Samuel</nameEnglish>
     <referenceAbbreviation>SAM</referenceAbbreviation>
-    <referenceNumber>181</referenceNumber>
+    <referenceNumber>191</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
+    <!-- Kings is just one book in the Hebrew -->
     <nameEnglish>Kings</nameEnglish>
     <referenceAbbreviation>KGS</referenceAbbreviation>
-    <referenceNumber>182</referenceNumber>
+    <referenceNumber>192</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
+    <!-- Chronicles is just one book in the Hebrew -->
     <nameEnglish>Chronicles</nameEnglish>
     <referenceAbbreviation>CHR</referenceAbbreviation>
-    <referenceNumber>183</referenceNumber>
+    <referenceNumber>193</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Ezra-Nehemiah</nameEnglish>
+    <nameEnglish>Ezra-Nehemiah / 1 Esdras</nameEnglish>
     <referenceAbbreviation>EZN</referenceAbbreviation>
-    <referenceNumber>184</referenceNumber>
+    <referenceNumber>194</referenceNumber>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
     <!-- Note that Paratext uses Ezr ambiguously for either Ezra or Ezra-Nehemiah -->
@@ -1274,24 +1433,101 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <!-- Is this duplication of Testaments of the Twelve Patriarchs ??? -->
+    <!-- Used for the Minor Prophets in the Hebrew -->
     <nameEnglish>Twelve Prophets</nameEnglish>
     <referenceAbbreviation>P12</referenceAbbreviation>
-    <referenceNumber>185</referenceNumber>
+    <referenceNumber>195</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Azaraiah and Song of the three young men</nameEnglish>
     <referenceAbbreviation>PAS</referenceAbbreviation>
-    <referenceNumber>186</referenceNumber>
+    <referenceNumber>196</referenceNumber>
     <ParatextAbbreviation>S3Y</ParatextAbbreviation>
     <ParatextNumber>75</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Luke-Acts</nameEnglish>
     <referenceAbbreviation>LKA</referenceAbbreviation>
-    <referenceNumber>187</referenceNumber>
+    <referenceNumber>197</referenceNumber>
   </BibleBookCodes>
 
-<!-- referenceNumbers 200..255 are reserved for user defined books -->
+<!-- Extra front and/or back matter (although this file doesn't define or imply the order of "books") -->
+  <BibleBookCodes>
+    <nameEnglish>Generic front matter</nameEnglish>
+    <referenceAbbreviation>FRT</referenceAbbreviation>
+    <referenceNumber>220</referenceNumber>
+    <ParatextAbbreviation>Frt</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Preface</nameEnglish>
+    <referenceAbbreviation>PRF</referenceAbbreviation>
+    <referenceNumber>221</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Acknowledgements</nameEnglish>
+    <referenceAbbreviation>ACK</referenceAbbreviation>
+    <referenceNumber>222</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Introduction</nameEnglish>
+    <referenceAbbreviation>INT</referenceAbbreviation>
+    <referenceNumber>223</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Table of Contents</nameEnglish>
+    <referenceAbbreviation>TOC</referenceAbbreviation>
+    <referenceNumber>224</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Glossary</nameEnglish>
+    <referenceAbbreviation>GLS</referenceAbbreviation>
+    <referenceNumber>225</referenceNumber>
+    <ParatextAbbreviation>Glo</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Concordance</nameEnglish>
+    <referenceAbbreviation>CNC</referenceAbbreviation>
+    <referenceNumber>226</referenceNumber>
+    <ParatextAbbreviation>Cnc</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Topical Concordance</nameEnglish>
+    <referenceAbbreviation>TPC</referenceAbbreviation>
+    <referenceNumber>227</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Names Index</nameEnglish>
+    <referenceAbbreviation>IXN</referenceAbbreviation>
+    <referenceNumber>228</referenceNumber>
+    <ParatextAbbreviation>NDX</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Places Index</nameEnglish>
+    <referenceAbbreviation>IXP</referenceAbbreviation>
+    <referenceNumber>229</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Maps</nameEnglish>
+    <referenceAbbreviation>Map</referenceAbbreviation>
+    <referenceNumber>230</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Is this the same as a topical concordance? -->
+    <nameEnglish>Thematic Index</nameEnglish>
+    <referenceAbbreviation>IXT</referenceAbbreviation>
+    <referenceNumber>231</referenceNumber>
+    <ParatextAbbreviation>TDX</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Generic back matter</nameEnglish>
+    <referenceAbbreviation>BAK</referenceAbbreviation>
+    <referenceNumber>232</referenceNumber>
+    <ParatextAbbreviation>Bak</ParatextAbbreviation>
+  </BibleBookCodes>
+<!-- We haven't mapped the Paratext XXA-XXG books.
+     If necessary, they can be created as user defined books,
+       however, it's probably better to define some more sensible generic titles in there to meet your needs and then everyone can take advantage of them. -->
+
+<!-- referenceNumbers 240..255 are reserved for user defined books -->
 
 </BibleBooksCodes>
