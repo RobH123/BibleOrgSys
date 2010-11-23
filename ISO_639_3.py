@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# iso_639_3.py
+# ISO_639_3.py
 #
-# Module handling iso_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-11-16 (also update versionString below)
+# Module handling ISO_639_3.xml to produce C and Python data tables
+#   Last modified: 2010-11-23 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling iso_639_3.xml to produce C and Python data tables.
+Module handling ISO_639_3.xml to produce C and Python data tables.
 """
 
 progName = "ISO 639_3 handler"
@@ -35,9 +35,9 @@ from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
 
-class iso_639_3_Convertor:
+class ISO_639_3_Convertor:
     """
-    Class for handling and converting BibleBooksCodes.
+    Class for handling and converting ISO 639-3 language codes.
     """
     filenameBase = "iso_639_3"
     treeTag = "iso_639_3_entries"
@@ -55,7 +55,7 @@ class iso_639_3_Convertor:
         Loads (and crudely validates the XML file) into an element tree.
         """
         if XMLFilepath is None:
-            XMLFilepath = os.path.join( "DataFiles", iso_639_3_Convertor.filenameBase + ".xml" )
+            XMLFilepath = os.path.join( "DataFiles", ISO_639_3_Convertor.filenameBase + ".xml" )
         self.title = "ISO 639-3 language codes"
         self.tree = None
         self.load( XMLFilepath )
@@ -83,8 +83,8 @@ class iso_639_3_Convertor:
         self.tree = ElementTree().parse ( XMLFilepath )
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
-        if self.tree.tag  != iso_639_3_Convertor.treeTag:
-            logging.error( "Expected to load '%s' but got '%s'" % ( iso_639_3_Convertor.treeTag, self.tree.tag ) )
+        if self.tree.tag  != ISO_639_3_Convertor.treeTag:
+            logging.error( "Expected to load '%s' but got '%s'" % ( ISO_639_3_Convertor.treeTag, self.tree.tag ) )
     # end of load
 
     def validate( self ):
@@ -94,12 +94,12 @@ class iso_639_3_Convertor:
         assert( len ( self.tree ) )
 
         uniqueDict = {}
-        for attributeName in iso_639_3_Convertor.uniqueAttributes: uniqueDict[attributeName] = []
+        for attributeName in ISO_639_3_Convertor.uniqueAttributes: uniqueDict[attributeName] = []
 
         for j,element in enumerate(self.tree):
-            if element.tag == iso_639_3_Convertor.mainElementTag:
+            if element.tag == ISO_639_3_Convertor.mainElementTag:
                 # Check compulsory attributes on this main element
-                for attributeName in iso_639_3_Convertor.compulsoryAttributes:
+                for attributeName in ISO_639_3_Convertor.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
                         logging.error( "Compulsory '%s' attribute is missing from %s element in record %i" % ( attributeName, element.tag, j ) )
@@ -107,7 +107,7 @@ class iso_639_3_Convertor:
                         logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
-                for attributeName in iso_639_3_Convertor.optionalAttributes:
+                for attributeName in ISO_639_3_Convertor.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
@@ -116,11 +116,11 @@ class iso_639_3_Convertor:
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
-                    if attributeName not in iso_639_3_Convertor.compulsoryAttributes and attributeName not in iso_639_3_Convertor.optionalAttributes:
+                    if attributeName not in ISO_639_3_Convertor.compulsoryAttributes and attributeName not in ISO_639_3_Convertor.optionalAttributes:
                         logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i" % ( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
-                for attributeName in iso_639_3_Convertor.uniqueAttributes:
+                for attributeName in ISO_639_3_Convertor.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict[attributeName]:
@@ -153,11 +153,11 @@ class iso_639_3_Convertor:
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
-            if "id" in iso_639_3_Convertor.compulsoryAttributes or ID:
-                if "id" in iso_639_3_Convertor.uniqueElements: assert( ID not in myIDDict ) # Shouldn't be any duplicates
+            if "id" in ISO_639_3_Convertor.compulsoryAttributes or ID:
+                if "id" in ISO_639_3_Convertor.uniqueElements: assert( ID not in myIDDict ) # Shouldn't be any duplicates
                 myIDDict[ID] = ( Name, Type, Scope, Part1Code, Part2Code, )
-            if "name" in iso_639_3_Convertor.compulsoryAttributes or Name:
-                if "name" in iso_639_3_Convertor.uniqueElements: assert( Name not in myNameDict ) # Shouldn't be any duplicates
+            if "name" in ISO_639_3_Convertor.compulsoryAttributes or Name:
+                if "name" in ISO_639_3_Convertor.uniqueElements: assert( Name not in myNameDict ) # Shouldn't be any duplicates
                 myNameDict[Name] = ( ID, Type, Scope, Part1Code, Part2Code, )
         return myIDDict, myNameDict # Just throw away any of the dictionaries that you don't need
     # end of importDataToPython
@@ -177,17 +177,17 @@ class iso_639_3_Convertor:
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "_Tables.py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", ISO_639_3_Convertor.filenameBase + "_Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by iso_639_3_Convertor.py %s\n#\n" % ( datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by ISO_639_3_Convertor.py %s\n#\n" % ( datetime.now() ) )
             if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.tree), iso_639_3_Convertor.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.tree), ISO_639_3_Convertor.treeTag ) )
             exportPythonDict( myFile, IDDict, "ISO639_3_IDDict", "id", "Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_NameDict", "name", "ID, Type, Scope, Part1Code, Part2Code" )
     # end of exportDataToPython
@@ -223,24 +223,24 @@ class iso_639_3_Convertor:
         from datetime import datetime
 
         assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", iso_639_3_Convertor.filenameBase + "_Tables.h" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", ISO_639_3_Convertor.filenameBase + "_Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
         IDDict, NameDict = self.importDataToPython()
-        ifdefName = iso_639_3_Convertor.filenameBase.upper() + "_h"
+        ifdefName = ISO_639_3_Convertor.filenameBase.upper() + "_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// %s\n//\n" % ( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by iso_639_3_Convertor.py %s\n//\n" % ( datetime.now() ) )
+            myFile.write( "// This UTF-8 file was automatically generated by ISO_639_3.py %s\n//\n" % ( datetime.now() ) )
             if self.title: myFile.write( "// %s\n" % ( self.title ) )
             #if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.tree), iso_639_3_Convertor.treeTag ) )
+            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.tree), ISO_639_3_Convertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
             exportPythonDict( myFile, IDDict, "ISO639_3_IDDict", "{char* ID; char* Name; char* Type; char* Scope; char* Part1Code; char* Part2Code;}", "ID (sorted), Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_NameDict", "{char* Name; char* ID; char* Type; char* Scope; char* Part1Code; char* Part2Code;}", "Name (sorted), ID, Type, Scope, Part1Code, Part2Code" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
-# end of iso_639_3_Convertor class
+# end of ISO_639_3_Convertor class
 
 
 def main():
@@ -253,7 +253,7 @@ def main():
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     CommandLineOptions, args = parser.parse_args()
 
-    stuff = iso_639_3_Convertor() # Load the XML
+    stuff = ISO_639_3_Convertor() # Load the XML
     if CommandLineOptions.export:
         stuff.exportDataToPython() # Produce the .py tables
         stuff.exportDataToC() # Produce the .h tables
@@ -264,4 +264,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# end of iso_639_3.py
+# end of ISO_639_3.py

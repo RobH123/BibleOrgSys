@@ -2,7 +2,7 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-      Version 0.91
+      Version 0.92
       Last modified: 2010-11-23
     
     On Linux, to convert to RNG, use
@@ -107,6 +107,15 @@
         </data>
       </element>
       <optional>
+        <element name="expectedChapters">
+          <data type="positiveInteger">
+            <param name="totalDigits">3</param>
+            <param name="minInclusive">1</param>
+            <param name="maxExclusive">188</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
         <element name="SBLAbbreviation">
           <data type="string">
             <param name="minLength">2</param>
@@ -159,6 +168,14 @@
           <data type="string">
             <param name="minLength">3</param>
             <param name="maxLength">5</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="possibleAlternativeBooks">
+          <data type="string">
+            <param name="minLength">3</param>
+            <param name="maxLength">19</param>
           </data>
         </element>
       </optional>

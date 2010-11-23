@@ -4,8 +4,6 @@
 This file gives a table of Bible booknames codes including
 these three compulsory fields:
     An English book name (as a comment only)
-        (The information in this table should be language agnostic although English is used as a meta-language.)
-        (It should also be independent of any theological judgements but mostly based on historical publications.)
     A three character reference code (upper case, no spaces, begins with a letter)
         This reference code should reflect book contents (not book names) and is used to link to other tables.
         These reference codes are guaranteed to be stable after V1.00
@@ -17,31 +15,39 @@ these three compulsory fields:
         1..66 are guaranteed to match the common Protestant Bible book orders.
         240..255 are reserved for user defined books.
 and then these optional fields (optional because not all systems handle the less common or more disputed books)
+    The number of expected chapters in this book (alternatives are separated by commas).
+        This is not authorative, but can assist in identifying books where the encoding is otherwise ambiguous.
     The SBL abbreviation (can include spaces)
     The OSIS abbrevation (no spaces but may begin with a digit)
     The 1-2 digit CCEL id number
     The three-character Paratext abbreviation (no spaces but may begin with a digit)
     The two-digit Paratext number
+        Bibledit also uses the same codes (above) and USFM format as Paratext
     The three-character NET Bible abbreviation
     The Sword abbreviation
+    Alternative book codes (separated by commas)
+        This is not precise but roughly shows which book this book might be confused with.
+        It is used for automatic mapping of book codes (also using the expected number of chapters)
 Most of the above fields should individually be unique, but there are some many-to-one mappings.
     e.g., Paratext uses the same code for Ezra as for Ezra-Nehemiah. (We make available separate codes.)
+
+The information in this table should be language agnostic although English is used as a meta-language.
+It should also be independent of any theological judgements but mostly based on historical publications.
+The main aim is to supply an inventory of book codes which are recognised by the BibleOrgSsy Bible Organisational System.
 
 Deutero-canonical/Apocryphal and less common books are included, even pseudegrapha.
 "Combined" books are included.
 This table does not infer any information about the quality or theological usefulness of any particular book.
-This table does not infer any information about the presence or the order of the books within any particular Bible version.
-This table does not infer any information about the number of chapters (or verses) in any given book.
+This table does not infer any information about the presence or the order of the books within any particular publication.
+This table is not authoritative about the number of chapters (or verses) in any given book in any particular publication.
 There should be exactly one entry for each possible Bible book which is printed separately in some publications
     and one entry for each possible combination of those Bible books.
 For example:
     If Ezra and Nehemiah are sometimes published as individual books, and sometimes combined, there should be three entries in this database.
     If Hebrew Esther and Greek Esther are sometimes published as individual books, and sometimes combined, there should be 3 entries in this database.
         However, if Greek Esther was never published singly, but only in combination with Hebrew Esther, there would only be 2 entries (Hebrew Esther and Combined Esther).
-    If some publications include Ps.151 as an extra chapter, that is not a reason to include a book for 151 chapters of Psalms here (we can just regard it as a chapter variation)
-        but if some publications publish it as a separate book, we would need to include 3 entries here (150 Psalms, Ps 151 only, 151 Psalms).
     This is because mappings between/across Bible books in different publications will be dependent on this file.
-        (If it's JUST chapter mapping within a book, that's handled elsewhere).
+        (If it's JUST that chapters and verses are divided up differently WITHIN a book, that's handled elsewhere.)
     If a book is a translation of another book, that is not usually a good enough reason to include multiple entries here
         (unless say, both the original and a translation were published in the same "Bible").
 
@@ -55,8 +61,6 @@ Note that the data is supplied as XML elements (not attributes).
 Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
 
 See the supplied BibleBooksCodes.ReadMe.txt for more details.
-
-Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
 -->
 
 <!DOCTYPE BibleBooksCodes [
@@ -73,10 +77,11 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,SBLAbbreviation?,OSISAbbreviation?,CCELNumber?,ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,SwordAbbreviation?)>
+        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,CCELNumber?,ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,SwordAbbreviation?,possibleAlternativeBooks?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT referenceNumber (#PCDATA)>
+            <!ELEMENT expectedChapters (#PCDATA)>
             <!ELEMENT SBLAbbreviation (#PCDATA)>
             <!ELEMENT OSISAbbreviation (#PCDATA)>
             <!ELEMENT CCELNumber (#PCDATA)>
@@ -84,6 +89,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
             <!ELEMENT ParatextNumber (#PCDATA)>
             <!ELEMENT NETBibleAbbreviation (#PCDATA)>
             <!ELEMENT SwordAbbreviation (#PCDATA)>
+            <!ELEMENT possibleAlternativeBooks (#PCDATA)>
 ]>
 
 <BibleBooksCodes>
@@ -107,6 +113,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Genesis / 1 Moses</nameEnglish>
     <referenceAbbreviation>GEN</referenceAbbreviation>
     <referenceNumber>1</referenceNumber>
+    <expectedChapters>50</expectedChapters>
     <SBLAbbreviation>Gen</SBLAbbreviation>
     <OSISAbbreviation>Gen</OSISAbbreviation>
     <CCELNumber>1</CCELNumber>
@@ -118,6 +125,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Exodus / 2 Moses</nameEnglish>
     <referenceAbbreviation>EXO</referenceAbbreviation>
     <referenceNumber>2</referenceNumber>
+    <expectedChapters>40</expectedChapters>
     <SBLAbbreviation>Exod</SBLAbbreviation>
     <OSISAbbreviation>Exod</OSISAbbreviation>
     <CCELNumber>2</CCELNumber>
@@ -129,6 +137,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Leviticus / 3 Moses</nameEnglish>
     <referenceAbbreviation>LEV</referenceAbbreviation>
     <referenceNumber>3</referenceNumber>
+    <expectedChapters>27</expectedChapters>
     <SBLAbbreviation>Lev</SBLAbbreviation>
     <OSISAbbreviation>Lev</OSISAbbreviation>
     <CCELNumber>3</CCELNumber>
@@ -140,6 +149,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Numbers / 4 Moses</nameEnglish>
     <referenceAbbreviation>NUM</referenceAbbreviation>
     <referenceNumber>4</referenceNumber>
+    <expectedChapters>36</expectedChapters>
     <SBLAbbreviation>Num</SBLAbbreviation>
     <OSISAbbreviation>Num</OSISAbbreviation>
     <CCELNumber>4</CCELNumber>
@@ -151,6 +161,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Deuteronomy / 5 Moses</nameEnglish>
     <referenceAbbreviation>DEU</referenceAbbreviation>
     <referenceNumber>5</referenceNumber>
+    <expectedChapters>34</expectedChapters>
     <SBLAbbreviation>Deut</SBLAbbreviation>
     <OSISAbbreviation>Deut</OSISAbbreviation>
     <CCELNumber>5</CCELNumber>
@@ -159,9 +170,10 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <NETBibleAbbreviation>Deu</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Joshua</nameEnglish>
+    <nameEnglish>Joshua / Joshua son of Nun</nameEnglish>
     <referenceAbbreviation>JOS</referenceAbbreviation>
     <referenceNumber>6</referenceNumber>
+    <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>Josh</SBLAbbreviation>
     <OSISAbbreviation>Josh</OSISAbbreviation>
     <CCELNumber>6</CCELNumber>
@@ -173,6 +185,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Judges</nameEnglish>
     <referenceAbbreviation>JDG</referenceAbbreviation>
     <referenceNumber>7</referenceNumber>
+    <expectedChapters>21</expectedChapters>
     <SBLAbbreviation>Judg</SBLAbbreviation>
     <OSISAbbreviation>Judg</OSISAbbreviation>
     <CCELNumber>7</CCELNumber>
@@ -184,6 +197,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Ruth</nameEnglish>
     <referenceAbbreviation>RUT</referenceAbbreviation>
     <referenceNumber>8</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Ruth</SBLAbbreviation>
     <OSISAbbreviation>Ruth</OSISAbbreviation>
     <CCELNumber>8</CCELNumber>
@@ -195,6 +209,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Samuel / 1 Kingdoms / 1 Kings</nameEnglish>
     <referenceAbbreviation>SA1</referenceAbbreviation>
     <referenceNumber>9</referenceNumber>
+    <expectedChapters>31</expectedChapters>
     <SBLAbbreviation>1 Sam</SBLAbbreviation>
     <OSISAbbreviation>1Sam</OSISAbbreviation>
     <CCELNumber>9</CCELNumber>
@@ -206,6 +221,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Samuel / 2 Kingdoms / 2 Kings</nameEnglish>
     <referenceAbbreviation>SA2</referenceAbbreviation>
     <referenceNumber>10</referenceNumber>
+    <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>2 Sam</SBLAbbreviation>
     <OSISAbbreviation>2Sam</OSISAbbreviation>
     <CCELNumber>10</CCELNumber>
@@ -217,6 +233,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Kings / 3 Kingdoms / 3 Kings</nameEnglish>
     <referenceAbbreviation>KI1</referenceAbbreviation>
     <referenceNumber>11</referenceNumber>
+    <expectedChapters>22</expectedChapters>
     <SBLAbbreviation>1 Kgs</SBLAbbreviation>
     <OSISAbbreviation>1Kgs</OSISAbbreviation>
     <CCELNumber>11</CCELNumber>
@@ -228,6 +245,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Kings / 4 Kingdoms / 4 Kings</nameEnglish>
     <referenceAbbreviation>KI2</referenceAbbreviation>
     <referenceNumber>12</referenceNumber>
+    <expectedChapters>25</expectedChapters>
     <SBLAbbreviation>2 Kgs</SBLAbbreviation>
     <OSISAbbreviation>2Kgs</OSISAbbreviation>
     <CCELNumber>12</CCELNumber>
@@ -239,6 +257,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Chronicles / 1 Paralipomenon</nameEnglish>
     <referenceAbbreviation>CH1</referenceAbbreviation>
     <referenceNumber>13</referenceNumber>
+    <expectedChapters>29</expectedChapters>
     <SBLAbbreviation>1 Chr</SBLAbbreviation>
     <OSISAbbreviation>1Chr</OSISAbbreviation>
     <CCELNumber>13</CCELNumber>
@@ -250,6 +269,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Chronicles / 2 Paralipomenon</nameEnglish>
     <referenceAbbreviation>CH2</referenceAbbreviation>
     <referenceNumber>14</referenceNumber>
+    <expectedChapters>36</expectedChapters>
     <SBLAbbreviation>2 Chr</SBLAbbreviation>
     <OSISAbbreviation>2Chr</OSISAbbreviation>
     <CCELNumber>14</CCELNumber>
@@ -259,42 +279,49 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Don't use this for combined Ezra-Nehemiah (use EZN) -->
-    <nameEnglish>Ezra / 1 Esdras</nameEnglish>
+    <nameEnglish>Ezra / 1 Ezra / 1 Esdras</nameEnglish>
     <referenceAbbreviation>EZR</referenceAbbreviation>
     <referenceNumber>15</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
     <CCELNumber>15</CCELNumber>
     <ParatextAbbreviation>Ezr</ParatextAbbreviation>
     <ParatextNumber>15</ParatextNumber>
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
+    <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Nehemiah / 2 Esdras</nameEnglish>
+    <nameEnglish>Nehemiah / 2 Ezra / 2 Esdras</nameEnglish>
     <referenceAbbreviation>NEH</referenceAbbreviation>
     <referenceNumber>16</referenceNumber>
+    <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>Neh</SBLAbbreviation>
     <OSISAbbreviation>Neh</OSISAbbreviation>
     <CCELNumber>16</CCELNumber>
     <ParatextAbbreviation>Neh</ParatextAbbreviation>
     <ParatextNumber>16</ParatextNumber>
     <NETBibleAbbreviation>Neh</NETBibleAbbreviation>
+    <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Esther</nameEnglish>
     <referenceAbbreviation>EST</referenceAbbreviation>
     <referenceNumber>17</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Esth</SBLAbbreviation>
     <OSISAbbreviation>Esth</OSISAbbreviation>
     <CCELNumber>17</CCELNumber>
     <ParatextAbbreviation>Est</ParatextAbbreviation>
     <ParatextNumber>17</ParatextNumber>
     <NETBibleAbbreviation>Est</NETBibleAbbreviation>
+    <possibleAlternativeBooks>ESG,ESA,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Job</nameEnglish>
     <referenceAbbreviation>JOB</referenceAbbreviation>
     <referenceNumber>18</referenceNumber>
+    <expectedChapters>42</expectedChapters>
     <SBLAbbreviation>Job</SBLAbbreviation>
     <OSISAbbreviation>Job</OSISAbbreviation>
     <CCELNumber>18</CCELNumber>
@@ -306,18 +333,21 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Psalms / Gallicanum / Psalms A</nameEnglish>
     <referenceAbbreviation>PSA</referenceAbbreviation>
     <referenceNumber>19</referenceNumber>
+    <expectedChapters>150</expectedChapters>
     <SBLAbbreviation>Ps</SBLAbbreviation>
     <OSISAbbreviation>Ps</OSISAbbreviation>
     <CCELNumber>19</CCELNumber>
     <ParatextAbbreviation>Psa</ParatextAbbreviation>
     <ParatextNumber>19</ParatextNumber>
     <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
+    <possibleAlternativeBooks>PB1,PB2,PB3,PB4,PB5</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Proverbs in the Ethiopian canon is shorter than in the European canon -->
     <nameEnglish>Proverbs</nameEnglish>
     <referenceAbbreviation>PRO</referenceAbbreviation>
     <referenceNumber>20</referenceNumber>
+    <expectedChapters>31</expectedChapters>
     <SBLAbbreviation>Prov</SBLAbbreviation>
     <OSISAbbreviation>Prov</OSISAbbreviation>
     <CCELNumber>20</CCELNumber>
@@ -329,6 +359,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Ecclesiastes / Qoholeth</nameEnglish>
     <referenceAbbreviation>ECC</referenceAbbreviation>
     <referenceNumber>21</referenceNumber>
+    <expectedChapters>12</expectedChapters>
     <SBLAbbreviation>Eccl</SBLAbbreviation>
     <OSISAbbreviation>Eccl</OSISAbbreviation>
     <CCELNumber>21</CCELNumber>
@@ -337,9 +368,10 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <NETBibleAbbreviation>Ecc</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Song of Solomon / Song of Songs / Canticles</nameEnglish>
+    <nameEnglish>Song of Solomon / Song of Songs / Canticles / Canticle of Canticles</nameEnglish>
     <referenceAbbreviation>SNG</referenceAbbreviation>
     <referenceNumber>22</referenceNumber>
+    <expectedChapters>8</expectedChapters>
     <SBLAbbreviation>Song</SBLAbbreviation>
     <OSISAbbreviation>Song</OSISAbbreviation>
     <CCELNumber>22</CCELNumber>
@@ -351,6 +383,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Isaiah</nameEnglish>
     <referenceAbbreviation>ISA</referenceAbbreviation>
     <referenceNumber>23</referenceNumber>
+    <expectedChapters>66</expectedChapters>
     <SBLAbbreviation>Isa</SBLAbbreviation>
     <OSISAbbreviation>Isa</OSISAbbreviation>
     <CCELNumber>23</CCELNumber>
@@ -362,6 +395,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Jeremiah</nameEnglish>
     <referenceAbbreviation>JER</referenceAbbreviation>
     <referenceNumber>24</referenceNumber>
+    <expectedChapters>52</expectedChapters>
     <SBLAbbreviation>Jer</SBLAbbreviation>
     <OSISAbbreviation>Jer</OSISAbbreviation>
     <CCELNumber>24</CCELNumber>
@@ -373,6 +407,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Lamentations of Jeremiah</nameEnglish>
     <referenceAbbreviation>LAM</referenceAbbreviation>
     <referenceNumber>25</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>Lam</SBLAbbreviation>
     <OSISAbbreviation>Lam</OSISAbbreviation>
     <CCELNumber>25</CCELNumber>
@@ -384,6 +419,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Ezekiel</nameEnglish>
     <referenceAbbreviation>EZK</referenceAbbreviation>
     <referenceNumber>26</referenceNumber>
+    <expectedChapters>48</expectedChapters>
     <SBLAbbreviation>Ezek</SBLAbbreviation>
     <OSISAbbreviation>Ezek</OSISAbbreviation>
     <CCELNumber>26</CCELNumber>
@@ -395,17 +431,20 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Daniel</nameEnglish>
     <referenceAbbreviation>DAN</referenceAbbreviation>
     <referenceNumber>27</referenceNumber>
+    <expectedChapters>12</expectedChapters>
     <SBLAbbreviation>Dan</SBLAbbreviation>
     <OSISAbbreviation>Dan</OSISAbbreviation>
     <CCELNumber>27</CCELNumber>
     <ParatextAbbreviation>Dan</ParatextAbbreviation>
     <ParatextNumber>27</ParatextNumber>
     <NETBibleAbbreviation>Dan</NETBibleAbbreviation>
+    <possibleAlternativeBooks>DAG,DAA,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Hosea</nameEnglish>
     <referenceAbbreviation>HOS</referenceAbbreviation>
     <referenceNumber>28</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Hos</SBLAbbreviation>
     <OSISAbbreviation>Hos</OSISAbbreviation>
     <CCELNumber>28</CCELNumber>
@@ -417,6 +456,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Joel</nameEnglish>
     <referenceAbbreviation>JOL</referenceAbbreviation>
     <referenceNumber>29</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Joel</SBLAbbreviation>
     <OSISAbbreviation>Joel</OSISAbbreviation>
     <CCELNumber>29</CCELNumber>
@@ -428,6 +468,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Amos</nameEnglish>
     <referenceAbbreviation>AMO</referenceAbbreviation>
     <referenceNumber>30</referenceNumber>
+    <expectedChapters>9</expectedChapters>
     <SBLAbbreviation>Amos</SBLAbbreviation>
     <OSISAbbreviation>Amos</OSISAbbreviation>
     <CCELNumber>30</CCELNumber>
@@ -439,6 +480,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Obadiah</nameEnglish>
     <referenceAbbreviation>OBA</referenceAbbreviation>
     <referenceNumber>31</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Obad</SBLAbbreviation>
     <OSISAbbreviation>Obad</OSISAbbreviation>
     <CCELNumber>31</CCELNumber>
@@ -450,6 +492,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Jonah</nameEnglish>
     <referenceAbbreviation>JNA</referenceAbbreviation>
     <referenceNumber>32</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Jonah</SBLAbbreviation>
     <OSISAbbreviation>Jonah</OSISAbbreviation>
     <CCELNumber>32</CCELNumber>
@@ -461,6 +504,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Micah</nameEnglish>
     <referenceAbbreviation>MIC</referenceAbbreviation>
     <referenceNumber>33</referenceNumber>
+    <expectedChapters>7</expectedChapters>
     <SBLAbbreviation>Nic</SBLAbbreviation>
     <OSISAbbreviation>Mic</OSISAbbreviation>
     <CCELNumber>33</CCELNumber>
@@ -472,6 +516,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Nahum</nameEnglish>
     <referenceAbbreviation>NAH</referenceAbbreviation>
     <referenceNumber>34</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Nah</SBLAbbreviation>
     <OSISAbbreviation>Nah</OSISAbbreviation>
     <CCELNumber>34</CCELNumber>
@@ -483,6 +528,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Habakkuk</nameEnglish>
     <referenceAbbreviation>HAB</referenceAbbreviation>
     <referenceNumber>35</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Hab</SBLAbbreviation>
     <OSISAbbreviation>Hab</OSISAbbreviation>
     <CCELNumber>35</CCELNumber>
@@ -494,6 +540,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Zephaniah</nameEnglish>
     <referenceAbbreviation>ZEP</referenceAbbreviation>
     <referenceNumber>36</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Zeph</SBLAbbreviation>
     <OSISAbbreviation>Zeph</OSISAbbreviation>
     <CCELNumber>36</CCELNumber>
@@ -505,6 +552,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Haggai</nameEnglish>
     <referenceAbbreviation>HAG</referenceAbbreviation>
     <referenceNumber>37</referenceNumber>
+    <expectedChapters>2</expectedChapters>
     <SBLAbbreviation>Hag</SBLAbbreviation>
     <OSISAbbreviation>Hag</OSISAbbreviation>
     <CCELNumber>37</CCELNumber>
@@ -516,6 +564,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Zechariah</nameEnglish>
     <referenceAbbreviation>ZEC</referenceAbbreviation>
     <referenceNumber>38</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Zech</SBLAbbreviation>
     <OSISAbbreviation>Zech</OSISAbbreviation>
     <CCELNumber>38</CCELNumber>
@@ -527,6 +576,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Malachi</nameEnglish>
     <referenceAbbreviation>MAL</referenceAbbreviation>
     <referenceNumber>39</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Mal</SBLAbbreviation>
     <OSISAbbreviation>Mal</OSISAbbreviation>
     <CCELNumber>39</CCELNumber>
@@ -540,6 +590,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Matthew</nameEnglish>
     <referenceAbbreviation>MAT</referenceAbbreviation>
     <referenceNumber>40</referenceNumber>
+    <expectedChapters>28</expectedChapters>
     <SBLAbbreviation>Matt</SBLAbbreviation>
     <OSISAbbreviation>Matt</OSISAbbreviation>
     <CCELNumber>40</CCELNumber>
@@ -551,6 +602,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Mark</nameEnglish>
     <referenceAbbreviation>MRK</referenceAbbreviation>
     <referenceNumber>41</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Mark</SBLAbbreviation>
     <OSISAbbreviation>Mark</OSISAbbreviation>
     <CCELNumber>41</CCELNumber>
@@ -562,17 +614,20 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Luke</nameEnglish>
     <referenceAbbreviation>LUK</referenceAbbreviation>
     <referenceNumber>42</referenceNumber>
+    <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>Luke</SBLAbbreviation>
     <OSISAbbreviation>Luke</OSISAbbreviation>
     <CCELNumber>42</CCELNumber>
     <ParatextAbbreviation>Luk</ParatextAbbreviation>
     <ParatextNumber>43</ParatextNumber>
     <NETBibleAbbreviation>Luk</NETBibleAbbreviation>
+    <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>John</nameEnglish>
     <referenceAbbreviation>JHN</referenceAbbreviation>
     <referenceNumber>43</referenceNumber>
+    <expectedChapters>21</expectedChapters>
     <SBLAbbreviation>John</SBLAbbreviation>
     <OSISAbbreviation>John</OSISAbbreviation>
     <CCELNumber>43</CCELNumber>
@@ -584,17 +639,20 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Acts</nameEnglish>
     <referenceAbbreviation>ACT</referenceAbbreviation>
     <referenceNumber>44</referenceNumber>
+    <expectedChapters>28</expectedChapters>
     <SBLAbbreviation>Acts</SBLAbbreviation>
     <OSISAbbreviation>Acts</OSISAbbreviation>
     <CCELNumber>44</CCELNumber>
     <ParatextAbbreviation>Act</ParatextAbbreviation>
     <ParatextNumber>45</ParatextNumber>
     <NETBibleAbbreviation>Act</NETBibleAbbreviation>
+    <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Romans</nameEnglish>
     <referenceAbbreviation>ROM</referenceAbbreviation>
     <referenceNumber>45</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Rom</SBLAbbreviation>
     <OSISAbbreviation>Rom</OSISAbbreviation>
     <CCELNumber>45</CCELNumber>
@@ -606,6 +664,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Corinthians</nameEnglish>
     <referenceAbbreviation>CO1</referenceAbbreviation>
     <referenceNumber>46</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>1 Cor</SBLAbbreviation>
     <OSISAbbreviation>1Cor</OSISAbbreviation>
     <CCELNumber>46</CCELNumber>
@@ -617,6 +676,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Corinthians</nameEnglish>
     <referenceAbbreviation>CO2</referenceAbbreviation>
     <referenceNumber>47</referenceNumber>
+    <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>2 Cor</SBLAbbreviation>
     <OSISAbbreviation>2Cor</OSISAbbreviation>
     <CCELNumber>47</CCELNumber>
@@ -628,6 +688,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Galatians</nameEnglish>
     <referenceAbbreviation>GAL</referenceAbbreviation>
     <referenceNumber>48</referenceNumber>
+    <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>Gal</SBLAbbreviation>
     <OSISAbbreviation>Gal</OSISAbbreviation>
     <CCELNumber>48</CCELNumber>
@@ -639,6 +700,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Ephesians</nameEnglish>
     <referenceAbbreviation>EPH</referenceAbbreviation>
     <referenceNumber>49</referenceNumber>
+    <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>Eph</SBLAbbreviation>
     <OSISAbbreviation>Eph</OSISAbbreviation>
     <CCELNumber>49</CCELNumber>
@@ -650,6 +712,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Philippians</nameEnglish>
     <referenceAbbreviation>PHP</referenceAbbreviation>
     <referenceNumber>50</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Phil</SBLAbbreviation>
     <OSISAbbreviation>Phil</OSISAbbreviation>
     <CCELNumber>50</CCELNumber>
@@ -661,6 +724,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Colossians</nameEnglish>
     <referenceAbbreviation>COL</referenceAbbreviation>
     <referenceNumber>51</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Col</SBLAbbreviation>
     <OSISAbbreviation>Col</OSISAbbreviation>
     <CCELNumber>51</CCELNumber>
@@ -672,6 +736,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Thessalonians</nameEnglish>
     <referenceAbbreviation>TH1</referenceAbbreviation>
     <referenceNumber>52</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 Thess</SBLAbbreviation>
     <OSISAbbreviation>1Thess</OSISAbbreviation>
     <CCELNumber>52</CCELNumber>
@@ -683,6 +748,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Thessalonians</nameEnglish>
     <referenceAbbreviation>TH2</referenceAbbreviation>
     <referenceNumber>53</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>2 Thess</SBLAbbreviation>
     <OSISAbbreviation>2Thess</OSISAbbreviation>
     <CCELNumber>53</CCELNumber>
@@ -694,6 +760,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Timothy</nameEnglish>
     <referenceAbbreviation>TI1</referenceAbbreviation>
     <referenceNumber>54</referenceNumber>
+    <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>1 Tim</SBLAbbreviation>
     <OSISAbbreviation>1Tim</OSISAbbreviation>
     <CCELNumber>54</CCELNumber>
@@ -705,6 +772,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Timothy</nameEnglish>
     <referenceAbbreviation>TI2</referenceAbbreviation>
     <referenceNumber>55</referenceNumber>
+    <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>2 Tim</SBLAbbreviation>
     <OSISAbbreviation>2Tim</OSISAbbreviation>
     <CCELNumber>55</CCELNumber>
@@ -716,6 +784,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Titus</nameEnglish>
     <referenceAbbreviation>TIT</referenceAbbreviation>
     <referenceNumber>56</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Titus</SBLAbbreviation>
     <OSISAbbreviation>Titus</OSISAbbreviation>
     <CCELNumber>56</CCELNumber>
@@ -727,6 +796,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Philemon</nameEnglish>
     <referenceAbbreviation>PHM</referenceAbbreviation>
     <referenceNumber>57</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Phlm</SBLAbbreviation>
     <OSISAbbreviation>Phlm</OSISAbbreviation>
     <CCELNumber>57</CCELNumber>
@@ -738,6 +808,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Hebrews</nameEnglish>
     <referenceAbbreviation>HEB</referenceAbbreviation>
     <referenceNumber>58</referenceNumber>
+    <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>Heb</SBLAbbreviation>
     <OSISAbbreviation>Heb</OSISAbbreviation>
     <CCELNumber>58</CCELNumber>
@@ -749,6 +820,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>James</nameEnglish>
     <referenceAbbreviation>JAS</referenceAbbreviation>
     <referenceNumber>59</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>Jas</SBLAbbreviation>
     <OSISAbbreviation>Jas</OSISAbbreviation>
     <CCELNumber>59</CCELNumber>
@@ -760,6 +832,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 Peter</nameEnglish>
     <referenceAbbreviation>PE1</referenceAbbreviation>
     <referenceNumber>60</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 Pet</SBLAbbreviation>
     <OSISAbbreviation>1Pet</OSISAbbreviation>
     <CCELNumber>60</CCELNumber>
@@ -771,6 +844,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 Peter</nameEnglish>
     <referenceAbbreviation>PE2</referenceAbbreviation>
     <referenceNumber>61</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>2 Pet</SBLAbbreviation>
     <OSISAbbreviation>2Pet</OSISAbbreviation>
     <CCELNumber>61</CCELNumber>
@@ -782,6 +856,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>1 John</nameEnglish>
     <referenceAbbreviation>JN1</referenceAbbreviation>
     <referenceNumber>62</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 John</SBLAbbreviation>
     <OSISAbbreviation>1John</OSISAbbreviation>
     <CCELNumber>62</CCELNumber>
@@ -793,6 +868,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>2 John</nameEnglish>
     <referenceAbbreviation>JN2</referenceAbbreviation>
     <referenceNumber>63</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>2 John</SBLAbbreviation>
     <OSISAbbreviation>2John</OSISAbbreviation>
     <CCELNumber>63</CCELNumber>
@@ -804,6 +880,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>3 John</nameEnglish>
     <referenceAbbreviation>JN3</referenceAbbreviation>
     <referenceNumber>64</referenceNumber>
+    <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>3 John</SBLAbbreviation>
     <OSISAbbreviation>3John</OSISAbbreviation>
     <CCELNumber>64</CCELNumber>
@@ -815,6 +892,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Jude</nameEnglish>
     <referenceAbbreviation>JDE</referenceAbbreviation>
     <referenceNumber>65</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Jude</SBLAbbreviation>
     <OSISAbbreviation>Jude</OSISAbbreviation>
     <CCELNumber>65</CCELNumber>
@@ -826,6 +904,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Revelation of John / Apocalypse of St. John</nameEnglish>
     <referenceAbbreviation>REV</referenceAbbreviation>
     <referenceNumber>66</referenceNumber>
+    <expectedChapters>22</expectedChapters>
     <SBLAbbreviation>Rev</SBLAbbreviation>
     <OSISAbbreviation>Rev</OSISAbbreviation>
     <CCELNumber>66</CCELNumber>
@@ -839,58 +918,70 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Greek Esther</nameEnglish>
     <referenceAbbreviation>ESG</referenceAbbreviation>
     <referenceNumber>70</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
+    <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Greek additions to Esther</nameEnglish>
     <referenceAbbreviation>ESA</referenceAbbreviation>
     <referenceNumber>71</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
+    <possibleAlternativeBooks>EST,ESG,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Combined Hebrew/Greek Esther</nameEnglish>
     <referenceAbbreviation>ESC</referenceAbbreviation>
     <referenceNumber>72</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
+    <possibleAlternativeBooks>EST,ESG,ESA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Greek Daniel</nameEnglish>
     <referenceAbbreviation>DAG</referenceAbbreviation>
     <referenceNumber>73</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>89</ParatextNumber>
+    <possibleAlternativeBooks>DAN,DAA,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Greek additions to Daniel</nameEnglish>
     <referenceAbbreviation>DAA</referenceAbbreviation>
     <referenceNumber>74</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>89</ParatextNumber>
+    <possibleAlternativeBooks>DAN,DAG,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Combined Hebrew/Greek Daniel</nameEnglish>
     <referenceAbbreviation>DAC</referenceAbbreviation>
     <referenceNumber>75</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>89</ParatextNumber>
+    <possibleAlternativeBooks>DAN,DAG,DAA</possibleAlternativeBooks>
   </BibleBookCodes>
 
 <!-- Catholic Deuterocanonical (Protestant Apocryphal) books -->
@@ -898,6 +989,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Bel and the dragon</nameEnglish>
     <referenceAbbreviation>BEL</referenceAbbreviation>
     <referenceNumber>80</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Bel</SBLAbbreviation>
     <OSISAbbreviation>Bel</OSISAbbreviation>
     <CCELNumber>78</CCELNumber>
@@ -908,6 +1000,7 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Susanna</nameEnglish>
     <referenceAbbreviation>SUS</referenceAbbreviation>
     <referenceNumber>81</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Sus</SBLAbbreviation>
     <OSISAbbreviation>Sus</OSISAbbreviation>
     <CCELNumber>77</CCELNumber>
@@ -915,41 +1008,10 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <ParatextNumber>76</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <!-- Neil Rees says: 1 Esdras is a Greek paraphrase of Hebrew Ezra. I refer to it as Greek Esdras. It is also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon. In the Catholic tradition it is called 3 Esdras/Ezra. -->
-    <nameEnglish>Greek Esdras / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras</nameEnglish>
-    <referenceAbbreviation>GES</referenceAbbreviation>
-    <referenceNumber>82</referenceNumber>
-    <SBLAbbreviation>1 Esd</SBLAbbreviation>
-    <OSISAbbreviation>1Esd</OSISAbbreviation>
-    <CCELNumber>81</CCELNumber>
-    <ParatextAbbreviation>1Es</ParatextAbbreviation>
-    <ParatextNumber>82</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <!-- Neil Rees says: 2 Esdras is what I call Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition. It is called 3 Esdras in the Russian and Georgian traditions I believe. -->
-    <nameEnglish>Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra</nameEnglish>
-    <referenceAbbreviation>LES</referenceAbbreviation>
-    <referenceNumber>83</referenceNumber>
-    <SBLAbbreviation>2 Esd</SBLAbbreviation>
-    <OSISAbbreviation>2Esd</OSISAbbreviation>
-    <CCELNumber>83</CCELNumber>
-    <ParatextAbbreviation>2Es</ParatextAbbreviation>
-    <ParatextNumber>83</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Epistle of Jeremiah / Letter of Jeremiah</nameEnglish>
-    <referenceAbbreviation>LJE</referenceAbbreviation>
-    <referenceNumber>84</referenceNumber>
-    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
-    <OSISAbbreviation>EpJer</OSISAbbreviation>
-    <CCELNumber>75</CCELNumber>
-    <ParatextAbbreviation>LJe</ParatextAbbreviation>
-    <ParatextNumber>74</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
     <nameEnglish>Judith</nameEnglish>
     <referenceAbbreviation>JDT</referenceAbbreviation>
-    <referenceNumber>85</referenceNumber>
+    <referenceNumber>82</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Jdt</SBLAbbreviation>
     <OSISAbbreviation>Jdt</OSISAbbreviation>
     <CCELNumber>70</CCELNumber>
@@ -960,7 +1022,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Prayer of Manasses / Prayer of Manasseh</nameEnglish>
     <!-- Part of Odes, part of 2 Chronicles in the Ethiopian Orthodox Bible -->
     <referenceAbbreviation>MAN</referenceAbbreviation>
-    <referenceNumber>86</referenceNumber>
+    <referenceNumber>83</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Pr Man</SBLAbbreviation>
     <OSISAbbreviation>PrMan</OSISAbbreviation>
     <CCELNumber>82</CCELNumber>
@@ -970,7 +1033,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   <BibleBookCodes>
     <nameEnglish>Sirach / Ecclesiasticus</nameEnglish>
     <referenceAbbreviation>SIR</referenceAbbreviation>
-    <referenceNumber>87</referenceNumber>
+    <referenceNumber>84</referenceNumber>
+    <expectedChapters>51</expectedChapters>
     <SBLAbbreviation>Sir</SBLAbbreviation>
     <OSISAbbreviation>Sir</OSISAbbreviation>
     <CCELNumber>94</CCELNumber>
@@ -980,7 +1044,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   <BibleBookCodes>
     <nameEnglish>Tobit / Tobias</nameEnglish>
     <referenceAbbreviation>TOB</referenceAbbreviation>
-    <referenceNumber>88</referenceNumber>
+    <referenceNumber>85</referenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Tob</SBLAbbreviation>
     <OSISAbbreviation>Tob</OSISAbbreviation>
     <CCELNumber>69</CCELNumber>
@@ -990,7 +1055,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   <BibleBookCodes>
     <nameEnglish>Wisdom / Wisdom of Solomon</nameEnglish>
     <referenceAbbreviation>WIS</referenceAbbreviation>
-    <referenceNumber>89</referenceNumber>
+    <referenceNumber>86</referenceNumber>
+    <expectedChapters>19</expectedChapters>
     <SBLAbbreviation>Wis</SBLAbbreviation>
     <OSISAbbreviation>Wis</OSISAbbreviation>
     <CCELNumber>72</CCELNumber>
@@ -998,25 +1064,151 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <ParatextNumber>71</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Prayer of Azariah</nameEnglish>
+    <nameEnglish>Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men</nameEnglish>
     <referenceAbbreviation>PAZ</referenceAbbreviation>
-    <referenceNumber>90</referenceNumber>
+    <referenceNumber>87</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Pr Azar</SBLAbbreviation>
     <OSISAbbreviation>PrAzar</OSISAbbreviation>
-    <CCELNumber>76</CCELNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Song of the three young men</nameEnglish>
-    <referenceAbbreviation>S3Y</referenceAbbreviation>
-    <referenceNumber>91</referenceNumber>
+    <!--
     <SBLAbbreviation>Sg Three</SBLAbbreviation>
-    <OSISAbbreviation>SgThree</OSISAbbreviation>
+    <OSISAbbreviation>SgThree</OSISAbbreviation> -->
+    <CCELNumber>76</CCELNumber>
+    <ParatextAbbreviation>S3Y</ParatextAbbreviation>
+    <ParatextNumber>75</ParatextNumber>
   </BibleBookCodes>
 
+<!-- Ezra / Esdras -->
+  <BibleBookCodes>
+    <!-- 1 Esdras is a Greek paraphrase of Hebrew Ezra. Also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon. In the Catholic tradition it is called 3 Esdras/Ezra. -->
+    <nameEnglish>Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras</nameEnglish>
+    <referenceAbbreviation>GES</referenceAbbreviation>
+    <referenceNumber>90</referenceNumber>
+    <expectedChapters>9</expectedChapters>
+    <SBLAbbreviation>1 Esd</SBLAbbreviation>
+    <OSISAbbreviation>1Esd</OSISAbbreviation>
+    <CCELNumber>81</CCELNumber>
+    <ParatextAbbreviation>1Es</ParatextAbbreviation>
+    <ParatextNumber>82</ParatextNumber>
+    <possibleAlternativeBooks>LES</possibleAlternativeBooks>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- 2 Esdras is Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition. It is called 3 Esdras in the Russian and Georgian traditions. -->
+    <nameEnglish>Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra</nameEnglish>
+    <referenceAbbreviation>LES</referenceAbbreviation>
+    <referenceNumber>91</referenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>2 Esd</SBLAbbreviation>
+    <OSISAbbreviation>2Esd</OSISAbbreviation>
+    <CCELNumber>83</CCELNumber>
+    <ParatextAbbreviation>2Es</ParatextAbbreviation>
+    <ParatextNumber>83</ParatextNumber>
+    <possibleAlternativeBooks>GES</possibleAlternativeBooks>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel</nameEnglish>
+    <!-- Historic 12 chapter Ezra Apocalypse used in the Armenian, Syriac and Ethiopian traditions -->
+    <referenceAbbreviation>EZA</referenceAbbreviation>
+    <referenceNumber>92</referenceNumber>
+    <expectedChapters>12,13</expectedChapters>
+    <SBLAbbreviation>4 Ezra</SBLAbbreviation>
+    <ParatextAbbreviation>EzA</ParatextAbbreviation>
+    <ParatextNumber>105</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>5 Ezra / 3 Esdras / 5 Esdras</nameEnglish>
+    <!-- 2 chapter Latin preface to the Apocalypse of Ezra known to scholars as 5 Ezra -->
+    <referenceAbbreviation>EZ5</referenceAbbreviation>
+    <referenceNumber>93</referenceNumber>
+    <expectedChapters>2</expectedChapters>
+    <SBLAbbreviation>5 Ezra</SBLAbbreviation>
+    <ParatextAbbreviation>5Ez</ParatextAbbreviation>
+    <ParatextNumber>106</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>6 Ezra / 5 Esdras / 6 Esdras</nameEnglish>
+    <!-- 2 chapter Latin addition to the Apocalypse of Ezra known to scholars as 6 Ezra -->
+    <referenceAbbreviation>EZ6</referenceAbbreviation>
+    <referenceNumber>94</referenceNumber>
+    <expectedChapters>2</expectedChapters>
+    <SBLAbbreviation>6 Ezra</SBLAbbreviation>
+    <ParatextAbbreviation>6Ez</ParatextAbbreviation>
+    <ParatextNumber>107</ParatextNumber>
+  </BibleBookCodes>
+
+<!-- Baruch and the Letter of Jeremiah -->
+  <BibleBookCodes>
+    <nameEnglish>Epistle of Jeremiah / Letter of Jeremiah</nameEnglish>
+    <referenceAbbreviation>LJE</referenceAbbreviation>
+    <referenceNumber>100</referenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
+    <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <CCELNumber>75</CCELNumber>
+    <ParatextAbbreviation>LJe</ParatextAbbreviation>
+    <ParatextNumber>74</ParatextNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
+    <!-- use LJB for the six-chapter book which includes the Letter of Jeremiah -->
+    <referenceAbbreviation>BAR</referenceAbbreviation>
+    <referenceNumber>101</referenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>Bar</SBLAbbreviation>
+    <OSISAbbreviation>Bar</OSISAbbreviation>
+    <CCELNumber>74</CCELNumber>
+    <ParatextAbbreviation>Bar</ParatextAbbreviation>
+    <ParatextNumber>73</ParatextNumber>
+    <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Baruch / Apocalypse of Baruch</nameEnglish>
+    <!-- Syriac -->
+    <referenceAbbreviation>BA2</referenceAbbreviation>
+    <referenceNumber>102</referenceNumber>
+    <expectedChapters>77</expectedChapters>
+    <ParatextAbbreviation>2Ba</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Baruch</nameEnglish>
+    <!-- Greek -->
+    <referenceAbbreviation>BA3</referenceAbbreviation>
+    <referenceNumber>103</referenceNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Rest of the Words of Baruch</nameEnglish>
+    <!-- Greek -->
+    <referenceAbbreviation>BA4</referenceAbbreviation>
+    <referenceNumber>104</referenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <ParatextAbbreviation>4Ba</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of Baruch</nameEnglish>
+    <!-- Syriac -->
+    <referenceAbbreviation>LBA</referenceAbbreviation>
+    <referenceNumber>105</referenceNumber>
+    <expectedChapters>9</expectedChapters>
+    <ParatextAbbreviation>LBa</ParatextAbbreviation>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter/Epistle of Jeremiah with Baruch</nameEnglish>
+    <referenceAbbreviation>LJB</referenceAbbreviation>
+    <referenceNumber>106</referenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
+    <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <ParatextAbbreviation>LJe</ParatextAbbreviation>
+    <ParatextNumber>74</ParatextNumber>
+    <possibleAlternativeBooks>BAR</possibleAlternativeBooks>
+  </BibleBookCodes>
+
+<!-- Maccabees -->
   <BibleBookCodes>
     <nameEnglish>1 Maccabees</nameEnglish>
     <referenceAbbreviation>MA1</referenceAbbreviation>
-    <referenceNumber>100</referenceNumber>
+    <referenceNumber>110</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>1 Macc</SBLAbbreviation>
     <OSISAbbreviation>1Macc</OSISAbbreviation>
     <CCELNumber>79</CCELNumber>
@@ -1026,7 +1218,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   <BibleBookCodes>
     <nameEnglish>2 Maccabees</nameEnglish>
     <referenceAbbreviation>MA2</referenceAbbreviation>
-    <referenceNumber>101</referenceNumber>
+    <referenceNumber>111</referenceNumber>
+    <expectedChapters>15</expectedChapters>
     <SBLAbbreviation>2 Macc</SBLAbbreviation>
     <OSISAbbreviation>2Macc</OSISAbbreviation>
     <CCELNumber>80</CCELNumber>
@@ -1037,7 +1230,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>3 Maccabees</nameEnglish>
     <!-- Part of Eastern Orthodox and Armenian Bibles -->
     <referenceAbbreviation>MA3</referenceAbbreviation>
-    <referenceNumber>102</referenceNumber>
+    <referenceNumber>112</referenceNumber>
+    <expectedChapters>7</expectedChapters>
     <SBLAbbreviation>3 Macc</SBLAbbreviation>
     <OSISAbbreviation>3Macc</OSISAbbreviation>
     <CCELNumber>84</CCELNumber>
@@ -1048,7 +1242,8 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>4 Maccabees</nameEnglish>
     <!-- Part of the Georgian Bible and the Greek Appendix -->
     <referenceAbbreviation>MA4</referenceAbbreviation>
-    <referenceNumber>103</referenceNumber>
+    <referenceNumber>113</referenceNumber>
+    <expectedChapters>18</expectedChapters>
     <SBLAbbreviation>4 Macc</SBLAbbreviation>
     <OSISAbbreviation>4Macc</OSISAbbreviation>
     <CCELNumber>85</CCELNumber>
@@ -1057,42 +1252,87 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>5 Maccabees</nameEnglish>
+    <!-- Syriac -->
     <referenceAbbreviation>MA5</referenceAbbreviation>
-    <referenceNumber>94</referenceNumber>
+    <referenceNumber>114</referenceNumber>
   </BibleBookCodes>
 
+<!-- Meqabyans / Makabians -->
   <BibleBookCodes>
-    <nameEnglish>1 Meqabyan/Makabian / Mekabis of Benjamin</nameEnglish>
+    <nameEnglish>1 Meqabyan / 1 Makabian / Mekabis of Benjamin</nameEnglish>
+    <!-- Ge'ez -->
     <referenceAbbreviation>MQ1</referenceAbbreviation>
-    <referenceNumber>95</referenceNumber>
+    <referenceNumber>115</referenceNumber>
+    <expectedChapters>36</expectedChapters>
     <ParatextAbbreviation>1Mq</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>2 Meqabyan/Makabian / Mekabis of Moab</nameEnglish>
+    <nameEnglish>2 Meqabyan / 2 Makabian / Mekabis of Moab</nameEnglish>
+    <!-- Ge'ez -->
     <referenceAbbreviation>MQ2</referenceAbbreviation>
-    <referenceNumber>96</referenceNumber>
+    <referenceNumber>116</referenceNumber>
+    <expectedChapters>20,21</expectedChapters>
     <ParatextAbbreviation>2Mq</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>3 Meqabyan/Makabian</nameEnglish>
+    <nameEnglish>3 Meqabyan / 3 Makabian</nameEnglish>
+    <!-- Ge'ez -->
     <referenceAbbreviation>MQ3</referenceAbbreviation>
-    <referenceNumber>97</referenceNumber>
+    <referenceNumber>117</referenceNumber>
+    <expectedChapters>10</expectedChapters>
     <ParatextAbbreviation>3Mq</ParatextAbbreviation>
   </BibleBookCodes>
 
-<!-- Other books -->
+<!-- Psalms -->
   <BibleBookCodes>
-    <nameEnglish>Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms</nameEnglish>
+    <nameEnglish>Psalms Book 1</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB1</referenceAbbreviation>
+    <referenceNumber>120</referenceNumber>
+    <expectedChapters>41</expectedChapters>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 2</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB2</referenceAbbreviation>
+    <referenceNumber>121</referenceNumber>
+    <expectedChapters>31</expectedChapters>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 3</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB3</referenceAbbreviation>
+    <referenceNumber>122</referenceNumber>
+    <expectedChapters>17</expectedChapters>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 4</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB4</referenceAbbreviation>
+    <referenceNumber>123</referenceNumber>
+    <expectedChapters>17</expectedChapters>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 5</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB5</referenceAbbreviation>
+    <referenceNumber>124</referenceNumber>
+    <expectedChapters>44</expectedChapters>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms</nameEnglish>
     <referenceAbbreviation>PSB</referenceAbbreviation>
-    <referenceNumber>110</referenceNumber>
+    <referenceNumber>125</referenceNumber>
+    <expectedChapters>150</expectedChapters>
     <ParatextAbbreviation>PsB</ParatextAbbreviation>
     <ParatextNumber>88</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalm 151</nameEnglish>
-    <!-- The 151st Psalm that is in the LXX, included in Orthodox Bibles translated from the Septuagint -->
+    <!-- The 151st Psalm of David (7 verses) that is in the LXX, included in Orthodox Bibles translated from the Septuagint -->
     <referenceAbbreviation>PS2</referenceAbbreviation>
-    <referenceNumber>111</referenceNumber>
+    <referenceNumber>126</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <OSISAbbreviation>Ps151</OSISAbbreviation>
     <CCELNumber>86</CCELNumber>
     <ParatextAbbreviation>Ps2</ParatextAbbreviation>
@@ -1100,15 +1340,17 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Syriac Psalms 152-155</nameEnglish>
+    <!-- Hebrew / Syriac (17,20,6,6 verses) -->
     <referenceAbbreviation>PS3</referenceAbbreviation>
-    <referenceNumber>112</referenceNumber>
+    <referenceNumber>127</referenceNumber>
+    <expectedChapters>5</expectedChapters>
     <ParatextAbbreviation>Ps3</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Additional Psalms of Solomon</nameEnglish>
     <!-- Not printed in any canonical tradition, but in some Syriac and LXX manuscripts -->
     <referenceAbbreviation>PSS</referenceAbbreviation>
-    <referenceNumber>113</referenceNumber>
+    <referenceNumber>128</referenceNumber>
     <ParatextAbbreviation>PsS</ParatextAbbreviation>
     <ParatextNumber>87</ParatextNumber>
     <SwordAbbreviation>AddPs</SwordAbbreviation>
@@ -1116,8 +1358,10 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
 
   <BibleBookCodes>
     <nameEnglish>Letter to the Laodiceans</nameEnglish>
+    <!-- Latin Vulgate NT -->
     <referenceAbbreviation>LAO</referenceAbbreviation>
-    <referenceNumber>120</referenceNumber>
+    <referenceNumber>130</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>Lao</ParatextAbbreviation>
     <SwordAbbreviation>EpLao</SwordAbbreviation>
   </BibleBookCodes>
@@ -1125,175 +1369,136 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->
     <nameEnglish>Odes / Odae</nameEnglish>
     <referenceAbbreviation>ODE</referenceAbbreviation>
-    <referenceNumber>121</referenceNumber>
+    <referenceNumber>131</referenceNumber>
     <!-- ParatextAbbreviation used to be Oda -->
     <ParatextAbbreviation>Ode</ParatextAbbreviation>
     <ParatextNumber>86</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Solomon</nameEnglish>
+    <!-- Latin Vulgate OT -->
     <referenceAbbreviation>PSO</referenceAbbreviation>
-    <referenceNumber>122</referenceNumber>
+    <referenceNumber>132</referenceNumber>
     <ParatextAbbreviation>PSo</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Jeremiah</nameEnglish>
+    <!-- Latin Vulgate OT -->
     <referenceAbbreviation>PJE</referenceAbbreviation>
-    <referenceNumber>123</referenceNumber>
+    <referenceNumber>133</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>PJe</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Words of Sirach</nameEnglish>
+    <!-- Armenian Zohrab Bible (not divided into chapters and verses) -->
     <referenceAbbreviation>WSI</referenceAbbreviation>
-    <referenceNumber>124</referenceNumber>
+    <referenceNumber>134</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>WSi</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Letter of the Corinthians to Paul</nameEnglish>
+    <!-- Armenian -->
     <referenceAbbreviation>COP</referenceAbbreviation>
-    <referenceNumber>125</referenceNumber>
+    <referenceNumber>135</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>CoP</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 Corinthians</nameEnglish>
+    <!-- Armenian (19 verses) -->
     <referenceAbbreviation>CO3</referenceAbbreviation>
-    <referenceNumber>126</referenceNumber>
+    <referenceNumber>136</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>3Co</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Euthalius</nameEnglish>
+    <!-- Armenian (60 verses) -->
     <referenceAbbreviation>EUT</referenceAbbreviation>
-    <referenceNumber>127</referenceNumber>
+    <referenceNumber>137</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>Eut</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Dormition of John</nameEnglish>
+    <!-- Armenian -->
     <referenceAbbreviation>DOJ</referenceAbbreviation>
-    <referenceNumber>128</referenceNumber>
+    <referenceNumber>138</referenceNumber>
+    <expectedChapters>1</expectedChapters>
     <ParatextAbbreviation>DoJ</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Testaments of the Twelve Patriarchs</nameEnglish>
+    <!-- Armenian -->
     <referenceAbbreviation>TTP</referenceAbbreviation>
-    <referenceNumber>129</referenceNumber>
+    <referenceNumber>139</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Jubilees</nameEnglish>
+    <!-- Hebrew -->
     <referenceAbbreviation>JUB</referenceAbbreviation>
-    <referenceNumber>130</referenceNumber>
+    <referenceNumber>140</referenceNumber>
+    <expectedChapters>34</expectedChapters>
     <ParatextAbbreviation>Jub</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Enoch</nameEnglish>
+    <!-- Hebrew -->
     <referenceAbbreviation>ENO</referenceAbbreviation>
-    <referenceNumber>131</referenceNumber>
+    <referenceNumber>141</referenceNumber>
+    <expectedChapters>42</expectedChapters>
     <ParatextAbbreviation>Eno</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Enoch</nameEnglish>
+    <!-- Old Church Slavonic -->
     <referenceAbbreviation>EN2</referenceAbbreviation>
-    <referenceNumber>132</referenceNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel</nameEnglish>
-    <!-- Historic 12 chapter Ezra Apocalypse used in the Armenian, Syriac and Ethiopian traditions -->
-    <referenceAbbreviation>EZA</referenceAbbreviation>
-    <referenceNumber>133</referenceNumber>
-    <ParatextAbbreviation>EzA</ParatextAbbreviation>
-    <ParatextNumber>105</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>5 Ezra / 3 Esdras / 5 Esdras</nameEnglish>
-    <referenceAbbreviation>EZ5</referenceAbbreviation>
-    <referenceNumber>134</referenceNumber>
-    <ParatextAbbreviation>5Ez</ParatextAbbreviation>
-    <ParatextNumber>106</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>6 Ezra / 5 Esdras / 6 Esdras</nameEnglish>
-    <referenceAbbreviation>EZ6</referenceAbbreviation>
-    <referenceNumber>135</referenceNumber>
-    <ParatextAbbreviation>6Ez</ParatextAbbreviation>
-    <ParatextNumber>107</ParatextNumber>
+    <referenceNumber>142</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Reproof</nameEnglish>
-    <!-- Proverbs 25-31 -->
+    <!-- Hebrew Proverbs 25-31 -->
     <referenceAbbreviation>REP</referenceAbbreviation>
-    <referenceNumber>136</referenceNumber>
+    <referenceNumber>143</referenceNumber>
+    <expectedChapters>6</expectedChapters>
     <ParatextAbbreviation>Rep</ParatextAbbreviation>
   </BibleBookCodes>
 
   <BibleBookCodes>
-    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
-    <!-- 5 chapters -->
-    <referenceAbbreviation>BAR</referenceAbbreviation>
-    <referenceNumber>140</referenceNumber>
-    <SBLAbbreviation>Bar</SBLAbbreviation>
-    <OSISAbbreviation>Bar</OSISAbbreviation>
-    <CCELNumber>74</CCELNumber>
-    <ParatextAbbreviation>Bar</ParatextAbbreviation>
-    <ParatextNumber>73</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>2 Baruch / Apocalypse of Baruch</nameEnglish>
-    <referenceAbbreviation>BA2</referenceAbbreviation>
-    <referenceNumber>141</referenceNumber>
-    <ParatextAbbreviation>2Ba</ParatextAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>3 Baruch</nameEnglish>
-    <referenceAbbreviation>BA3</referenceAbbreviation>
-    <referenceNumber>142</referenceNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Rest of the Words of Baruch</nameEnglish>
-    <referenceAbbreviation>BA4</referenceAbbreviation>
-    <referenceNumber>143</referenceNumber>
-    <ParatextAbbreviation>4Ba</ParatextAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Letter of Baruch</nameEnglish>
-    <referenceAbbreviation>LBA</referenceAbbreviation>
-    <referenceNumber>144</referenceNumber>
-    <ParatextAbbreviation>LBa</ParatextAbbreviation>
-  </BibleBookCodes>
-  <BibleBookCodes>
-    <nameEnglish>Letter/Epistle of Jeremiah with Baruch</nameEnglish>
-    <referenceAbbreviation>LJB</referenceAbbreviation>
-    <referenceNumber>145</referenceNumber>
-    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
-    <OSISAbbreviation>EpJer</OSISAbbreviation>
-    <ParatextAbbreviation>LJe</ParatextAbbreviation>
-    <ParatextNumber>74</ParatextNumber>
-  </BibleBookCodes>
-
-  <BibleBookCodes>
     <nameEnglish>1 Clement</nameEnglish>
+    <!-- Greek from Alexandrinus, Hierosolymitanus -->
     <referenceAbbreviation>CL1</referenceAbbreviation>
     <referenceNumber>150</referenceNumber>
+    <expectedChapters>65</expectedChapters>
     <ParatextAbbreviation>1Cl</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Clement</nameEnglish>
+    <!-- Greek from Alexandrinus, Hierosolymitanus -->
     <referenceAbbreviation>CL2</referenceAbbreviation>
     <referenceNumber>151</referenceNumber>
+    <expectedChapters>20</expectedChapters>
     <ParatextAbbreviation>2Cl</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Shepherd of Hermas</nameEnglish>
+    <!-- Greek from Codex Siniaticus -->
     <referenceAbbreviation>SHE</referenceAbbreviation>
     <referenceNumber>152</referenceNumber>
     <ParatextAbbreviation>She</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Didache</nameEnglish>
+    <!-- Greek from Codex Hierosolymitanus -->
     <referenceAbbreviation>DID</referenceAbbreviation>
     <referenceNumber>153</referenceNumber>
+    <expectedChapters>16</expectedChapters>
     <ParatextAbbreviation>Did</ParatextAbbreviation>
   </BibleBookCodes>
 
-<!-- Apocryphal gosels -->
+<!-- Apocryphal gosels / Gnostic gospels -->
   <BibleBookCodes>
     <nameEnglish>Gospel of the Hebrews</nameEnglish>
     <referenceAbbreviation>GHE</referenceAbbreviation>
@@ -1402,35 +1607,45 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <nameEnglish>Books of Moses</nameEnglish>
     <referenceAbbreviation>MOS</referenceAbbreviation>
     <referenceNumber>190</referenceNumber>
+    <expectedChapters>187</expectedChapters>
+    <possibleAlternativeBooks>GEN,EXO,LEV,NUM,DEU</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Samuel is just one book in the Hebrew -->
     <nameEnglish>Samuel</nameEnglish>
     <referenceAbbreviation>SAM</referenceAbbreviation>
     <referenceNumber>191</referenceNumber>
+    <expectedChapters>55</expectedChapters>
+    <possibleAlternativeBooks>SA1,SA2</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Kings is just one book in the Hebrew -->
     <nameEnglish>Kings</nameEnglish>
     <referenceAbbreviation>KGS</referenceAbbreviation>
     <referenceNumber>192</referenceNumber>
+    <expectedChapters>47</expectedChapters>
+    <possibleAlternativeBooks>KG1,KG2</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Chronicles is just one book in the Hebrew -->
     <nameEnglish>Chronicles</nameEnglish>
     <referenceAbbreviation>CHR</referenceAbbreviation>
     <referenceNumber>193</referenceNumber>
+    <expectedChapters>65</expectedChapters>
+    <possibleAlternativeBooks>CH1,CH2</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Ezra-Nehemiah / 1 Esdras</nameEnglish>
     <referenceAbbreviation>EZN</referenceAbbreviation>
     <referenceNumber>194</referenceNumber>
+    <expectedChapters>26</expectedChapters>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
     <!-- Note that Paratext uses Ezr ambiguously for either Ezra or Ezra-Nehemiah -->
     <ParatextAbbreviation>Ezr</ParatextAbbreviation>
     <ParatextNumber>15</ParatextNumber>
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
+    <possibleAlternativeBooks>EZR,NEH</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Used for the Minor Prophets in the Hebrew -->
@@ -1439,94 +1654,90 @@ Acknowledgements: Neil Rees (Studge), British & Foreign Bible Society
     <referenceNumber>195</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Prayer of Azaraiah and Song of the three young men</nameEnglish>
-    <referenceAbbreviation>PAS</referenceAbbreviation>
-    <referenceNumber>196</referenceNumber>
-    <ParatextAbbreviation>S3Y</ParatextAbbreviation>
-    <ParatextNumber>75</ParatextNumber>
-  </BibleBookCodes>
-  <BibleBookCodes>
     <nameEnglish>Luke-Acts</nameEnglish>
     <referenceAbbreviation>LKA</referenceAbbreviation>
-    <referenceNumber>197</referenceNumber>
+    <referenceNumber>196</referenceNumber>
+    <expectedChapters>52</expectedChapters>
+    <possibleAlternativeBooks>LUK,ACT</possibleAlternativeBooks>
   </BibleBookCodes>
 
 <!-- Extra front and/or back matter (although this file doesn't define or imply the order of "books") -->
   <BibleBookCodes>
     <nameEnglish>Generic front matter</nameEnglish>
     <referenceAbbreviation>FRT</referenceAbbreviation>
-    <referenceNumber>220</referenceNumber>
+    <referenceNumber>200</referenceNumber>
     <ParatextAbbreviation>Frt</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Preface</nameEnglish>
     <referenceAbbreviation>PRF</referenceAbbreviation>
-    <referenceNumber>221</referenceNumber>
+    <referenceNumber>201</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Acknowledgements</nameEnglish>
     <referenceAbbreviation>ACK</referenceAbbreviation>
-    <referenceNumber>222</referenceNumber>
+    <referenceNumber>202</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Introduction</nameEnglish>
     <referenceAbbreviation>INT</referenceAbbreviation>
-    <referenceNumber>223</referenceNumber>
+    <referenceNumber>203</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Table of Contents</nameEnglish>
     <referenceAbbreviation>TOC</referenceAbbreviation>
-    <referenceNumber>224</referenceNumber>
+    <referenceNumber>204</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Glossary</nameEnglish>
     <referenceAbbreviation>GLS</referenceAbbreviation>
-    <referenceNumber>225</referenceNumber>
+    <referenceNumber>205</referenceNumber>
     <ParatextAbbreviation>Glo</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Concordance</nameEnglish>
     <referenceAbbreviation>CNC</referenceAbbreviation>
-    <referenceNumber>226</referenceNumber>
+    <referenceNumber>206</referenceNumber>
     <ParatextAbbreviation>Cnc</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Topical Concordance</nameEnglish>
     <referenceAbbreviation>TPC</referenceAbbreviation>
-    <referenceNumber>227</referenceNumber>
+    <referenceNumber>207</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Names Index</nameEnglish>
     <referenceAbbreviation>IXN</referenceAbbreviation>
-    <referenceNumber>228</referenceNumber>
+    <referenceNumber>208</referenceNumber>
     <ParatextAbbreviation>NDX</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Places Index</nameEnglish>
     <referenceAbbreviation>IXP</referenceAbbreviation>
-    <referenceNumber>229</referenceNumber>
+    <referenceNumber>209</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Maps</nameEnglish>
     <referenceAbbreviation>Map</referenceAbbreviation>
-    <referenceNumber>230</referenceNumber>
+    <referenceNumber>210</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Is this the same as a topical concordance? -->
     <nameEnglish>Thematic Index</nameEnglish>
     <referenceAbbreviation>IXT</referenceAbbreviation>
-    <referenceNumber>231</referenceNumber>
+    <referenceNumber>211</referenceNumber>
     <ParatextAbbreviation>TDX</ParatextAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Generic back matter</nameEnglish>
     <referenceAbbreviation>BAK</referenceAbbreviation>
-    <referenceNumber>232</referenceNumber>
+    <referenceNumber>212</referenceNumber>
     <ParatextAbbreviation>Bak</ParatextAbbreviation>
   </BibleBookCodes>
-<!-- We haven't mapped the Paratext XXA-XXG books.
+  <!-- We haven't mapped the Paratext XXA-XXG books.
      If necessary, they can be created as user defined books,
-       however, it's probably better to define some more sensible generic titles in there to meet your needs and then everyone can take advantage of them. -->
+       however, it's probably better to define some more sensible generic titles
+       in here to meet your needs and then everyone can take advantage of them. -->
 
 <!-- referenceNumbers 240..255 are reserved for user defined books -->
 

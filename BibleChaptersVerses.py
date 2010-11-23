@@ -4,7 +4,7 @@
 # BibleChaptersVerses.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-16 (also update versionString below)
+#   Last modified: 2010-11-23 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.14"
+versionString = "0.15"
 
 
 import os, logging
@@ -243,9 +243,11 @@ class BibleVersificationSystemsConvertor:
                 # Save it by book reference abbreviation
                 #assert( sReferenceAbbreviation not in bookData )
                 #bookData[sReferenceAbbreviation] = (chapterData, omittedVersesData,)
-                assert( sReferenceAbbreviation not in chapterDataDict )
+                if sReferenceAbbreviation in chapterDataDict:
+                    logging.error( "Duplicate %s in %s" % ( sReferenceAbbreviation, versificationSystemCode ) )
                 chapterDataDict[sReferenceAbbreviation] = chapterData
-                assert( sReferenceAbbreviation not in omittedVersesDict )
+                if sReferenceAbbreviation in omittedVersesDict:
+                    logging.error( "Duplicate omitted data for %s in %s" % ( sReferenceAbbreviation, versificationSystemCode ) )
                 omittedVersesDict[sReferenceAbbreviation] = omittedVersesData
 
             # Now put it into my dictionaries for easy access
