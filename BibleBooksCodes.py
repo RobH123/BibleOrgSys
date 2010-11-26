@@ -359,7 +359,7 @@ class BibleBooksCodesConvertor:
                 elif isinstance( dictKey, int ):
                     theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
+                    logging.error( "Can't handle this type of key data yet: %s" % ( dictKey ) )
             theFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 

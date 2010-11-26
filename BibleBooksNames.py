@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-15 (also update versionString below)
+#   Last modified: 2010-11-26 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -34,7 +34,7 @@ versionString = "0.15"
 import os, logging
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
-import BibleBooksCodes, iso_639_3
+import BibleBooksCodes, ISO_639_3
 
 
 class BibleBooksNamesSystemsConvertor:
@@ -72,29 +72,30 @@ class BibleBooksNamesSystemsConvertor:
         @rtype: string
         """
         result = ""
-        result += ('\n' if result else '') + "Num systems loaded = %i" % ( len(self.systems) )
-        for x in self.systems:
-            result += ('\n' if result else '') + "  %s" % ( x )
-            if self.ISO639Dict and self.systems[x]["languageCode"] and self.systems[x]["languageCode"] in self.ISO639Dict:
-                result += ('\n' if result else '') + "    Language code %s = %s" % ( self.systems[x]["languageCode"], self.ISO639Dict[self.systems[x]["languageCode"]][0] )
-            title = self.systems[x]["title"]
-            if title: result += ('\n' if result else '') + "    %s" % ( title )
-            version = self.systems[x]["version"]
-            if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-            date = self.systems[x]["date"]
-            if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-            result += ('\n' if result else '') + "    Num entries = %i" % ( len(self.systems[x]["tree"]) )
-            numDivisions, numLeaders, numBooks = 0, 0, 0
-            for element in self.systems[x]["tree"]:
-                if element.tag == "BibleDivisionNames":
-                    numDivisions += 1
-                elif element.tag == "BibleBooknameLeaders":
-                    numLeaders += 1
-                elif element.tag == "BibleBookNames":
-                    numBooks += 1
-            if numDivisions: result += ('\n' if result else '') + "      Num divisions = %i" % ( numDivisions )
-            if numLeaders: result += ('\n' if result else '') + "      Num bookname leaders = %i" % ( numLeaders )
-            if numBooks: result += ('\n' if result else '') + "      Num books = %i" % ( numBooks )
+        result += ('\n' if result else '') + "Num bookname systems loaded = %i" % ( len(self.systems) )
+        if 0: # Make it verbose
+            for x in self.systems:
+                result += ('\n' if result else '') + "  %s" % ( x )
+                if self.ISO639Dict and self.systems[x]["languageCode"] and self.systems[x]["languageCode"] in self.ISO639Dict:
+                    result += ('\n' if result else '') + "    Language code %s = %s" % ( self.systems[x]["languageCode"], self.ISO639Dict[self.systems[x]["languageCode"]][0] )
+                title = self.systems[x]["title"]
+                if title: result += ('\n' if result else '') + "    %s" % ( title )
+                version = self.systems[x]["version"]
+                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
+                date = self.systems[x]["date"]
+                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
+                result += ('\n' if result else '') + "    Num entries = %i" % ( len(self.systems[x]["tree"]) )
+                numDivisions, numLeaders, numBooks = 0, 0, 0
+                for element in self.systems[x]["tree"]:
+                    if element.tag == "BibleDivisionNames":
+                        numDivisions += 1
+                    elif element.tag == "BibleBooknameLeaders":
+                        numLeaders += 1
+                    elif element.tag == "BibleBookNames":
+                        numBooks += 1
+                if numDivisions: result += ('\n' if result else '') + "      Num divisions = %i" % ( numDivisions )
+                if numLeaders: result += ('\n' if result else '') + "      Num bookname leaders = %i" % ( numLeaders )
+                if numBooks: result += ('\n' if result else '') + "      Num books = %i" % ( numBooks )
         return result
     # end of __str__
 
@@ -249,6 +250,8 @@ class BibleBooksNamesSystemsConvertor:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
+                        if self.BibleBooksCodesDict and BBB not in self.BibleBooksCodesDict:
+                            logging.error( "Unrecognized '%s' book abbreviation in BibleDivisionNames in '%s' booksNames system" % ( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
                             logging.error( "Duplicate '%s' entry in includesBook field for '%s' division in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: includedBooks.append( BBB )
@@ -265,7 +268,7 @@ class BibleBooksNamesSystemsConvertor:
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
                     if self.BibleBooksCodesDict and referenceAbbreviation not in self.BibleBooksCodesDict:
-                        logging.error( "Unrecognized '%s' book abbreviation BibleBookNames in '%s' booksNames system" % ( referenceAbbreviation, booksNamesSystemCode ) )
+                        logging.error( "Unrecognized '%s' book abbreviation in BibleBookNames in '%s' booksNames system" % ( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ] # Add the default name to the allowed input fields
@@ -345,14 +348,14 @@ class BibleBooksNamesSystemsConvertor:
                 for field in entryDict["inputFields"]:
                     UCField = field.upper()
                     if UCField in divNameInputDict or UCField in bkNameInputDict:
-                        logging.error( "Have duplicate entries of '%s' in divisionsNames for %s" % ( UCField, systemName ) )
+                        logging.warning( "Have duplicate entries of '%s' in divisionsNames for %s" % ( UCField, systemName ) )
                         ambigSet.add( UCField )
                     divNameInputDict[UCField] = k # Store the index into divisionsNamesList
             for refAbbrev in bookNamesDict.keys():
                 for field in bookNamesDict[refAbbrev]["inputFields"]:
                     UCField = field.upper()
                     if UCField in divNameInputDict or UCField in bkNameInputDict:
-                        logging.error( "Have duplicate entries of '%s' in divisions and book names for %s" % ( UCField, systemName ) )
+                        logging.warning( "Have duplicate entries of '%s' in divisions and book names for %s" % ( UCField, systemName ) )
                         ambigSet.add( UCField )
                     bkNameInputDict[UCField] = refAbbrev # Store the index to the book
             #print( 'amb', len(ambigSet), ambigSet )
@@ -540,8 +543,8 @@ def main():
     # Get the data tables that we need for proper checking
     bbc = BibleBooksCodes.BibleBooksCodesConvertor()
     junk, BBCRADict, junk, junk, junk, junk, junk, junk, BBCNameDict = bbc.importDataToPython()
-    iso = iso_639_3.iso_639_3_Convertor()
-    ISOIDDict, junk = iso.importDataToPython()
+    ISO = ISO_639_3.ISO_639_3_Convertor()
+    ISOIDDict, junk = ISO.importDataToPython()
 
     # Adjust the name dict to upper case
     UC_BBCNameDict = {}

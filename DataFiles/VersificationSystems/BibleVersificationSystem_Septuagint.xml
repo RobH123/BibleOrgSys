@@ -1813,7 +1813,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>1 Esdras / Ezra-Nehemiah</nameEnglish>
-    <referenceAbbreviation>EZN</referenceAbbreviation>
+    <referenceAbbreviation>GES</referenceAbbreviation>
     <numChapters>9</numChapters>
     <numVerses chapter="1">55</numVerses>
     <numVerses chapter="2">26</numVerses>
@@ -1827,7 +1827,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>2 Esdras / Latin Esdras</nameEnglish>
-    <referenceAbbreviation>ESL</referenceAbbreviation>
+    <referenceAbbreviation>LES</referenceAbbreviation>
     <numChapters>16</numChapters>
     <numVerses chapter="1">40</numVerses>
     <numVerses chapter="2">48</numVerses>

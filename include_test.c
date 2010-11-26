@@ -13,10 +13,12 @@
 
 /*  Include the .h files that we wish to test for errors */
 # 
-#include "DerivedFiles/iso_639_3Tables.h"
-#include "DerivedFiles/BibleBooksCodesTables.h"
-/*#include "DerivedFiles/BibleBooksNamesTables.h"*/
-#include "DerivedFiles/BibleOrganizationalSystemsTables.h"
+#include "DerivedFiles/iso_639_3_Tables.h"
+#include "DerivedFiles/BibleBooksCodes_Tables.h"
+#include "DerivedFiles/BibleVersificationSystems_Tables.h"
+#include "DerivedFiles/BibleBooksOrders_Tables.h"
+/*#include "DerivedFiles/BibleBooksNames_Tables.h"*/
+/*#include "DerivedFiles/BibleOrganizationalSystems_Tables.h"*/
 
 /* A dummy main program to keep the compiler happy */
 main() {}

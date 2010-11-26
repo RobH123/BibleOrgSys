@@ -1597,7 +1597,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>1 Esdras / Ezra-Nehemiah</nameEnglish>
-    <referenceAbbreviation>EZR</referenceAbbreviation>
+    <referenceAbbreviation>GES</referenceAbbreviation>
     <numChapters>9</numChapters>
     <numVerses chapter="1">58</numVerses>
     <numVerses chapter="2">30</numVerses>
@@ -1611,7 +1611,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>2 Esdras / Latin Esdras</nameEnglish>
-    <referenceAbbreviation>NEH</referenceAbbreviation>
+    <referenceAbbreviation>LES</referenceAbbreviation>
     <numChapters>16</numChapters>
     <numVerses chapter="1">40</numVerses>
     <numVerses chapter="2">48</numVerses>
@@ -1820,7 +1820,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish> Prayer of Azaraiah and Song of the three young men</nameEnglish>
-    <referenceAbbreviation>PAS</referenceAbbreviation>
+    <referenceAbbreviation>PAZ</referenceAbbreviation>
     <numChapters>1</numChapters>
     <numVerses chapter="1">68</numVerses>
   </BibleBookVersification>

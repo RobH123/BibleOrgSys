@@ -91,9 +91,9 @@ See the supplied ReadMe.txt for more details.
     <includesBook>JOL</includesBook>
     <includesBook>AMO</includesBook>
     <includesBook>OBA</includesBook>
-    <includesBook>JON</includesBook>
+    <includesBook>JNA</includesBook>
     <includesBook>MIC</includesBook>
-    <includesBook>NHM</includesBook>
+    <includesBook>NAH</includesBook>
     <includesBook>HAB</includesBook>
     <includesBook>ZEP</includesBook>
     <includesBook>HAG</includesBook>
@@ -134,9 +134,9 @@ See the supplied ReadMe.txt for more details.
     <includesBook>JOL</includesBook>
     <includesBook>AMO</includesBook>
     <includesBook>OBA</includesBook>
-    <includesBook>JON</includesBook>
+    <includesBook>JNA</includesBook>
     <includesBook>MIC</includesBook>
-    <includesBook>NHM</includesBook>
+    <includesBook>NAH</includesBook>
     <includesBook>HAB</includesBook>
     <includesBook>ZEP</includesBook>
     <includesBook>HAG</includesBook>
@@ -172,7 +172,7 @@ See the supplied ReadMe.txt for more details.
     <includesBook>JN1</includesBook>
     <includesBook>JN2</includesBook>
     <includesBook>JN3</includesBook>
-    <includesBook>JUD</includesBook>
+    <includesBook>JDE</includesBook>
     <includesBook>REV</includesBook>
   </BibleDivisionNames>
   <BibleDivisionNames>
@@ -436,7 +436,7 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Oba</defaultAbbreviation>
     <inputAbbreviation>Obdh</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="JON">
+  <BibleBookNames referenceAbbreviation="JNA">
     <defaultName>Jonah</defaultName>
     <defaultAbbreviation>Jon</defaultAbbreviation>
     <inputAbbreviation>Jnh</inputAbbreviation>
@@ -448,7 +448,7 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Mich</inputAbbreviation>
     <inputAbbreviation>Mch</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="NAM">
+  <BibleBookNames referenceAbbreviation="NAH">
     <defaultName>Nahum</defaultName>
     <defaultAbbreviation>Nah</defaultAbbreviation>
     <inputAbbreviation>Nahm</inputAbbreviation>
@@ -656,7 +656,7 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>3 Jhn</inputAbbreviation>
     <inputAbbreviation>3 Jn</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="JUD">
+  <BibleBookNames referenceAbbreviation="JDE">
     <defaultName>Jude</defaultName>
     <defaultAbbreviation>Jud</defaultAbbreviation>
     <inputAbbreviation>Jde</inputAbbreviation>
@@ -688,22 +688,17 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Bel</defaultAbbreviation>
     <inputAbbreviation>BaD</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="S3Y">
-    <defaultName>Song of Three Young Men</defaultName>
-    <defaultAbbreviation>S3Y</defaultAbbreviation>
-    <inputAbbreviation>Sng3</inputAbbreviation>
-  </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SUS">
     <defaultName>Susanna</defaultName>
     <defaultAbbreviation>Sus</defaultAbbreviation>
     <inputAbbreviation>Ssnn</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="ES1">
+  <BibleBookNames referenceAbbreviation="GES">
     <defaultName>1 Esdras</defaultName>
     <defaultAbbreviation>1 Esd</defaultAbbreviation>
     <inputAbbreviation>1 Esdrs</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="ES2">
+  <BibleBookNames referenceAbbreviation="LES">
     <defaultName>2 Esdras</defaultName>
     <defaultAbbreviation>2 Esd</defaultAbbreviation>
     <inputAbbreviation>2 Esdrs</inputAbbreviation>
@@ -1025,11 +1020,6 @@ See the supplied ReadMe.txt for more details.
     <defaultName>Twelve Prophets</defaultName>
     <defaultAbbreviation>TwProp</defaultAbbreviation>
     <inputAbbreviation>12 Prophets</inputAbbreviation>
-  </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="PAS">
-    <defaultName>Prayer of Azariah (with Song)</defaultName>
-    <defaultAbbreviation>PrAza</defaultAbbreviation>
-    <inputAbbreviation>Pr Aza</inputAbbreviation>
   </BibleBookNames>
 
 </BibleBooksNames>

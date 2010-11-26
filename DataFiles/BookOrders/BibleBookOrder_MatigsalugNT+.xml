@@ -50,7 +50,7 @@ See the supplied ReadMe.txt for more details.
   <book id="1">GEN</book>
   <book id="2">RUT</book>
   <book id="3">EST</book>
-  <book id="4">JON</book>
+  <book id="4">JNA</book>
   <!-- Yes, this volume contains only four OT books -->
   <book id="5">MAT</book>
   <book id="6">MRK</book>
@@ -77,6 +77,6 @@ See the supplied ReadMe.txt for more details.
   <book id="27">JN1</book>
   <book id="28">JN2</book>
   <book id="29">JN3</book>
-  <book id="30">JUD</book>
+  <book id="30">JDE</book>
   <book id="31">REV</book>
 </BibleBookOrderSystem>

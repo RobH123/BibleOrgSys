@@ -1180,7 +1180,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>1 Esdras</nameEnglish>
-    <referenceAbbreviation>EZR</referenceAbbreviation>
+    <referenceAbbreviation>GES</referenceAbbreviation>
     <numChapters>9</numChapters>
     <numVerses chapter="1">58</numVerses>
     <numVerses chapter="2">30</numVerses>
@@ -1194,7 +1194,7 @@ See the supplied ReadMe.txt for more details.
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>2 Esdras</nameEnglish>
-    <referenceAbbreviation>NEH</referenceAbbreviation>
+    <referenceAbbreviation>LES</referenceAbbreviation>
     <numChapters>16</numChapters>
     <numVerses chapter="1">40</numVerses>
     <numVerses chapter="2">48</numVerses>

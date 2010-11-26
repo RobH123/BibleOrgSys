@@ -4,7 +4,7 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2010-11-16 (also update versionString below)
+#   Last modified: 2010-11-26 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -34,7 +34,7 @@ versionString = "0.12"
 import logging, os.path
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
-import BibleBooksCodes, iso_639_3, BibleChaptersVerses
+import BibleBooksCodes, ISO_639_3, BibleChaptersVerses
 
 
 class BibleOrganizationalSystemsConvertor:
@@ -335,8 +335,8 @@ def main():
     # Get the data tables that we need for proper checking
     bbc = BibleBooksCodes.BibleBooksCodesConvertor()
     junk, BBCRADict, junk, junk, junk, junk, junk, junk, BBCNameDict = bbc.importDataToPython()
-    iso = iso_639_3.iso_639_3_Convertor()
-    ISOIDDict, junk = iso.importDataToPython()
+    ISO = ISO_639_3.ISO_639_3_Convertor()
+    ISOIDDict, junk = ISO.importDataToPython()
 
     # Do a proper load/check
     bvs = BibleOrganizationalSystemsConvertor( ISO639Dict=ISOIDDict, BibleBooksCodesDict=BBCRADict )
