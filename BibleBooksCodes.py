@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-11-23 (also update versionString below)
+#   Last modified: 2010-11-30 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -244,6 +244,8 @@ class BibleBooksCodesConvertor:
             # Start with the compulsory elements
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             referenceAbbreviation = element.find("referenceAbbreviation").text
+            if referenceAbbreviation.upper() != referenceAbbreviation:
+                logging.error( "Reference abbreviation '%s' should be UPPER CASE" % ( referenceAbbreviation ) )
             ID = element.find("referenceNumber").text
             intID = int( ID )
             # The optional elements are set to None if they don't exist
@@ -459,7 +461,8 @@ def main():
 
         bbc = BibleBooksCodes() # Reloads the XML!
         print( bbc )
-        print( bbc.getExpectedChapters("EST") )
+        print( "Esther has %s expected chapters" % (bbc.getExpectedChapters("EST")) )
+        print( "Apocalypse of Ezra has %s expected chapters" % (bbc.getExpectedChapters("EZA")) )
 # end of main
 
 if __name__ == '__main__':

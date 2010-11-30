@@ -4,7 +4,7 @@
 # BibleChaptersVerses.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-26 (also update versionString below)
+#   Last modified: 2010-11-30 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import os, logging
@@ -262,12 +262,12 @@ class BibleVersificationSystemsConvertor:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
+        def exportPythonDict( theFile, theDict, systemName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( '  "%s": {\n    # Key is %s\n    # Fields are: %s\n' % ( systemName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '  %s: %s,\n' % ( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
+                theFile.write( '    %s: %s,\n' % ( repr(dictKey), theDict[dictKey] ) )
+            theFile.write( "  }, # end of %s (%i entries)\n\n" % ( systemName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -284,13 +284,16 @@ class BibleVersificationSystemsConvertor:
             #if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), BibleVersificationSystemsConvertor.treeTag ) )
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleVersificationSystemsConvertor.treeTag ) )
-            myFile.write( "from collections import OrderedDict\n" )
+            myFile.write( "from collections import OrderedDict\n\n" )
+            myFile.write( "chapterVerseDict = {\n  # Key is versificationSystemName\n  # Fields are versificationSystem\n" )
             for systemName in versificationSystemDict:
-                myFile.write( "#\n# %s\n" % ( systemName ) )
-                exportPythonDict( myFile, versificationSystemDict[systemName][0], "chapterVerseDict", "BBB referenceAbbreviation", "tuples containing (emptyString, numChapters) then (chapterNumber, numVerses)" )
-                exportPythonDict( myFile, versificationSystemDict[systemName][1], "omittedVersesDict", "BBB referenceAbbreviation", "tuples containing (chapterNumber, omittedVerseNumber)" )
+                exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName, "BBB referenceAbbreviation", "tuples containing (emptyString, numChapters) then (chapterNumber, numVerses)" )
+            myFile.write( "} # end of chapterVerseDict (%i systems)\n\n" % ( len(versificationSystemDict) ) )
+            myFile.write( "omittedVersesDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n" )
+            for systemName in versificationSystemDict:
+                exportPythonDict( myFile, versificationSystemDict[systemName][1], systemName, "BBB referenceAbbreviation", "tuples containing (chapterNumber, omittedVerseNumber)" )
+            myFile.write( "} # end of omittedVersesDict (%i systems)\n\n" % ( len(versificationSystemDict) ) )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):
@@ -321,7 +324,7 @@ class BibleVersificationSystemsConvertor:
                     else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
                 return result
 
-            theFile.write( "static struct %s %s[] = {\n  // Fields are %s\n" % ( structName, dictName, fieldsComment ) )
+            theFile.write( "static struct %s %s[%i] = {\n  // Fields are %s\n" % ( structName, dictName, len(theDict), fieldsComment ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
                     #print( dictKey, theDict[dictKey] )
@@ -330,7 +333,7 @@ class BibleVersificationSystemsConvertor:
                     theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
                     logging.error( "Can't handle this type of key data yet: %s" % ( dictKey ) )
-            theFile.write( "}; // %s\n\n" % ( dictName) )
+            theFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -347,12 +350,16 @@ class BibleVersificationSystemsConvertor:
             #if self.title: myFile.write( "// %s\n" % ( self.title ) )
             #if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            #myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.namesTree), BibleVersificationSystemsConvertor.treeTag ) )
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleVersificationSystemsConvertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
+            myFile.write( "static struct {struct char*, void*, void*} versificationSystemNames[%i] = {\n  // Fields are systemName, systemVersification, systemOmittedVerses\n" % ( len(versificationSystemDict) ) )
+            for systemName in versificationSystemDict:
+                myFile.write( '  { "%s", %s_versificationSystem, %s_omittedVerses },\n' % ( systemName, systemName, systemName ) )
+            myFile.write( "}; // versificationSystemNames (%i entries)\n\n" % ( len(versificationSystemDict) ) )
             for systemName in versificationSystemDict:
                 myFile.write( "#\n# %s\n" % ( systemName ) )
-                exportPythonDict( myFile, versificationSystemDict[systemName][0], "chapterVerseDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation, emptyString, numChapters) then pairs of chapterNumber,numVerses" )
+                exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, emptyString, numChapters) then pairs of chapterNumber,numVerses" )
+                exportPythonDict( myFile, versificationSystemDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
                 exportPythonDict( myFile, versificationSystemDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC

@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-26 (also update versionString below)
+#   Last modified: 2010-11-30 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import os, logging
@@ -275,10 +275,10 @@ class BibleBookOrdersConvertor:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( '  "%s": {\n    # Key is %s\n    # Fields are: %s\n' % ( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '  %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
+                theFile.write( '    %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "  }, # end of %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -297,12 +297,17 @@ class BibleBookOrdersConvertor:
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), BibleBookOrdersConvertor.treeTag ) )
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleBookOrdersConvertor.treeTag ) )
-            myFile.write( "from collections import OrderedDict\n" )
+            myFile.write( "from collections import OrderedDict\n\n\n" )
+            myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName in bookOrderSystemDict:
                 bookDataDict, idDataDict = bookOrderSystemDict[systemName]
-                myFile.write( "#\n# %s\n" % ( systemName ) )
-                exportPythonDict( myFile, bookDataDict, "bookDataDict", "referenceAbbreviation", "id" )
-                exportPythonDict( myFile, idDataDict, "idDataDict", "id", "referenceAbbreviation" )
+                exportPythonDict( myFile, bookDataDict, systemName, "referenceAbbreviation", "id" )
+            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(bookOrderSystemDict) ) )
+            myFile.write( "idDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
+            for systemName in bookOrderSystemDict:
+                bookDataDict, idDataDict = bookOrderSystemDict[systemName]
+                exportPythonDict( myFile, idDataDict, systemName, "id", "referenceAbbreviation" )
+            myFile.write( "} # end of idDataDict (%i systems)\n" % ( len(bookOrderSystemDict) ) )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):

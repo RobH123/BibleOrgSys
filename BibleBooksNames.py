@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-26 (also update versionString below)
+#   Last modified: 2010-11-30 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.15"
+versionString = "0.16"
 
 
 import os, logging
@@ -52,9 +52,7 @@ class BibleBooksNamesSystemsConvertor:
         uniqueAttributes[key] = compulsoryAttributes[key] + optionalAttributes[key]
     compulsoryElements = { 0:("defaultName","defaultAbbreviation","includesBook",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation",) }
     optionalElements =  { 0:("inputAbbreviation",), 1:(), 2:("inputAbbreviation",) }
-    uniqueElements = {}
-    for key in compulsoryElements.keys():
-        uniqueElements[key] = compulsoryElements[key] + optionalElements[key]
+    uniqueElements = { 0:("defaultName","defaultAbbreviation","inputAbbreviation",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation","inputAbbreviation",) }
 
     def __init__( self, ISO639Dict=None, BibleBooksCodesDict=None ):
         """
@@ -220,7 +218,7 @@ class BibleBooksNamesSystemsConvertor:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+str(index)+"_"+elementName]:
-                            logging.error( "Found '%s' data repeated in '%s' element (record %i) in %s" % ( text, elementName, k, systemName ) )
+                            logging.warning( "Found '%s' data repeated in '%s' element (record %i) in %s" % ( text, elementName, k, systemName ) )
                         uniqueDict["Element_"+str(index)+"_"+elementName].append( text )
             else:
                 logging.warning( "Unexpected element: %s in record %i in %s" % ( element.tag, k, systemName ) )
@@ -422,26 +420,26 @@ class BibleBooksNamesSystemsConvertor:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( '  "%s": {\n    # Key is %s\n    # Fields are: %s\n' % ( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '  %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "} # (%i entries)\n# end of %s\n\n" % ( len(theDict), dictName ) )
+                theFile.write( '    %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "  }, # end of %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         def exportPythonOrderedDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = OrderedDict([\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( '  "%s": OrderedDict([\n    # Key is %s\n    # Fields are: %s\n' % ( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '  (%s, %s),\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "]) # (%i entries)\n# end of %s\n\n" % ( len(theDict), dictName ) )
+                theFile.write( '    (%s, %s),\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "  ]), # end of %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         def exportPythonList( theFile, theList, listName, fieldsComment ):
             """Exports theList to theFile."""
-            theFile.write( "%s = [\n  # Fields are: %s\n" % ( listName, fieldsComment ) )
+            theFile.write( '  "%s": [\n    # Fields are: %s\n' % ( listName, fieldsComment ) )
             for j,entry in enumerate(theList):
-                theFile.write( '  %s, # %i\n' % ( repr(entry), j ) )
-            theFile.write( "] # (%i entries)\n# end of %s\n\n" % ( len(theList), listName ) )
+                theFile.write( '    %s, # %i\n' % ( repr(entry), j ) )
+            theFile.write( "  ], # end of %s (%i entries)\n\n" % ( listName, len(theList) ) )
         # end of exportPythonList
 
         from datetime import datetime
@@ -459,18 +457,35 @@ class BibleBooksNamesSystemsConvertor:
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), BibleBooksNamesSystemsConvertor.treeTag ) )
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleBooksNamesSystemsConvertor.treeTag ) )
-            myFile.write( "from collections import OrderedDict\n" )
+            myFile.write( "from collections import OrderedDict\n\n" )
+            myFile.write( "\ndivisionNamesList = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
             for systemName in self.importedSystems:
                 divisionsNamesList, booknameLeadersDict, bookNamesDict = self.importedSystems[systemName]
-                myFile.write( "\n\n#\n# %s\n#\n\n" % ( systemName ) )
-                exportPythonList( myFile, divisionsNamesList, "divisionNamesList", "startsWith( string), defaultName (string), defaultAbbreviation (string), inputFields (list of strings) all in a dictionary" )
-                exportPythonDict( myFile, booknameLeadersDict, "booknameLeadersDict", "standardLeader (all fields include a trailing space)", "inputAlternatives (list of strings)" )
-                exportPythonDict( myFile, bookNamesDict, "bookNamesDict", "referenceAbbreviation", "defaultName (string), defaultAbbreviation (string), inputAbbreviations (list of strings) all in a dictionary" )
-                if systemName in self.expandedInputSystems:
-                    divisionsNamesInputDict, bookNamesInputDict = self.expandedInputSystems[systemName]
-                    #myFile.write( "#\n# %s\n" % ( systemName ) )
-                    exportPythonOrderedDict( myFile, divisionsNamesInputDict, "divisionsNamesInputDict", "UpperCaseInputString", "index (into divisionNamesList above)" )
-                    exportPythonOrderedDict( myFile, bookNamesInputDict, "bookNamesInputDict", "UpperCaseInputString", "referenceAbbreviation (string)" )
+                exportPythonList( myFile, divisionsNamesList, systemName, "startsWith( string), defaultName (string), defaultAbbreviation (string), inputFields (list of strings) all in a dictionary" )
+            myFile.write( "} # end of divisionNamesList (%i systems)\n\n\n" % ( len(self.importedSystems) ) )
+            myFile.write( "\nbooknameLeadersDict = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
+            for systemName in self.importedSystems:
+                divisionsNamesList, booknameLeadersDict, bookNamesDict = self.importedSystems[systemName]
+                exportPythonDict( myFile, booknameLeadersDict, systemName, "standardLeader (all fields include a trailing space)", "inputAlternatives (list of strings)" )
+            myFile.write( "} # end of booknameLeadersDict (%i systems)\n\n\n" % ( len(self.importedSystems) ) )
+            myFile.write( "\nbookNamesDict = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
+            for systemName in self.importedSystems:
+                divisionsNamesList, booknameLeadersDict, bookNamesDict = self.importedSystems[systemName]
+                exportPythonDict( myFile, bookNamesDict, systemName, "referenceAbbreviation", "defaultName (string), defaultAbbreviation (string), inputAbbreviations (list of strings) all in a dictionary" )
+            myFile.write( "} # end of bookNamesDict (%i systems)\n\n\n" % ( len(self.importedSystems) ) )
+            if self.expandedInputSystems:
+                myFile.write( "\ndivisionsNamesInputDict = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
+                for systemName in self.importedSystems:
+                    if systemName in self.expandedInputSystems:
+                        divisionsNamesInputDict, bookNamesInputDict = self.expandedInputSystems[systemName]
+                        exportPythonOrderedDict( myFile, divisionsNamesInputDict, "divisionsNamesInputDict", "UpperCaseInputString (sorted with longest first)", "index (into divisionNamesList above)" )
+                myFile.write( "} # end of divisionsNamesInputDict (%i systems)\n\n\n" % ( len(self.importedSystems) ) )
+                myFile.write( "\nbookNamesInputDict = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
+                for systemName in self.importedSystems:
+                    if systemName in self.expandedInputSystems:
+                        divisionsNamesInputDict, bookNamesInputDict = self.expandedInputSystems[systemName]
+                        exportPythonOrderedDict( myFile, bookNamesInputDict, "bookNamesInputDict", "UpperCaseInputString (sorted with longest first)", "referenceAbbreviation (string)" )
+                myFile.write( "} # end of bookNamesInputDict (%i systems)\n" % ( len(self.importedSystems) ) )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):
@@ -535,6 +550,7 @@ def main():
     from optparse import OptionParser
     global CommandLineOptions
     parser = OptionParser( version="v%s" % ( versionString ) )
+    parser.add_option("-x", "--expand", action="store_true", dest="expand", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="display extra debugging information")
     CommandLineOptions, args = parser.parse_args()
@@ -555,15 +571,15 @@ def main():
     bbns = BibleBooksNamesSystemsConvertor( ISO639Dict=ISOIDDict, BibleBooksCodesDict=BBCRADict )
     bbns.loadSystems()
     bbns.importDataToPython()
-    # Expand the inputAbbreviations to find all shorter unambiguous possibilities
-    bbns.expandInputs()
+    if CommandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        bbns.expandInputs()
 
     if CommandLineOptions.export:
         bbns.exportDataToPython()
         bbns.exportDataToC()
-    else: # not scraping or exporting -- must just be a demo run
-        print( bbns )
-        bbns.expandInputs()
+    else: # not exporting -- must just be a demo run
+        #print( bbns )
+        #bbns.expandInputs()
         print( bbns )
 # end of main
 
