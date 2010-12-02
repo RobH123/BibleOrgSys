@@ -39,9 +39,9 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.21</version>
+      <version>0.10</version>
       <date>2010-12-01</date>
-      <title>European Protestant Bible book order</title>
+      <title>New Revised Standard Bible with Apocrypha book order</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
@@ -86,31 +86,48 @@ See the supplied ReadMe.txt for more details.
   <book id="37">HAG</book>
   <book id="38">ZEC</book>
   <book id="39">MAL</book>
-  <book id="40">MAT</book>
-  <book id="41">MRK</book>
-  <book id="42">LUK</book>
-  <book id="43">JHN</book>
-  <book id="44">ACT</book>
-  <book id="45">ROM</book>
-  <book id="46">CO1</book>
-  <book id="47">CO2</book>
-  <book id="48">GAL</book>
-  <book id="49">EPH</book>
-  <book id="50">PHP</book>
-  <book id="51">COL</book>
-  <book id="52">TH1</book>
-  <book id="53">TH2</book>
-  <book id="54">TI1</book>
-  <book id="55">TI2</book>
-  <book id="56">TIT</book>
-  <book id="57">PHM</book>
-  <book id="58">HEB</book>
-  <book id="59">JAM</book>
-  <book id="60">PE1</book>
-  <book id="61">PE2</book>
-  <book id="62">JN1</book>
-  <book id="63">JN2</book>
-  <book id="64">JN3</book>
-  <book id="65">JDE</book>
-  <book id="66">REV</book>
+  <book id="40">TOB</book>
+  <book id="41">JDT</book>
+  <book id="42">ESG</book>
+  <book id="43">WIS</book>
+  <book id="44">SIR</book>
+  <book id="45">BAR</book>
+  <book id="46">PAZ</book>
+  <book id="47">SUS</book>
+  <book id="48">BEL</book>
+  <book id="49">MA1</book>
+  <book id="50">MA2</book>
+  <book id="51">GES</book>
+  <book id="52">MAN</book>
+  <book id="53">PSS</book>
+  <book id="54">MA3</book>
+  <book id="55">LES</book>
+  <book id="56">MA4</book>
+  <book id="57">MAT</book>
+  <book id="58">MRK</book>
+  <book id="59">LUK</book>
+  <book id="60">JHN</book>
+  <book id="61">ACT</book>
+  <book id="62">ROM</book>
+  <book id="63">CO1</book>
+  <book id="64">CO2</book>
+  <book id="65">GAL</book>
+  <book id="66">EPH</book>
+  <book id="67">PHP</book>
+  <book id="68">COL</book>
+  <book id="69">TH1</book>
+  <book id="70">TH2</book>
+  <book id="71">TI1</book>
+  <book id="72">TI2</book>
+  <book id="73">TIT</book>
+  <book id="74">PHM</book>
+  <book id="75">HEB</book>
+  <book id="76">JAM</book>
+  <book id="77">PE1</book>
+  <book id="78">PE2</book>
+  <book id="79">JN1</book>
+  <book id="80">JN2</book>
+  <book id="81">JN3</book>
+  <book id="82">JDE</book>
+  <book id="83">REV</book>
 </BibleBookOrderSystem>

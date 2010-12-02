@@ -2,8 +2,8 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-      Version 0.92
-      Last modified: 2010-11-26
+      Version 0.93
+      Last modified: 2010-11-30
     
     On Linux, to convert to RNG, use
           trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
@@ -91,7 +91,7 @@
       <element name="nameEnglish">
         <data type="string">
           <param name="minLength">3</param>
-          <param name="maxLength">120</param>
+          <param name="maxLength">140</param>
         </data>
       </element>
       <element name="referenceAbbreviation">
@@ -131,6 +131,14 @@
         </element>
       </optional>
       <optional>
+        <element name="SwordAbbreviation">
+          <data type="string">
+            <param name="minLength">2</param>
+            <param name="maxLength">7</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
         <element name="CCELNumber">
           <data type="positiveInteger">
             <param name="totalDigits">2</param>
@@ -157,14 +165,6 @@
         <element name="NETBibleAbbreviation">
           <data type="string">
             <param name="length">3</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="SwordAbbreviation">
-          <data type="string">
-            <param name="minLength">3</param>
-            <param name="maxLength">5</param>
           </data>
         </element>
       </optional>

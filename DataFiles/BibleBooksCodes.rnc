@@ -1,6 +1,6 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Version 0.92
-#   Last modified: 2010-11-26
+#   Version 0.93
+#   Last modified: 2010-11-30
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
@@ -41,16 +41,16 @@ work = element work
 }
 
 BibleBookCodes = element BibleBookCodes
-{   element nameEnglish { xsd:string { minLength="3" maxLength="120" } },
+{   element nameEnglish { xsd:string { minLength="3" maxLength="140" } },
     element referenceAbbreviation { xsd:string { length="3" } },
     element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="245" } },
     element expectedChapters { xsd:string { minLength="1" maxLength="5" } }?,
     element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
     element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
+    element SwordAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
     element CCELNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="95" } }?,
     element ParatextAbbreviation { xsd:string { length="3" } }?,
     element ParatextNumber { xsd:string { length="2" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
-    element SwordAbbreviation { xsd:string { minLength="3" maxLength="5" } }?,
     element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
 }

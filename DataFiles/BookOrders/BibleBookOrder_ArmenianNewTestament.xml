@@ -39,9 +39,9 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.20</version>
-      <date>2010-11-10</date>
-      <title>Slavonic New Testament book order</title>
+      <version>0.21</version>
+      <date>2010-12-01</date>
+      <title>Armenian New Testament book order</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://lc.bfbs.org.uk/request.php?canonicalissuesinparatext.pdf</identifier>
       <rights>Public Domain</rights>
@@ -53,7 +53,7 @@ See the supplied ReadMe.txt for more details.
   <book id="3">LUK</book>
   <book id="4">JHN</book>
   <book id="5">ACT</book>
-  <book id="6">JAS</book>
+  <book id="6">JAM</book>
   <book id="7">PE1</book>
   <book id="8">PE2</book>
   <book id="9">JN1</book>
@@ -69,10 +69,10 @@ See the supplied ReadMe.txt for more details.
   <book id="19">COL</book>
   <book id="20">TH1</book>
   <book id="21">TH2</book>
-  <book id="22">TI1</book>
-  <book id="23">TI2</book>
-  <book id="24">TIT</book>
-  <book id="25">PHM</book>
-  <book id="26">HEB</book>
+  <book id="22">HEB</book>
+  <book id="23">TI1</book>
+  <book id="24">TI2</book>
+  <book id="25">TIT</book>
+  <book id="26">PHM</book>
   <book id="27">REV</book>
 </BibleBookOrderSystem>

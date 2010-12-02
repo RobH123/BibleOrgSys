@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-30 (also update versionString below)
+#   Last modified: 2010-12-01 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.17"
+versionString = "0.18"
 
 
 import os, logging
@@ -58,7 +58,7 @@ class BibleBookOrdersConvertor:
         """
         self.BibleBooksCodesDict = BibleBooksCodesDict
         #self.title, self.version, self.date = None, None, None
-        self.systems = {}
+        self.XMLSystems, self.Dict, self.Lists = {}, {}, {}
     # end of __init__
 
     def __str__( self ):
@@ -72,17 +72,17 @@ class BibleBookOrdersConvertor:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: %s" % ( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: %s" % ( self.date )
-        result += ('\n' if result else '') + "Num book order systems loaded = %i" % ( len(self.systems) )
+        result += ('\n' if result else '') + "Num book order systems loaded = %i" % ( len(self.XMLSystems) )
         if 0: # Make it verbose
-            for x in self.systems:
+            for x in self.XMLSystems:
                 result += ('\n' if result else '') + "  %s" % ( x )
-                title = self.systems[x]["title"]
+                title = self.XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    %s" % ( title )
-                version = self.systems[x]["version"]
+                version = self.XMLSystems[x]["version"]
                 if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-                date = self.systems[x]["date"]
+                date = self.XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.systems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
         return result
     # end of __str__
 
@@ -97,16 +97,16 @@ class BibleBookOrdersConvertor:
             if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
                 bookOrderSystemCode = filepart[15:]
                 #print( "Loading %s book order system from %s..." % ( bookOrderSystemCode, filename ) )
-                self.systems[bookOrderSystemCode] = {}
-                self.systems[bookOrderSystemCode]["tree"] = ElementTree().parse ( os.path.join( folder, filename ) )
-                assert( self.systems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                self.XMLSystems[bookOrderSystemCode] = {}
+                self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse ( os.path.join( folder, filename ) )
+                assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
                 # Check and remove the header element
-                if self.systems[bookOrderSystemCode]["tree"].tag  == BibleBookOrdersConvertor.treeTag:
-                    header = self.systems[bookOrderSystemCode]["tree"][0]
+                if self.XMLSystems[bookOrderSystemCode]["tree"].tag  == BibleBookOrdersConvertor.treeTag:
+                    header = self.XMLSystems[bookOrderSystemCode]["tree"][0]
                     if header.tag == BibleBookOrdersConvertor.headerTag:
-                        self.systems[bookOrderSystemCode]["header"] = header
-                        self.systems[bookOrderSystemCode]["tree"].remove( header )
+                        self.XMLSystems[bookOrderSystemCode]["header"] = header
+                        self.XMLSystems[bookOrderSystemCode]["tree"].remove( header )
                         if len(header)>1:
                             logging.info( "Unexpected elements in header" )
                         elif len(header)==0:
@@ -114,21 +114,21 @@ class BibleBookOrdersConvertor:
                         else:
                             work = header[0]
                             if work.tag == "work":
-                                self.systems[bookOrderSystemCode]["version"] = work.find("version").text
-                                self.systems[bookOrderSystemCode]["date"] = work.find("date").text
-                                self.systems[bookOrderSystemCode]["title"] = work.find("title").text
+                                self.XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
+                                self.XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
+                                self.XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
                             else:
                                 logging.warning( "Missing work element in header" )
                     else:
                         logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
                 else:
-                    logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.systems[bookOrderSystemCode]["tree"].tag ) )
+                    logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
                 bookCount = 0 # There must be an easier way to do this
-                for subelement in self.systems[bookOrderSystemCode]["tree"]:
+                for subelement in self.XMLSystems[bookOrderSystemCode]["tree"]:
                     bookCount += 1
                 logging.info( "    Loaded %i books" % ( bookCount ) )
 
-                self.validateSystem( self.systems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+                self.validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
     # end of loadSystems
 
     def validateSystem( self, bookOrderTree, systemName ):
@@ -221,10 +221,10 @@ class BibleBookOrdersConvertor:
         Returns True if a duplicate is found.
         """
         systemLists, foundDuplicate = {}, False
-        for bookOrderSystemCode in self.systems.keys():
+        for bookOrderSystemCode in self.XMLSystems.keys():
             # Get the referenceAbbreviations all into a list
             bookDataList = []
-            for bookElement in self.systems[bookOrderSystemCode]["tree"]:
+            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
                 bookRA = bookElement.text
                 if bookRA in self.BibleBooksCodesDict:
                     bookDataList.append( bookRA )
@@ -242,13 +242,15 @@ class BibleBookOrdersConvertor:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
+        assert( self.XMLSystems )
+
         # We'll create a number of dictionaries
-        myBookOrderDict = {}
-        for bookOrderSystemCode in self.systems.keys():
+        self.Dict, self.Lists = {}, {}
+        for bookOrderSystemCode in self.XMLSystems.keys():
             #print( bookOrderSystemCode )
             # Make the data dictionary for this book order system
-            bookDataDict, idDataDict = OrderedDict(), OrderedDict()
-            for bookElement in self.systems[bookOrderSystemCode]["tree"]:
+            bookDataDict, idDataDict, BBBList = OrderedDict(), OrderedDict(), []
+            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
@@ -261,12 +263,14 @@ class BibleBookOrdersConvertor:
                 if intID in idDataDict:
                     logging.error( "Duplicate %i ID numbers in '%s' book order system" % ( intID, bookOrderSystemCode ) )
                 idDataDict[intID] = bookRA
+                BBBList.append( bookRA )
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
-            myBookOrderDict[bookOrderSystemCode] = bookDataDict, idDataDict
-        return myBookOrderDict
+            self.Dict[bookOrderSystemCode] = bookDataDict, idDataDict
+            self.Lists[bookOrderSystemCode] = BBBList
+        return self.Dict
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -283,7 +287,7 @@ class BibleBookOrdersConvertor:
 
         from datetime import datetime
 
-        assert( self.systems )
+        assert( self.XMLSystems )
         if not filepath: filepath = os.path.join( "DerivedFiles", BibleBookOrdersConvertor.filenameBase + "_Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
@@ -296,7 +300,7 @@ class BibleBookOrdersConvertor:
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), BibleBookOrdersConvertor.treeTag ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleBookOrdersConvertor.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), BibleBookOrdersConvertor.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName in bookOrderSystemDict:
@@ -343,7 +347,7 @@ class BibleBookOrdersConvertor:
 
         from datetime import datetime
 
-        assert( self.systems )
+        assert( self.XMLSystems )
         if not filepath: filepath = os.path.join( "DerivedFiles", BibleBookOrdersConvertor.filenameBase + "_Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
 
@@ -355,7 +359,7 @@ class BibleBookOrdersConvertor:
             #if self.title: myFile.write( "// %s\n" % ( self.title ) )
             #if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.systems), BibleBookOrdersConvertor.treeTag ) )
+            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), BibleBookOrdersConvertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
             for systemName in bookOrderSystemDict:
                 bookDataDict, idDataDict = bookOrderSystemDict[systemName]
@@ -365,108 +369,54 @@ class BibleBookOrdersConvertor:
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
 
-    def checkBookOrderSystem( self, VSDict, systemName, bookOrderSchemeToCheck, omittedVersesToCheck=None ):
+    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False, debugFlag=False ):
         """
         Check the given book order scheme against all the loaded systems.
         Create a new book order file if it doesn't match any.
         """
-        assert( VSDict )
+        assert( systemName )
         assert( bookOrderSchemeToCheck )
-        if omittedVersesToCheck is None: omittedVersesToCheck = {}
+        assert( self.Lists )
+        #print( systemName, bookOrderSchemeToCheck )
 
         matchedBookOrderSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
-        for bookOrderSystemCode in VSDict: # Step through the various reference schemes
-            #print( system )
-            bookMismatchCount, chapterMismatchCount, verseMismatchCount, omittedVerseMismatchCount, theseErrors = 0, 0, 0, 0, ''
-            CVData, OVData = VSDict[bookOrderSystemCode]
-
-            # Check verses per chapter
-            for BBB in bookOrderSchemeToCheck.keys():
-                #print( BBB )
-                if BBB in CVData:
-                    for chapterToCheck,numVersesToCheck in bookOrderSchemeToCheck[BBB]:
-                        if not isinstance(chapterToCheck,str): logging.critical( "Chapter programming error" ); halt
-                        if not isinstance(numVersesToCheck,str): logging.critical( "Verse programming error" ); halt
-                        if chapterToCheck in CVData[BBB]: # That chapter number is in our scheme
-                            if CVData[BBB][chapterToCheck] != numVersesToCheck:
-                                theseErrors += ("\n" if theseErrors else "") + "    Doesn't match '%s' system at %s %s verse %s" % ( bookOrderSystemCode, BBB, chapterToCheck, numVersesToCheck )
-                                verseMismatchCount += 1
-                        else: # Our scheme doesn't have that chapter number
-                            theseErrors += ("\n" if theseErrors else "") + "    Doesn't match '%s' system at %s chapter %s (%s verses)" % ( bookOrderSystemCode, BBB, chapterToCheck, numVersesToCheck )
-                            chapterMismatchCount += 1
+        for bookOrderSystemCode in self.Lists: # Step through the various reference schemes
+            theseErrors = ''
+            if self.Lists[bookOrderSystemCode] == bookOrderSchemeToCheck:
+                #print( "  Matches '%s' book order system" % ( bookOrderSystemCode ) )
+                systemMatchCount += 1
+                matchedBookOrderSystemCodes.append( bookOrderSystemCode )
+            else:
+                if len(self.Lists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
+                    for BBB1,BBB2 in zip(self.Lists[bookOrderSystemCode],bookOrderSchemeToCheck):
+                        if BBB1 != BBB2: break
+                    thisError = "    Doesn't match '%s' system (Both have %i books, but %s instead of %s)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
                 else:
-                    theseErrors += ("\n" if theseErrors else "") + "    Can't find %s bookcode in %s" % ( BBB, bookOrderSystemCode )
-                    bookMismatchCount += 1
-
-            # Check omitted verses
-            for BBB in omittedVersesToCheck.keys():
-                if BBB in OVData:
-                    if OVData[BBB] == omittedVersesToCheck[BBB]: continue # Perfect match for this book
-                    for cv in omittedVersesToCheck[BBB]:
-                        if cv not in OVData[BBB]:
-                            theseErrors += ("\n" if theseErrors else "") + "    %s:%s not omitted in %s reference book order for %s" % ( cv[0], cv[1], bookOrderSystemCode, BBB )
-                            omittedVerseMismatchCount += 1
-                    for cv in OVData[BBB]:
-                        if cv not in omittedVersesToCheck[BBB]:
-                            theseErrors += ("\n" if theseErrors else "") + "    %s:%s is omitted in %s reference book order for %s" % ( cv[0], cv[1], bookOrderSystemCode, BBB )
-                            omittedVerseMismatchCount += 1
-                else: # We don't match
-                    theseErrors += ("\n" if theseErrors else "") + "    No omitted verses for %s in %s" % ( BBB, bookOrderSystemCode )
-                    omittedVerseMismatchCount += len( omittedVersesToCheck[BBB] )
-
-            if bookMismatchCount or chapterMismatchCount or verseMismatchCount or omittedVerseMismatchCount:
-                if omittedVersesToCheck:
-                    thisError = "    Doesn't match '%s' system (%i book mismatches, %i chapter mismatches, %i verse mismatches, %i omitted-verse mismatches)" % ( bookOrderSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
-                else:
-                    thisError = "    Doesn't match '%s' system (%i book mismatches, %i chapter mismatches, %i verse mismatches)" % ( bookOrderSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount )
+                    thisError = "    Doesn't match '%s' system (%i books instead of %i)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
-            else:
-                #print( "  Matches '%s' system" % ( bookOrderSystemCode ) )
-                systemMatchCount += 1
-                matchedBookOrderSystemCodes.append( bookOrderSystemCode )
-            if chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
-            allErrors += ("\n" if allErrors else "") + theseErrors
+
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( "  Matched %s (with these %i books)" % ( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                if CommandLineOptions.debug: print( errorSummary )
+                print( "  Matched %s book order (with these %i books)" % ( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                if debugFlag: print( errorSummary )
             else:
-                print( "  Matched %i system(s): %s (with these %i books)" % ( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                if CommandLineOptions.debug: print( errorSummary )
+                print( "  Matched %i book order system(s): %s (with these %i books)" % ( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                if debugFlag: print( errorSummary )
         else:
-            print( "  Mismatched %i systems (with these %i books)" % ( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            if CommandLineOptions.debug: print( allErrors )
+            print( "  Mismatched %i book order systems (with these %i books)" % ( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            if debugFlag: print( allErrors )
             else: print( errorSummary)
-        if not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( "DerivedFiles", "BibleBookOrderSystem_"+systemName + ".xml" )
+
+        if exportFlag and not systemMatchCount: # Write a new file
+            outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
             print( "Writing %i books to %s..." % ( len(bookOrderSchemeToCheck), outputFilepath ) )
-            if omittedVersesToCheck:
-                totalOmittedVerses = 0
-                for BBB in omittedVersesToCheck.keys():
-                    totalOmittedVerses += len( omittedVersesToCheck[BBB] )
-                print( "  Have %i omitted verses for %i books" % ( totalOmittedVerses, len(omittedVersesToCheck) ) )
             with open( outputFilepath, 'wt' ) as myFile:
-                for BBB in bookOrderSchemeToCheck:
-                    myFile.write( "  <BibleBookBookOrder>\n" )
-                    myFile.write( "    <nameEnglish>%s</nameEnglish>\n" % ( self.BibleBooksCodesDict[BBB][7] ) ) # the book name from the BibleBooksCodes.xml file
-                    myFile.write( "    <referenceAbbreviation>%s</referenceAbbreviation>\n" % ( BBB ) )
-                    myFile.write( "    <numChapters>%i</numChapters>\n" % ( len(bookOrderSchemeToCheck[BBB]) ) )
-                    for c,numV in bookOrderSchemeToCheck[BBB]:
-                        omittedVerseString = ''
-                        if BBB in omittedVersesToCheck:
-                            for oc,ov in omittedVersesToCheck[BBB]:
-                                if oc == c: # It's this chapter
-                                    omittedVerseString += (',' if omittedVerseString else '') + str(ov)
-                        if omittedVerseString:
-                            print( '   ', BBB, c+':'+omittedVerseString )
-                            myFile.write( '    <numVerses chapter="%s" omittedVerses="%s">%s</numVerses>\n' % ( c, omittedVerseString, numV ) )
-                        else:
-                            myFile.write( '    <numVerses chapter="%s">%s</numVerses>\n' % ( c, numV ) )
-                    myFile.write( "  </BibleBookBookOrder>\n" )
-                myFile.write( "\n</BibleBookOrderSystem>" )
+                for n,BBB in enumerate(bookOrderSchemeToCheck):
+                    myFile.write( '  <book id="%i">%s</book>\n' % ( n+1,BBB ) )
+                myFile.write( "</BibleBookOrderSystem>" )
     # end of checkBookOrderSystem
 # end of BibleBookOrdersConvertor class
 

@@ -60,6 +60,8 @@ Note that the data is supplied as XML elements (not attributes).
 
 Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
 
+Not sure where the SWORD entry belongs:   {"SIRACH (PROLOGUE)", "SirP"},		// Sirach (Prologue)
+
 See the supplied BibleBooksCodes.ReadMe.txt for more details.
 -->
 
@@ -77,18 +79,18 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,CCELNumber?,ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,SwordAbbreviation?,possibleAlternativeBooks?)>
+        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,possibleAlternativeBooks?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT referenceNumber (#PCDATA)>
             <!ELEMENT expectedChapters (#PCDATA)>
             <!ELEMENT SBLAbbreviation (#PCDATA)>
             <!ELEMENT OSISAbbreviation (#PCDATA)>
+            <!ELEMENT SwordAbbreviation (#PCDATA)>
             <!ELEMENT CCELNumber (#PCDATA)>
             <!ELEMENT ParatextAbbreviation (#PCDATA)>
             <!ELEMENT ParatextNumber (#PCDATA)>
             <!ELEMENT NETBibleAbbreviation (#PCDATA)>
-            <!ELEMENT SwordAbbreviation (#PCDATA)>
             <!ELEMENT possibleAlternativeBooks (#PCDATA)>
 ]>
 
@@ -116,6 +118,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>50</expectedChapters>
     <SBLAbbreviation>Gen</SBLAbbreviation>
     <OSISAbbreviation>Gen</OSISAbbreviation>
+    <SwordAbbreviation>Gen</SwordAbbreviation>
     <CCELNumber>1</CCELNumber>
     <ParatextAbbreviation>Gen</ParatextAbbreviation>
     <ParatextNumber>01</ParatextNumber>
@@ -128,6 +131,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>40</expectedChapters>
     <SBLAbbreviation>Exod</SBLAbbreviation>
     <OSISAbbreviation>Exod</OSISAbbreviation>
+    <SwordAbbreviation>Exod</SwordAbbreviation>
     <CCELNumber>2</CCELNumber>
     <ParatextAbbreviation>Exo</ParatextAbbreviation>
     <ParatextNumber>02</ParatextNumber>
@@ -140,6 +144,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>27</expectedChapters>
     <SBLAbbreviation>Lev</SBLAbbreviation>
     <OSISAbbreviation>Lev</OSISAbbreviation>
+    <SwordAbbreviation>Lev</SwordAbbreviation>
     <CCELNumber>3</CCELNumber>
     <ParatextAbbreviation>Lev</ParatextAbbreviation>
     <ParatextNumber>03</ParatextNumber>
@@ -152,6 +157,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>36</expectedChapters>
     <SBLAbbreviation>Num</SBLAbbreviation>
     <OSISAbbreviation>Num</OSISAbbreviation>
+    <SwordAbbreviation>Num</SwordAbbreviation>
     <CCELNumber>4</CCELNumber>
     <ParatextAbbreviation>Num</ParatextAbbreviation>
     <ParatextNumber>04</ParatextNumber>
@@ -164,6 +170,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>34</expectedChapters>
     <SBLAbbreviation>Deut</SBLAbbreviation>
     <OSISAbbreviation>Deut</OSISAbbreviation>
+    <SwordAbbreviation>Deut</SwordAbbreviation>
     <CCELNumber>5</CCELNumber>
     <ParatextAbbreviation>Deu</ParatextAbbreviation>
     <ParatextNumber>05</ParatextNumber>
@@ -176,6 +183,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>Josh</SBLAbbreviation>
     <OSISAbbreviation>Josh</OSISAbbreviation>
+    <SwordAbbreviation>Josh</SwordAbbreviation>
     <CCELNumber>6</CCELNumber>
     <ParatextAbbreviation>Jos</ParatextAbbreviation>
     <ParatextNumber>06</ParatextNumber>
@@ -188,6 +196,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>21</expectedChapters>
     <SBLAbbreviation>Judg</SBLAbbreviation>
     <OSISAbbreviation>Judg</OSISAbbreviation>
+    <SwordAbbreviation>Judg</SwordAbbreviation>
     <CCELNumber>7</CCELNumber>
     <ParatextAbbreviation>Jdg</ParatextAbbreviation>
     <ParatextNumber>07</ParatextNumber>
@@ -200,6 +209,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Ruth</SBLAbbreviation>
     <OSISAbbreviation>Ruth</OSISAbbreviation>
+    <SwordAbbreviation>Ruth</SwordAbbreviation>
     <CCELNumber>8</CCELNumber>
     <ParatextAbbreviation>Rut</ParatextAbbreviation>
     <ParatextNumber>08</ParatextNumber>
@@ -212,6 +222,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>31</expectedChapters>
     <SBLAbbreviation>1 Sam</SBLAbbreviation>
     <OSISAbbreviation>1Sam</OSISAbbreviation>
+    <SwordAbbreviation>1Sam</SwordAbbreviation>
     <CCELNumber>9</CCELNumber>
     <ParatextAbbreviation>1Sa</ParatextAbbreviation>
     <ParatextNumber>09</ParatextNumber>
@@ -224,6 +235,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>2 Sam</SBLAbbreviation>
     <OSISAbbreviation>2Sam</OSISAbbreviation>
+    <SwordAbbreviation>2Sam</SwordAbbreviation>
     <CCELNumber>10</CCELNumber>
     <ParatextAbbreviation>2Sa</ParatextAbbreviation>
     <ParatextNumber>10</ParatextNumber>
@@ -236,6 +248,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>22</expectedChapters>
     <SBLAbbreviation>1 Kgs</SBLAbbreviation>
     <OSISAbbreviation>1Kgs</OSISAbbreviation>
+    <SwordAbbreviation>1Kgs</SwordAbbreviation>
     <CCELNumber>11</CCELNumber>
     <ParatextAbbreviation>1Ki</ParatextAbbreviation>
     <ParatextNumber>11</ParatextNumber>
@@ -248,6 +261,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>25</expectedChapters>
     <SBLAbbreviation>2 Kgs</SBLAbbreviation>
     <OSISAbbreviation>2Kgs</OSISAbbreviation>
+    <SwordAbbreviation>2Kgs</SwordAbbreviation>
     <CCELNumber>12</CCELNumber>
     <ParatextAbbreviation>2Ki</ParatextAbbreviation>
     <ParatextNumber>12</ParatextNumber>
@@ -260,6 +274,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>29</expectedChapters>
     <SBLAbbreviation>1 Chr</SBLAbbreviation>
     <OSISAbbreviation>1Chr</OSISAbbreviation>
+    <SwordAbbreviation>1Chr</SwordAbbreviation>
     <CCELNumber>13</CCELNumber>
     <ParatextAbbreviation>1Ch</ParatextAbbreviation>
     <ParatextNumber>13</ParatextNumber>
@@ -272,6 +287,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>36</expectedChapters>
     <SBLAbbreviation>2 Chr</SBLAbbreviation>
     <OSISAbbreviation>2Chr</OSISAbbreviation>
+    <SwordAbbreviation>2Chr</SwordAbbreviation>
     <CCELNumber>14</CCELNumber>
     <ParatextAbbreviation>2Ch</ParatextAbbreviation>
     <ParatextNumber>14</ParatextNumber>
@@ -285,6 +301,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
+    <SwordAbbreviation>Ezra</SwordAbbreviation>
     <CCELNumber>15</CCELNumber>
     <ParatextAbbreviation>Ezr</ParatextAbbreviation>
     <ParatextNumber>15</ParatextNumber>
@@ -298,6 +315,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>Neh</SBLAbbreviation>
     <OSISAbbreviation>Neh</OSISAbbreviation>
+    <SwordAbbreviation>Neh</SwordAbbreviation>
     <CCELNumber>16</CCELNumber>
     <ParatextAbbreviation>Neh</ParatextAbbreviation>
     <ParatextNumber>16</ParatextNumber>
@@ -311,6 +329,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Esth</SBLAbbreviation>
     <OSISAbbreviation>Esth</OSISAbbreviation>
+    <SwordAbbreviation>Esth</SwordAbbreviation>
     <CCELNumber>17</CCELNumber>
     <ParatextAbbreviation>Est</ParatextAbbreviation>
     <ParatextNumber>17</ParatextNumber>
@@ -324,6 +343,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>42</expectedChapters>
     <SBLAbbreviation>Job</SBLAbbreviation>
     <OSISAbbreviation>Job</OSISAbbreviation>
+    <SwordAbbreviation>Job</SwordAbbreviation>
     <CCELNumber>18</CCELNumber>
     <ParatextAbbreviation>Job</ParatextAbbreviation>
     <ParatextNumber>18</ParatextNumber>
@@ -336,6 +356,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>150</expectedChapters>
     <SBLAbbreviation>Ps</SBLAbbreviation>
     <OSISAbbreviation>Ps</OSISAbbreviation>
+    <SwordAbbreviation>Ps</SwordAbbreviation>
     <CCELNumber>19</CCELNumber>
     <ParatextAbbreviation>Psa</ParatextAbbreviation>
     <ParatextNumber>19</ParatextNumber>
@@ -350,6 +371,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>31</expectedChapters>
     <SBLAbbreviation>Prov</SBLAbbreviation>
     <OSISAbbreviation>Prov</OSISAbbreviation>
+    <SwordAbbreviation>Prov</SwordAbbreviation>
     <CCELNumber>20</CCELNumber>
     <ParatextAbbreviation>Pro</ParatextAbbreviation>
     <ParatextNumber>20</ParatextNumber>
@@ -363,6 +385,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>12</expectedChapters>
     <SBLAbbreviation>Eccl</SBLAbbreviation>
     <OSISAbbreviation>Eccl</OSISAbbreviation>
+    <SwordAbbreviation>Eccl</SwordAbbreviation>
     <CCELNumber>21</CCELNumber>
     <ParatextAbbreviation>Ecc</ParatextAbbreviation>
     <ParatextNumber>21</ParatextNumber>
@@ -375,6 +398,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>8</expectedChapters>
     <SBLAbbreviation>Song</SBLAbbreviation>
     <OSISAbbreviation>Song</OSISAbbreviation>
+    <SwordAbbreviation>Song</SwordAbbreviation>
     <CCELNumber>22</CCELNumber>
     <ParatextAbbreviation>Sng</ParatextAbbreviation>
     <ParatextNumber>22</ParatextNumber>
@@ -387,6 +411,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>66</expectedChapters>
     <SBLAbbreviation>Isa</SBLAbbreviation>
     <OSISAbbreviation>Isa</OSISAbbreviation>
+    <SwordAbbreviation>Isa</SwordAbbreviation>
     <CCELNumber>23</CCELNumber>
     <ParatextAbbreviation>Isa</ParatextAbbreviation>
     <ParatextNumber>23</ParatextNumber>
@@ -399,6 +424,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>52</expectedChapters>
     <SBLAbbreviation>Jer</SBLAbbreviation>
     <OSISAbbreviation>Jer</OSISAbbreviation>
+    <SwordAbbreviation>Jer</SwordAbbreviation>
     <CCELNumber>24</CCELNumber>
     <ParatextAbbreviation>Jer</ParatextAbbreviation>
     <ParatextNumber>24</ParatextNumber>
@@ -411,6 +437,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>Lam</SBLAbbreviation>
     <OSISAbbreviation>Lam</OSISAbbreviation>
+    <SwordAbbreviation>Lam</SwordAbbreviation>
     <CCELNumber>25</CCELNumber>
     <ParatextAbbreviation>Lam</ParatextAbbreviation>
     <ParatextNumber>25</ParatextNumber>
@@ -423,6 +450,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>48</expectedChapters>
     <SBLAbbreviation>Ezek</SBLAbbreviation>
     <OSISAbbreviation>Ezek</OSISAbbreviation>
+    <SwordAbbreviation>Ezek</SwordAbbreviation>
     <CCELNumber>26</CCELNumber>
     <ParatextAbbreviation>Ezk</ParatextAbbreviation>
     <ParatextNumber>26</ParatextNumber>
@@ -435,6 +463,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>12</expectedChapters>
     <SBLAbbreviation>Dan</SBLAbbreviation>
     <OSISAbbreviation>Dan</OSISAbbreviation>
+    <SwordAbbreviation>Dan</SwordAbbreviation>
     <CCELNumber>27</CCELNumber>
     <ParatextAbbreviation>Dan</ParatextAbbreviation>
     <ParatextNumber>27</ParatextNumber>
@@ -448,6 +477,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Hos</SBLAbbreviation>
     <OSISAbbreviation>Hos</OSISAbbreviation>
+    <SwordAbbreviation>Hos</SwordAbbreviation>
     <CCELNumber>28</CCELNumber>
     <ParatextAbbreviation>Hos</ParatextAbbreviation>
     <ParatextNumber>28</ParatextNumber>
@@ -472,6 +502,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>9</expectedChapters>
     <SBLAbbreviation>Amos</SBLAbbreviation>
     <OSISAbbreviation>Amos</OSISAbbreviation>
+    <SwordAbbreviation>Amos</SwordAbbreviation>
     <CCELNumber>30</CCELNumber>
     <ParatextAbbreviation>Amo</ParatextAbbreviation>
     <ParatextNumber>30</ParatextNumber>
@@ -484,6 +515,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Obad</SBLAbbreviation>
     <OSISAbbreviation>Obad</OSISAbbreviation>
+    <SwordAbbreviation>Obad</SwordAbbreviation>
     <CCELNumber>31</CCELNumber>
     <ParatextAbbreviation>Oba</ParatextAbbreviation>
     <ParatextNumber>31</ParatextNumber>
@@ -496,6 +528,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Jonah</SBLAbbreviation>
     <OSISAbbreviation>Jonah</OSISAbbreviation>
+    <SwordAbbreviation>Jonah</SwordAbbreviation>
     <CCELNumber>32</CCELNumber>
     <ParatextAbbreviation>Jon</ParatextAbbreviation>
     <ParatextNumber>32</ParatextNumber>
@@ -508,6 +541,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>7</expectedChapters>
     <SBLAbbreviation>Nic</SBLAbbreviation>
     <OSISAbbreviation>Mic</OSISAbbreviation>
+    <SwordAbbreviation>Mic</SwordAbbreviation>
     <CCELNumber>33</CCELNumber>
     <ParatextAbbreviation>Mic</ParatextAbbreviation>
     <ParatextNumber>33</ParatextNumber>
@@ -520,6 +554,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Nah</SBLAbbreviation>
     <OSISAbbreviation>Nah</OSISAbbreviation>
+    <SwordAbbreviation>Nah</SwordAbbreviation>
     <CCELNumber>34</CCELNumber>
     <ParatextAbbreviation>Nam</ParatextAbbreviation>
     <ParatextNumber>34</ParatextNumber>
@@ -532,6 +567,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Hab</SBLAbbreviation>
     <OSISAbbreviation>Hab</OSISAbbreviation>
+    <SwordAbbreviation>Hab</SwordAbbreviation>
     <CCELNumber>35</CCELNumber>
     <ParatextAbbreviation>Hab</ParatextAbbreviation>
     <ParatextNumber>35</ParatextNumber>
@@ -544,6 +580,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Zeph</SBLAbbreviation>
     <OSISAbbreviation>Zeph</OSISAbbreviation>
+    <SwordAbbreviation>Zeph</SwordAbbreviation>
     <CCELNumber>36</CCELNumber>
     <ParatextAbbreviation>Zep</ParatextAbbreviation>
     <ParatextNumber>36</ParatextNumber>
@@ -556,6 +593,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>2</expectedChapters>
     <SBLAbbreviation>Hag</SBLAbbreviation>
     <OSISAbbreviation>Hag</OSISAbbreviation>
+    <SwordAbbreviation>Hag</SwordAbbreviation>
     <CCELNumber>37</CCELNumber>
     <ParatextAbbreviation>Hag</ParatextAbbreviation>
     <ParatextNumber>37</ParatextNumber>
@@ -568,6 +606,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Zech</SBLAbbreviation>
     <OSISAbbreviation>Zech</OSISAbbreviation>
+    <SwordAbbreviation>Zech</SwordAbbreviation>
     <CCELNumber>38</CCELNumber>
     <ParatextAbbreviation>Zec</ParatextAbbreviation>
     <ParatextNumber>38</ParatextNumber>
@@ -580,6 +619,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Mal</SBLAbbreviation>
     <OSISAbbreviation>Mal</OSISAbbreviation>
+    <SwordAbbreviation>Mal</SwordAbbreviation>
     <CCELNumber>39</CCELNumber>
     <ParatextAbbreviation>Mal</ParatextAbbreviation>
     <ParatextNumber>39</ParatextNumber>
@@ -594,6 +634,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>28</expectedChapters>
     <SBLAbbreviation>Matt</SBLAbbreviation>
     <OSISAbbreviation>Matt</OSISAbbreviation>
+    <SwordAbbreviation>Matt</SwordAbbreviation>
     <CCELNumber>40</CCELNumber>
     <ParatextAbbreviation>Mat</ParatextAbbreviation>
     <ParatextNumber>41</ParatextNumber>
@@ -606,6 +647,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Mark</SBLAbbreviation>
     <OSISAbbreviation>Mark</OSISAbbreviation>
+    <SwordAbbreviation>Mark</SwordAbbreviation>
     <CCELNumber>41</CCELNumber>
     <ParatextAbbreviation>Mrk</ParatextAbbreviation>
     <ParatextNumber>42</ParatextNumber>
@@ -618,6 +660,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>24</expectedChapters>
     <SBLAbbreviation>Luke</SBLAbbreviation>
     <OSISAbbreviation>Luke</OSISAbbreviation>
+    <SwordAbbreviation>Luke</SwordAbbreviation>
     <CCELNumber>42</CCELNumber>
     <ParatextAbbreviation>Luk</ParatextAbbreviation>
     <ParatextNumber>43</ParatextNumber>
@@ -631,6 +674,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>21</expectedChapters>
     <SBLAbbreviation>John</SBLAbbreviation>
     <OSISAbbreviation>John</OSISAbbreviation>
+    <SwordAbbreviation>John</SwordAbbreviation>
     <CCELNumber>43</CCELNumber>
     <ParatextAbbreviation>Jhn</ParatextAbbreviation>
     <ParatextNumber>44</ParatextNumber>
@@ -643,6 +687,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>28</expectedChapters>
     <SBLAbbreviation>Acts</SBLAbbreviation>
     <OSISAbbreviation>Acts</OSISAbbreviation>
+    <SwordAbbreviation>Acts</SwordAbbreviation>
     <CCELNumber>44</CCELNumber>
     <ParatextAbbreviation>Act</ParatextAbbreviation>
     <ParatextNumber>45</ParatextNumber>
@@ -656,6 +701,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Rom</SBLAbbreviation>
     <OSISAbbreviation>Rom</OSISAbbreviation>
+    <SwordAbbreviation>Rom</SwordAbbreviation>
     <CCELNumber>45</CCELNumber>
     <ParatextAbbreviation>Rom</ParatextAbbreviation>
     <ParatextNumber>46</ParatextNumber>
@@ -668,6 +714,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>1 Cor</SBLAbbreviation>
     <OSISAbbreviation>1Cor</OSISAbbreviation>
+    <SwordAbbreviation>1Cor</SwordAbbreviation>
     <CCELNumber>46</CCELNumber>
     <ParatextAbbreviation>1Co</ParatextAbbreviation>
     <ParatextNumber>47</ParatextNumber>
@@ -680,6 +727,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>2 Cor</SBLAbbreviation>
     <OSISAbbreviation>2Cor</OSISAbbreviation>
+    <SwordAbbreviation>2Cor</SwordAbbreviation>
     <CCELNumber>47</CCELNumber>
     <ParatextAbbreviation>2Co</ParatextAbbreviation>
     <ParatextNumber>48</ParatextNumber>
@@ -692,6 +740,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>Gal</SBLAbbreviation>
     <OSISAbbreviation>Gal</OSISAbbreviation>
+    <SwordAbbreviation>Gal</SwordAbbreviation>
     <CCELNumber>48</CCELNumber>
     <ParatextAbbreviation>Gal</ParatextAbbreviation>
     <ParatextNumber>49</ParatextNumber>
@@ -704,6 +753,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>Eph</SBLAbbreviation>
     <OSISAbbreviation>Eph</OSISAbbreviation>
+    <SwordAbbreviation>Eph</SwordAbbreviation>
     <CCELNumber>49</CCELNumber>
     <ParatextAbbreviation>Eph</ParatextAbbreviation>
     <ParatextNumber>50</ParatextNumber>
@@ -716,6 +766,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Phil</SBLAbbreviation>
     <OSISAbbreviation>Phil</OSISAbbreviation>
+    <SwordAbbreviation>Phil</SwordAbbreviation>
     <CCELNumber>50</CCELNumber>
     <ParatextAbbreviation>Php</ParatextAbbreviation>
     <ParatextNumber>51</ParatextNumber>
@@ -728,6 +779,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>Col</SBLAbbreviation>
     <OSISAbbreviation>Col</OSISAbbreviation>
+    <SwordAbbreviation>Col</SwordAbbreviation>
     <CCELNumber>51</CCELNumber>
     <ParatextAbbreviation>Col</ParatextAbbreviation>
     <ParatextNumber>52</ParatextNumber>
@@ -740,6 +792,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 Thess</SBLAbbreviation>
     <OSISAbbreviation>1Thess</OSISAbbreviation>
+    <SwordAbbreviation>1Thess</SwordAbbreviation>
     <CCELNumber>52</CCELNumber>
     <ParatextAbbreviation>1Th</ParatextAbbreviation>
     <ParatextNumber>53</ParatextNumber>
@@ -752,6 +805,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>2 Thess</SBLAbbreviation>
     <OSISAbbreviation>2Thess</OSISAbbreviation>
+    <SwordAbbreviation>2Thess</SwordAbbreviation>
     <CCELNumber>53</CCELNumber>
     <ParatextAbbreviation>2Th</ParatextAbbreviation>
     <ParatextNumber>54</ParatextNumber>
@@ -764,6 +818,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>1 Tim</SBLAbbreviation>
     <OSISAbbreviation>1Tim</OSISAbbreviation>
+    <SwordAbbreviation>1Tim</SwordAbbreviation>
     <CCELNumber>54</CCELNumber>
     <ParatextAbbreviation>1Ti</ParatextAbbreviation>
     <ParatextNumber>55</ParatextNumber>
@@ -776,6 +831,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>4</expectedChapters>
     <SBLAbbreviation>2 Tim</SBLAbbreviation>
     <OSISAbbreviation>2Tim</OSISAbbreviation>
+    <SwordAbbreviation>2Tim</SwordAbbreviation>
     <CCELNumber>55</CCELNumber>
     <ParatextAbbreviation>2Ti</ParatextAbbreviation>
     <ParatextNumber>56</ParatextNumber>
@@ -788,6 +844,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>Titus</SBLAbbreviation>
     <OSISAbbreviation>Titus</OSISAbbreviation>
+    <SwordAbbreviation>Titus</SwordAbbreviation>
     <CCELNumber>56</CCELNumber>
     <ParatextAbbreviation>Tit</ParatextAbbreviation>
     <ParatextNumber>57</ParatextNumber>
@@ -800,6 +857,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Phlm</SBLAbbreviation>
     <OSISAbbreviation>Phlm</OSISAbbreviation>
+    <SwordAbbreviation>Phlm</SwordAbbreviation>
     <CCELNumber>57</CCELNumber>
     <ParatextAbbreviation>Phm</ParatextAbbreviation>
     <ParatextNumber>58</ParatextNumber>
@@ -812,18 +870,20 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>13</expectedChapters>
     <SBLAbbreviation>Heb</SBLAbbreviation>
     <OSISAbbreviation>Heb</OSISAbbreviation>
+    <SwordAbbreviation>Heb</SwordAbbreviation>
     <CCELNumber>58</CCELNumber>
     <ParatextAbbreviation>Heb</ParatextAbbreviation>
     <ParatextNumber>59</ParatextNumber>
     <NETBibleAbbreviation>Heb</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>James</nameEnglish>
-    <referenceAbbreviation>JAS</referenceAbbreviation>
+    <nameEnglish>James / Jacob</nameEnglish>
+    <referenceAbbreviation>JAM</referenceAbbreviation>
     <referenceNumber>59</referenceNumber>
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>Jas</SBLAbbreviation>
     <OSISAbbreviation>Jas</OSISAbbreviation>
+    <SwordAbbreviation>Jas</SwordAbbreviation>
     <CCELNumber>59</CCELNumber>
     <ParatextAbbreviation>Jas</ParatextAbbreviation>
     <ParatextNumber>60</ParatextNumber>
@@ -836,6 +896,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 Pet</SBLAbbreviation>
     <OSISAbbreviation>1Pet</OSISAbbreviation>
+    <SwordAbbreviation>1Pet</SwordAbbreviation>
     <CCELNumber>60</CCELNumber>
     <ParatextAbbreviation>1Pe</ParatextAbbreviation>
     <ParatextNumber>61</ParatextNumber>
@@ -848,6 +909,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>2 Pet</SBLAbbreviation>
     <OSISAbbreviation>2Pet</OSISAbbreviation>
+    <SwordAbbreviation>2Pet</SwordAbbreviation>
     <CCELNumber>61</CCELNumber>
     <ParatextAbbreviation>2Pe</ParatextAbbreviation>
     <ParatextNumber>62</ParatextNumber>
@@ -860,6 +922,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>1 John</SBLAbbreviation>
     <OSISAbbreviation>1John</OSISAbbreviation>
+    <SwordAbbreviation>1John</SwordAbbreviation>
     <CCELNumber>62</CCELNumber>
     <ParatextAbbreviation>1Jn</ParatextAbbreviation>
     <ParatextNumber>63</ParatextNumber>
@@ -872,6 +935,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>2 John</SBLAbbreviation>
     <OSISAbbreviation>2John</OSISAbbreviation>
+    <SwordAbbreviation>2John</SwordAbbreviation>
     <CCELNumber>63</CCELNumber>
     <ParatextAbbreviation>2Jn</ParatextAbbreviation>
     <ParatextNumber>64</ParatextNumber>
@@ -884,6 +948,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>3</expectedChapters>
     <SBLAbbreviation>3 John</SBLAbbreviation>
     <OSISAbbreviation>3John</OSISAbbreviation>
+    <SwordAbbreviation>3John</SwordAbbreviation>
     <CCELNumber>64</CCELNumber>
     <ParatextAbbreviation>3Jn</ParatextAbbreviation>
     <ParatextNumber>65</ParatextNumber>
@@ -896,6 +961,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Jude</SBLAbbreviation>
     <OSISAbbreviation>Jude</OSISAbbreviation>
+    <SwordAbbreviation>Jude</SwordAbbreviation>
     <CCELNumber>65</CCELNumber>
     <ParatextAbbreviation>Jud</ParatextAbbreviation>
     <ParatextNumber>66</ParatextNumber>
@@ -908,6 +974,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>22</expectedChapters>
     <SBLAbbreviation>Rev</SBLAbbreviation>
     <OSISAbbreviation>Rev</OSISAbbreviation>
+    <SwordAbbreviation>Rev</SwordAbbreviation>
     <CCELNumber>66</CCELNumber>
     <ParatextAbbreviation>Rev</ParatextAbbreviation>
     <ParatextNumber>67</ParatextNumber>
@@ -916,70 +983,76 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
 <!-- Books from above which have quite different Hebrew and Greek versions. Sometimes printed separately, sometimes combined. -->
   <BibleBookCodes>
-    <nameEnglish>Greek Esther</nameEnglish>
+    <nameEnglish>Greek Esther / Esther (Greek)</nameEnglish>
     <referenceAbbreviation>ESG</referenceAbbreviation>
     <referenceNumber>70</referenceNumber>
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <SwordAbbreviation>EsthGr</SwordAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
     <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Greek additions to Esther</nameEnglish>
+    <nameEnglish>Greek additions to Esther / Esther (additions)</nameEnglish>
     <referenceAbbreviation>ESA</referenceAbbreviation>
     <referenceNumber>71</referenceNumber>
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <SwordAbbreviation>AddEsth</SwordAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
     <possibleAlternativeBooks>EST,ESG,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Combined Hebrew/Greek Esther</nameEnglish>
+    <nameEnglish>Combined Hebrew/Greek Esther / Esther (combined)</nameEnglish>
     <referenceAbbreviation>ESC</referenceAbbreviation>
     <referenceNumber>72</referenceNumber>
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
     <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <SwordAbbreviation>AddEsth</SwordAbbreviation>
     <CCELNumber>95</CCELNumber>
     <ParatextAbbreviation>EsG</ParatextAbbreviation>
     <ParatextNumber>70</ParatextNumber>
     <possibleAlternativeBooks>EST,ESG,ESA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Greek Daniel</nameEnglish>
+    <nameEnglish>Greek Daniel / Daniel (Greek)</nameEnglish>
     <referenceAbbreviation>DAG</referenceAbbreviation>
     <referenceNumber>73</referenceNumber>
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>DanGr</SwordAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>B2</ParatextNumber>
     <possibleAlternativeBooks>DAN,DAA,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Greek additions to Daniel</nameEnglish>
+    <nameEnglish>Greek additions to Daniel / Daniel (additions)</nameEnglish>
     <referenceAbbreviation>DAA</referenceAbbreviation>
     <referenceNumber>74</referenceNumber>
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>AddDan</SwordAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>B2</ParatextNumber>
     <possibleAlternativeBooks>DAN,DAG,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Combined Hebrew/Greek Daniel</nameEnglish>
+    <nameEnglish>Combined Hebrew/Greek Daniel / Daniel (combined)</nameEnglish>
     <referenceAbbreviation>DAC</referenceAbbreviation>
     <referenceNumber>75</referenceNumber>
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Add Dan</SBLAbbreviation>
     <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>AddDan</SwordAbbreviation>
     <ParatextAbbreviation>DaG</ParatextAbbreviation>
     <ParatextNumber>B2</ParatextNumber>
     <possibleAlternativeBooks>DAN,DAG,DAA</possibleAlternativeBooks>
@@ -993,6 +1066,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Bel</SBLAbbreviation>
     <OSISAbbreviation>Bel</OSISAbbreviation>
+    <SwordAbbreviation>Bel</SwordAbbreviation>
     <CCELNumber>78</CCELNumber>
     <ParatextAbbreviation>Bel</ParatextAbbreviation>
     <ParatextNumber>77</ParatextNumber>
@@ -1004,6 +1078,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Sus</SBLAbbreviation>
     <OSISAbbreviation>Sus</OSISAbbreviation>
+    <SwordAbbreviation>Sus</SwordAbbreviation>
     <CCELNumber>77</CCELNumber>
     <ParatextAbbreviation>Sus</ParatextAbbreviation>
     <ParatextNumber>76</ParatextNumber>
@@ -1015,6 +1090,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>Jdt</SBLAbbreviation>
     <OSISAbbreviation>Jdt</OSISAbbreviation>
+    <SwordAbbreviation>Jdt</SwordAbbreviation>
     <CCELNumber>70</CCELNumber>
     <ParatextAbbreviation>Jdt</ParatextAbbreviation>
     <ParatextNumber>69</ParatextNumber>
@@ -1027,17 +1103,19 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Pr Man</SBLAbbreviation>
     <OSISAbbreviation>PrMan</OSISAbbreviation>
+    <SwordAbbreviation>PrMan</SwordAbbreviation>
     <CCELNumber>82</CCELNumber>
     <ParatextAbbreviation>Man</ParatextAbbreviation>
     <ParatextNumber>84</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Sirach / Ecclesiasticus</nameEnglish>
+    <nameEnglish>Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach</nameEnglish>
     <referenceAbbreviation>SIR</referenceAbbreviation>
     <referenceNumber>84</referenceNumber>
     <expectedChapters>51</expectedChapters>
     <SBLAbbreviation>Sir</SBLAbbreviation>
     <OSISAbbreviation>Sir</OSISAbbreviation>
+    <SwordAbbreviation>Sir</SwordAbbreviation>
     <CCELNumber>94</CCELNumber>
     <ParatextAbbreviation>Sir</ParatextAbbreviation>
     <ParatextNumber>72</ParatextNumber>
@@ -1049,6 +1127,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>14</expectedChapters>
     <SBLAbbreviation>Tob</SBLAbbreviation>
     <OSISAbbreviation>Tob</OSISAbbreviation>
+    <SwordAbbreviation>Tob</SwordAbbreviation>
     <CCELNumber>69</CCELNumber>
     <ParatextAbbreviation>Tob</ParatextAbbreviation>
     <ParatextNumber>68</ParatextNumber>
@@ -1060,17 +1139,19 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>19</expectedChapters>
     <SBLAbbreviation>Wis</SBLAbbreviation>
     <OSISAbbreviation>Wis</OSISAbbreviation>
+    <SwordAbbreviation>Wis</SwordAbbreviation>
     <CCELNumber>72</CCELNumber>
     <ParatextAbbreviation>Wis</ParatextAbbreviation>
     <ParatextNumber>71</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men</nameEnglish>
+    <nameEnglish>Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children</nameEnglish>
     <referenceAbbreviation>PAZ</referenceAbbreviation>
     <referenceNumber>87</referenceNumber>
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Pr Azar</SBLAbbreviation>
     <OSISAbbreviation>PrAzar</OSISAbbreviation>
+    <SwordAbbreviation>PrAzar</SwordAbbreviation>
     <!--
     <SBLAbbreviation>Sg Three</SBLAbbreviation>
     <OSISAbbreviation>SgThree</OSISAbbreviation> -->
@@ -1088,6 +1169,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>9</expectedChapters>
     <SBLAbbreviation>1 Esd</SBLAbbreviation>
     <OSISAbbreviation>1Esd</OSISAbbreviation>
+    <SwordAbbreviation>1Esd</SwordAbbreviation>
     <CCELNumber>81</CCELNumber>
     <ParatextAbbreviation>1Es</ParatextAbbreviation>
     <ParatextNumber>82</ParatextNumber>
@@ -1101,6 +1183,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>2 Esd</SBLAbbreviation>
     <OSISAbbreviation>2Esd</OSISAbbreviation>
+    <SwordAbbreviation>2Esd</SwordAbbreviation>
     <CCELNumber>83</CCELNumber>
     <ParatextAbbreviation>2Es</ParatextAbbreviation>
     <ParatextNumber>83</ParatextNumber>
@@ -1151,6 +1234,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>1</expectedChapters>
     <SBLAbbreviation>Ep Jer</SBLAbbreviation>
     <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <SwordAbbreviation>EpJer</SwordAbbreviation>
     <CCELNumber>75</CCELNumber>
     <ParatextAbbreviation>LJe</ParatextAbbreviation>
     <ParatextNumber>74</ParatextNumber>
@@ -1164,6 +1248,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>5</expectedChapters>
     <SBLAbbreviation>Bar</SBLAbbreviation>
     <OSISAbbreviation>Bar</OSISAbbreviation>
+    <SwordAbbreviation>Bar</SwordAbbreviation>
     <CCELNumber>74</CCELNumber>
     <ParatextAbbreviation>Bar</ParatextAbbreviation>
     <ParatextNumber>73</ParatextNumber>
@@ -1176,6 +1261,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>6</expectedChapters>
     <SBLAbbreviation>Ep Jer</SBLAbbreviation>
     <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <SwordAbbreviation>EpJer</SwordAbbreviation>
     <ParatextAbbreviation>LJe</ParatextAbbreviation>
     <ParatextNumber>74</ParatextNumber>
     <possibleAlternativeBooks>BAR</possibleAlternativeBooks>
@@ -1186,6 +1272,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>BA2</referenceAbbreviation>
     <referenceNumber>103</referenceNumber>
     <expectedChapters>77</expectedChapters>
+    <SwordAbbreviation>2Bar</SwordAbbreviation>
     <ParatextAbbreviation>2Ba</ParatextAbbreviation>
     <ParatextNumber>B4</ParatextNumber>
     <possibleAlternativeBooks>LB2</possibleAlternativeBooks>
@@ -1217,11 +1304,12 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>106</referenceNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Paraleipmena Ieremiou / Rest of the Words of Baruch</nameEnglish>
+    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch</nameEnglish>
     <!-- Greek -->
     <referenceAbbreviation>BA4</referenceAbbreviation>
     <referenceNumber>107</referenceNumber>
     <expectedChapters>6</expectedChapters>
+    <SwordAbbreviation>4Bar</SwordAbbreviation>
     <ParatextAbbreviation>4Ba</ParatextAbbreviation>
     <ParatextNumber>C2</ParatextNumber>
   </BibleBookCodes>
@@ -1234,6 +1322,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>16</expectedChapters>
     <SBLAbbreviation>1 Macc</SBLAbbreviation>
     <OSISAbbreviation>1Macc</OSISAbbreviation>
+    <SwordAbbreviation>1Macc</SwordAbbreviation>
     <CCELNumber>79</CCELNumber>
     <ParatextAbbreviation>1Ma</ParatextAbbreviation>
     <ParatextNumber>78</ParatextNumber>
@@ -1245,6 +1334,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>15</expectedChapters>
     <SBLAbbreviation>2 Macc</SBLAbbreviation>
     <OSISAbbreviation>2Macc</OSISAbbreviation>
+    <SwordAbbreviation>2Macc</SwordAbbreviation>
     <CCELNumber>80</CCELNumber>
     <ParatextAbbreviation>2Ma</ParatextAbbreviation>
     <ParatextNumber>79</ParatextNumber>
@@ -1257,6 +1347,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>7</expectedChapters>
     <SBLAbbreviation>3 Macc</SBLAbbreviation>
     <OSISAbbreviation>3Macc</OSISAbbreviation>
+    <SwordAbbreviation>3Macc</SwordAbbreviation>
     <CCELNumber>84</CCELNumber>
     <ParatextAbbreviation>3Ma</ParatextAbbreviation>
     <ParatextNumber>80</ParatextNumber>
@@ -1269,6 +1360,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>18</expectedChapters>
     <SBLAbbreviation>4 Macc</SBLAbbreviation>
     <OSISAbbreviation>4Macc</OSISAbbreviation>
+    <SwordAbbreviation>4Macc</SwordAbbreviation>
     <CCELNumber>85</CCELNumber>
     <ParatextAbbreviation>4Ma</ParatextAbbreviation>
     <ParatextNumber>81</ParatextNumber>
@@ -1287,6 +1379,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>MQ1</referenceAbbreviation>
     <referenceNumber>115</referenceNumber>
     <expectedChapters>36</expectedChapters>
+    <SwordAbbreviation>1Meq</SwordAbbreviation>
     <ParatextAbbreviation>1Mq</ParatextAbbreviation>
     <ParatextNumber>B8</ParatextNumber>
   </BibleBookCodes>
@@ -1296,6 +1389,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>MQ2</referenceAbbreviation>
     <referenceNumber>116</referenceNumber>
     <expectedChapters>20,21</expectedChapters>
+    <SwordAbbreviation>2Meq</SwordAbbreviation>
     <ParatextAbbreviation>2Mq</ParatextAbbreviation>
     <ParatextNumber>B9</ParatextNumber>
   </BibleBookCodes>
@@ -1305,6 +1399,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>MQ3</referenceAbbreviation>
     <referenceNumber>117</referenceNumber>
     <expectedChapters>10</expectedChapters>
+    <SwordAbbreviation>3Meq</SwordAbbreviation>
     <ParatextAbbreviation>3Mq</ParatextAbbreviation>
     <ParatextNumber>C0</ParatextNumber>
   </BibleBookCodes>
@@ -1365,11 +1460,12 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextNumber>85</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Syriac Psalms 152-155</nameEnglish>
+    <nameEnglish>Syriac Psalms 152-155 / Five apocryphal Syriac Psalms</nameEnglish>
     <!-- Hebrew / Syriac (17,20,6,6 verses) -->
     <referenceAbbreviation>PS3</referenceAbbreviation>
     <referenceNumber>127</referenceNumber>
     <expectedChapters>5</expectedChapters>
+    <SwordAbbreviation>AddPs</SwordAbbreviation>
     <ParatextAbbreviation>Ps3</ParatextAbbreviation>
     <ParatextNumber>B3</ParatextNumber>
   </BibleBookCodes>
@@ -1378,9 +1474,9 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <!-- Not printed in any canonical tradition, but in some Syriac and LXX manuscripts -->
     <referenceAbbreviation>PSS</referenceAbbreviation>
     <referenceNumber>128</referenceNumber>
+    <SwordAbbreviation>PssSol</SwordAbbreviation>
     <ParatextAbbreviation>PsS</ParatextAbbreviation>
     <ParatextNumber>87</ParatextNumber>
-    <SwordAbbreviation>AddPs</SwordAbbreviation>
   </BibleBookCodes>
 
   <BibleBookCodes>
@@ -1389,15 +1485,16 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>LAO</referenceAbbreviation>
     <referenceNumber>130</referenceNumber>
     <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>EpLao</SwordAbbreviation>
     <ParatextAbbreviation>Lao</ParatextAbbreviation>
     <ParatextNumber>C3</ParatextNumber>
-    <SwordAbbreviation>EpLao</SwordAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->
     <nameEnglish>Odes / Odae</nameEnglish>
     <referenceAbbreviation>ODE</referenceAbbreviation>
     <referenceNumber>131</referenceNumber>
+    <SwordAbbreviation>Odes</SwordAbbreviation>
     <!-- ParatextAbbreviation used to be Oda -->
     <ParatextAbbreviation>Ode</ParatextAbbreviation>
     <ParatextNumber>86</ParatextNumber>
@@ -1469,15 +1566,17 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>JUB</referenceAbbreviation>
     <referenceNumber>140</referenceNumber>
     <expectedChapters>34</expectedChapters>
+    <SwordAbbreviation>Jub</SwordAbbreviation>
     <ParatextAbbreviation>Jub</ParatextAbbreviation>
     <ParatextNumber>B6</ParatextNumber>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Enoch / 1 Enoch</nameEnglish>
+    <nameEnglish>Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch</nameEnglish>
     <!-- Hebrew -->
     <referenceAbbreviation>ENO</referenceAbbreviation>
     <referenceNumber>141</referenceNumber>
     <expectedChapters>42</expectedChapters>
+    <SwordAbbreviation>1En</SwordAbbreviation>
     <ParatextAbbreviation>Eno</ParatextAbbreviation>
     <ParatextNumber>B7</ParatextNumber>
   </BibleBookCodes>
@@ -1737,6 +1836,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>26</expectedChapters>
     <SBLAbbreviation>Ezra</SBLAbbreviation>
     <OSISAbbreviation>Ezra</OSISAbbreviation>
+    <SwordAbbreviation>Ezra</SwordAbbreviation>
     <!-- Note that Paratext uses Ezr ambiguously for either Ezra or Ezra-Nehemiah -->
     <ParatextAbbreviation>Ezr</ParatextAbbreviation>
     <ParatextNumber>15</ParatextNumber>
