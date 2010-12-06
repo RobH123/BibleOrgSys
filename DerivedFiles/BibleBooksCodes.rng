@@ -169,6 +169,14 @@
         </element>
       </optional>
       <optional>
+        <element name="ByzantineAbbreviation">
+          <data type="string">
+            <param name="minLength">2</param>
+            <param name="maxLength">4</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
         <element name="possibleAlternativeBooks">
           <data type="string">
             <param name="minLength">3</param>

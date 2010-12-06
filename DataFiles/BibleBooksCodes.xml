@@ -19,12 +19,13 @@ and then these optional fields (optional because not all systems handle the less
         This is not authorative, but can assist in identifying books where the encoding is otherwise ambiguous.
     The SBL abbreviation (can include spaces)
     The OSIS abbrevation (no spaces but may begin with a digit)
+    The Sword abbreviation
     The 1-2 digit CCEL id number
     The three-character Paratext abbreviation (no spaces but may begin with a digit)
     The two-digit Paratext number
         Bibledit also uses the same codes (above) and USFM format as Paratext
     The three-character NET Bible abbreviation
-    The Sword abbreviation
+    The 2-4 character Bible abbreviation used for the Robinson-Pierpont Byzantine Greek text
     Alternative book codes (separated by commas)
         This is not precise but roughly shows which book this book might be confused with.
         It is used for automatic mapping of book codes (also using the expected number of chapters)
@@ -79,7 +80,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,possibleAlternativeBooks?)>
+        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,
+                                    ParatextAbbreviation?,ParatextNumber?,NETBibleAbbreviation?,ByzantineAbbreviation?,possibleAlternativeBooks?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT referenceNumber (#PCDATA)>
@@ -91,6 +93,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
             <!ELEMENT ParatextAbbreviation (#PCDATA)>
             <!ELEMENT ParatextNumber (#PCDATA)>
             <!ELEMENT NETBibleAbbreviation (#PCDATA)>
+            <!ELEMENT ByzantineAbbreviation (#PCDATA)>
             <!ELEMENT possibleAlternativeBooks (#PCDATA)>
 ]>
 
@@ -98,8 +101,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.92</version>
-      <date>2010-11-30</date>
+      <version>0.93</version>
+      <date>2010-12-06</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -639,6 +642,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Mat</ParatextAbbreviation>
     <ParatextNumber>41</ParatextNumber>
     <NETBibleAbbreviation>Mat</NETBibleAbbreviation>
+    <ByzantineAbbreviation>MT</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Mark</nameEnglish>
@@ -652,6 +656,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Mrk</ParatextAbbreviation>
     <ParatextNumber>42</ParatextNumber>
     <NETBibleAbbreviation>Mar</NETBibleAbbreviation>
+    <ByzantineAbbreviation>MR</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Luke</nameEnglish>
@@ -665,6 +670,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Luk</ParatextAbbreviation>
     <ParatextNumber>43</ParatextNumber>
     <NETBibleAbbreviation>Luk</NETBibleAbbreviation>
+    <ByzantineAbbreviation>LU</ByzantineAbbreviation>
     <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -679,6 +685,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Jhn</ParatextAbbreviation>
     <ParatextNumber>44</ParatextNumber>
     <NETBibleAbbreviation>Joh</NETBibleAbbreviation>
+    <ByzantineAbbreviation>JOH</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Acts</nameEnglish>
@@ -692,6 +699,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Act</ParatextAbbreviation>
     <ParatextNumber>45</ParatextNumber>
     <NETBibleAbbreviation>Act</NETBibleAbbreviation>
+    <ByzantineAbbreviation>AC</ByzantineAbbreviation>
     <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -706,6 +714,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Rom</ParatextAbbreviation>
     <ParatextNumber>46</ParatextNumber>
     <NETBibleAbbreviation>Rom</NETBibleAbbreviation>
+    <ByzantineAbbreviation>RO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>1 Corinthians</nameEnglish>
@@ -719,6 +728,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>1Co</ParatextAbbreviation>
     <ParatextNumber>47</ParatextNumber>
     <NETBibleAbbreviation>1Co</NETBibleAbbreviation>
+    <ByzantineAbbreviation>1CO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Corinthians</nameEnglish>
@@ -732,6 +742,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>2Co</ParatextAbbreviation>
     <ParatextNumber>48</ParatextNumber>
     <NETBibleAbbreviation>2Co</NETBibleAbbreviation>
+    <ByzantineAbbreviation>2CO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Galatians</nameEnglish>
@@ -745,6 +756,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Gal</ParatextAbbreviation>
     <ParatextNumber>49</ParatextNumber>
     <NETBibleAbbreviation>Gal</NETBibleAbbreviation>
+    <ByzantineAbbreviation>GA</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Ephesians</nameEnglish>
@@ -758,6 +770,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Eph</ParatextAbbreviation>
     <ParatextNumber>50</ParatextNumber>
     <NETBibleAbbreviation>Eph</NETBibleAbbreviation>
+    <ByzantineAbbreviation>EPH</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Philippians</nameEnglish>
@@ -771,6 +784,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Php</ParatextAbbreviation>
     <ParatextNumber>51</ParatextNumber>
     <NETBibleAbbreviation>Phi</NETBibleAbbreviation>
+    <ByzantineAbbreviation>PHP</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Colossians</nameEnglish>
@@ -784,6 +798,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Col</ParatextAbbreviation>
     <ParatextNumber>52</ParatextNumber>
     <NETBibleAbbreviation>Col</NETBibleAbbreviation>
+    <ByzantineAbbreviation>COL</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>1 Thessalonians</nameEnglish>
@@ -797,6 +812,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>1Th</ParatextAbbreviation>
     <ParatextNumber>53</ParatextNumber>
     <NETBibleAbbreviation>1Th</NETBibleAbbreviation>
+    <ByzantineAbbreviation>1TH</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Thessalonians</nameEnglish>
@@ -810,6 +826,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>2Th</ParatextAbbreviation>
     <ParatextNumber>54</ParatextNumber>
     <NETBibleAbbreviation>2Th</NETBibleAbbreviation>
+    <ByzantineAbbreviation>2TH</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>1 Timothy</nameEnglish>
@@ -823,6 +840,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>1Ti</ParatextAbbreviation>
     <ParatextNumber>55</ParatextNumber>
     <NETBibleAbbreviation>1Ti</NETBibleAbbreviation>
+    <ByzantineAbbreviation>1TI</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Timothy</nameEnglish>
@@ -836,6 +854,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>2Ti</ParatextAbbreviation>
     <ParatextNumber>56</ParatextNumber>
     <NETBibleAbbreviation>2Ti</NETBibleAbbreviation>
+    <ByzantineAbbreviation>2TI</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Titus</nameEnglish>
@@ -849,6 +868,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Tit</ParatextAbbreviation>
     <ParatextNumber>57</ParatextNumber>
     <NETBibleAbbreviation>Tit</NETBibleAbbreviation>
+    <ByzantineAbbreviation>TIT</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Philemon</nameEnglish>
@@ -862,6 +882,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Phm</ParatextAbbreviation>
     <ParatextNumber>58</ParatextNumber>
     <NETBibleAbbreviation>Phm</NETBibleAbbreviation>
+    <ByzantineAbbreviation>PHM</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Hebrews</nameEnglish>
@@ -875,6 +896,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Heb</ParatextAbbreviation>
     <ParatextNumber>59</ParatextNumber>
     <NETBibleAbbreviation>Heb</NETBibleAbbreviation>
+    <ByzantineAbbreviation>HEB</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>James / Jacob</nameEnglish>
@@ -888,6 +910,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Jas</ParatextAbbreviation>
     <ParatextNumber>60</ParatextNumber>
     <NETBibleAbbreviation>Jam</NETBibleAbbreviation>
+    <ByzantineAbbreviation>JAS</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>1 Peter</nameEnglish>
@@ -901,6 +924,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>1Pe</ParatextAbbreviation>
     <ParatextNumber>61</ParatextNumber>
     <NETBibleAbbreviation>1Pe</NETBibleAbbreviation>
+    <ByzantineAbbreviation>1PE</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Peter</nameEnglish>
@@ -914,6 +938,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>2Pe</ParatextAbbreviation>
     <ParatextNumber>62</ParatextNumber>
     <NETBibleAbbreviation>2Pe</NETBibleAbbreviation>
+    <ByzantineAbbreviation>2PE</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>1 John</nameEnglish>
@@ -927,6 +952,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>1Jn</ParatextAbbreviation>
     <ParatextNumber>63</ParatextNumber>
     <NETBibleAbbreviation>1Jo</NETBibleAbbreviation>
+    <ByzantineAbbreviation>1JO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 John</nameEnglish>
@@ -940,6 +966,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>2Jn</ParatextAbbreviation>
     <ParatextNumber>64</ParatextNumber>
     <NETBibleAbbreviation>2Jo</NETBibleAbbreviation>
+    <ByzantineAbbreviation>2JO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 John</nameEnglish>
@@ -953,6 +980,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>3Jn</ParatextAbbreviation>
     <ParatextNumber>65</ParatextNumber>
     <NETBibleAbbreviation>3Jo</NETBibleAbbreviation>
+    <ByzantineAbbreviation>3JO</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Jude</nameEnglish>
@@ -966,6 +994,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Jud</ParatextAbbreviation>
     <ParatextNumber>66</ParatextNumber>
     <NETBibleAbbreviation>Jud</NETBibleAbbreviation>
+    <ByzantineAbbreviation>JUDE</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Revelation of John / Apocalypse of St. John</nameEnglish>
@@ -979,6 +1008,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ParatextAbbreviation>Rev</ParatextAbbreviation>
     <ParatextNumber>67</ParatextNumber>
     <NETBibleAbbreviation>Rev</NETBibleAbbreviation>
+    <ByzantineAbbreviation>RE</ByzantineAbbreviation>
   </BibleBookCodes>
 
 <!-- Books from above which have quite different Hebrew and Greek versions. Sometimes printed separately, sometimes combined. -->

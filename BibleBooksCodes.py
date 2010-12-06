@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-11-30 (also update versionString below)
+#   Last modified: 2010-12-06 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.91"
+versionString = "0.92"
 
 import logging, os.path
 from collections import OrderedDict
@@ -49,7 +49,7 @@ class BibleBooksCodesConvertor:
     optionalAttributes = ()
     uniqueAttributes = compulsoryAttributes + optionalAttributes
     compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
-    optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "SwordAbbreviation", "possibleAlternativeBooks" )
+    optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
     #uniqueElements = compulsoryElements + optionalElements
     uniqueElements = compulsoryElements # Relax the checking
 
@@ -238,7 +238,7 @@ class BibleBooksCodesConvertor:
         assert( len ( self.tree ) )
 
         # We'll create a number of dictionaries with different elements as the key
-        myIDDict, myRADict, mySBLDict, myOADict, myCCELDict, myPADict, myPNDict, myENDict, mySwDict = OrderedDict(), OrderedDict(), {}, {}, {}, {}, {},{},{}
+        myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}
         for element in self.tree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -252,12 +252,14 @@ class BibleBooksCodesConvertor:
             expectedChapters = None if element.find("expectedChapters") is None else element.find("expectedChapters").text
             SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
             OSISAbbreviation = None if element.find("OSISAbbreviation") is None else element.find("OSISAbbreviation").text
+            SwordAbbreviation = None if element.find("SwordAbbreviation") is None else element.find("SwordAbbreviation").text
             CCELNumberString = None if element.find("CCELNumber") is None else element.find("CCELNumber").text
             #CCELNumber = int( CCELNumberString ) if CCELNumberString else -1
             ParatextAbbreviation = None if element.find("ParatextAbbreviation") is None else element.find("ParatextAbbreviation").text
             ParatextNumberString = None if element.find("ParatextNumber") is None else element.find("ParatextNumber").text
             #ParatextNumber = int( ParatextNumberString ) if ParatextNumberString else -1
-            SwordAbbreviation = None if element.find("SwordAbbreviation") is None else element.find("SwordAbbreviation").text
+            NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
+            ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
             possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text
 
             # Now put it into my dictionaries for easy access
@@ -266,32 +268,38 @@ class BibleBooksCodesConvertor:
             #   The referenceAbbreviation is UPPER CASE by definition
             if "referenceAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or referenceAbbreviation:
                 if "referenceAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
-                myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
+                myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
             if "referenceNumber" in BibleBooksCodesConvertor.compulsoryElements or ID:
                 if "referenceNumber" in BibleBooksCodesConvertor.uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
-                myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
+                myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
             if "SBLAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or SBLAbbreviation:
                 if "SBLAbbreviation" in BibleBooksCodesConvertor.uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
+                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
             if "OSISAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or OSISAbbreviation:
                 if "OSISAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-            if "CCELNumberString" in BibleBooksCodesConvertor.compulsoryElements or CCELNumberString:
-                if "CCELNumberString" in BibleBooksCodesConvertor.uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
-                myCCELDict[CCELNumberString] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
-            if "ParatextAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or ParatextAbbreviation:
-                if "ParatextAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
-            if "ParatextNumberString" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumberString:
-                if "ParatextNumberString" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
-                myPNDict[ParatextNumberString] = ( intID, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
             if "SwordAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or SwordAbbreviation:
                 if "SwordAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
-                mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish )
+                mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+            if "CCELNumberString" in BibleBooksCodesConvertor.compulsoryElements or CCELNumberString:
+                if "CCELNumberString" in BibleBooksCodesConvertor.uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
+                myCCELDict[CCELNumberString] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+            if "ParatextAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or ParatextAbbreviation:
+                if "ParatextAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
+                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+            if "ParatextNumberString" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumberString:
+                if "ParatextNumberString" in BibleBooksCodesConvertor.uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
+                myPNDict[ParatextNumberString] = ( intID, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+            if "NETBibleAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or NETBibleAbbreviation:
+                if "NETBibleAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
+                myNETDict[NETBibleAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, ByzantineAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
+            if "ByzantineAbbreviation" in BibleBooksCodesConvertor.compulsoryElements or ByzantineAbbreviation:
+                if "ByzantineAbbreviation" in BibleBooksCodesConvertor.uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
+                myBzDict[ByzantineAbbreviation] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish )
             if "nameEnglish" in BibleBooksCodesConvertor.compulsoryElements or ParatextNumberString:
                 if "nameEnglish" in BibleBooksCodesConvertor.uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
-                myENDict[nameEnglish] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks )
-        return myIDDict, myRADict, mySBLDict, myOADict, myCCELDict, myPADict, myPNDict, mySwDict, myENDict # Just throw away any of the dictionaries that you don't need
+                myENDict[nameEnglish] = ( intID, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks )
+        return myIDDict, myRADict, mySBLDict, myOADict, mySwDict, myCCELDict, myPADict, myPNDict, myNETDict, myBzDict, myENDict # Just throw away any of the dictionaries that you don't need
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -315,23 +323,25 @@ class BibleBooksCodesConvertor:
         if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + "_Tables.py" )
         print( "Exporting to %s..." % ( filepath ) )
 
-        IDDict, RADict, SBLDict, OADict, CCELDict, PADict, PNDict, SwDict, ENDict = self.importDataToPython()
+        IDDict, RADict, SBLDict, OADict, SwDict, CCELDict, PADict, PNDict, NETDict, BzDict, ENDict = self.importDataToPython()
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
-            if self.title: myFile.write( "# %s\n" % ( self.title ) )
+            if self.title: myFile.write( "# %s data\n" % ( self.title ) )
             if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.tree), BibleBooksCodesConvertor.treeTag ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "referenceNumber", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "referenceAbbreviation", "referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "SBLAbbreviation", "referenceNumber, ReferenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "OSISAbbreviation", "referenceNumber, ReferenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, CCELDict, "CCELDict", "CCELAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "ParatextAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "ParatextNumberString", "referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SwDict, "SwDict", "SwordAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, ENDict, "ENDict", "nameEnglish", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks" )
+            exportPythonDict( myFile, IDDict, "IDDict", "referenceNumber", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, RADict, "RADict", "referenceAbbreviation", "referenceNumber, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SBLDict, "SBLDict", "SBLAbbreviation", "referenceNumber, ReferenceAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, OADict, "OADict", "OSISAbbreviation", "referenceNumber, ReferenceAbbreviation, SBLAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SwDict, "SwDict", "SwordAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviationexpectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, CCELDict, "CCELDict", "CCELNumberString", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PADict, "PADict", "ParatextAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PNDict, "PNDict", "ParatextNumberString", "referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, NETDict, "NETDict", "NETBibleAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, BzDict, "BzDict", "ByzantineAbbreviation", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, ENDict, "ENDict", "nameEnglish", "referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks" )
     # end of exportDataToPython
 
     def exportDataToC( self, filepath=None ):
@@ -370,25 +380,28 @@ class BibleBooksCodesConvertor:
         assert( len ( self.tree ) )
         if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksCodesConvertor.filenameBase + "_Tables.h" )
         print( "Exporting to %s..." % ( filepath ) )
+        raise "Fields aren't properly handled yet, esp NETBible and Byzantine"
 
-        IDDict, RADict, SBLDict, OADict, CCELDict, PADict, PNDict, SwDict, ENDict = self.importDataToPython()
+        IDDict, RADict, SBLDict, OADict, SwDict, CCELDict, PADict, PNDict, NETDict, BzDict, ENDict = self.importDataToPython()
         ifdefName = BibleBooksCodesConvertor.filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// %s\n//\n" % ( filepath ) )
             myFile.write( "// This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n//\n" % ( datetime.now() ) )
-            if self.title: myFile.write( "// %s\n" % ( self.title ) )
+            if self.title: myFile.write( "// %s data\n" % ( self.title ) )
             if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
             myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.tree), BibleBooksCodesConvertor.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceAbbreviation (sorted), referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "SBLAbbreviation (sorted), referenceNumber, referenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "OSISAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, CCELDict, "CCELDict", "{char* CCELNum; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "CCELNumberString (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNum; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextNumberString (sorted), referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNum; char* PTAbbrev; char* PTNum; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceAbbreviation (sorted), referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "SBLAbbreviation (sorted), referenceNumber, referenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "OSISAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, CCELDict, "CCELDict", "{char* CCELNumStr; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "CCELNumberString (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNumStr; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextNumberString (sorted), referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, NETDict, "NETDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
+            exportPythonDict( myFile, BzDict, "BzDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
 # end of BibleBooksCodesConvertor class
@@ -409,7 +422,7 @@ class BibleBooksCodes:
         """
         bbcc = BibleBooksCodesConvertor( XMLFilepath ) # Load the XML
         # Get the various dictionaries organised for quick lookup
-        self.IDDict, self.RADict, self.SBLDict, self.OADict, self.CCELDict, self.PADict, self.PNDict, self.SwDict, self.ENDict = bbcc.importDataToPython()
+        self.IDDict, self.RADict, self.SBLDict, self.OADict, self.SwDict, self.CCELDict, self.PADict, self.PNDict, self.NETDict, self.BzDict, self.ENDict = bbcc.importDataToPython()
     # end of __init__
 
     def __str__( self ):
@@ -431,7 +444,7 @@ class BibleBooksCodes:
         """
         Gets a list with the number of expected chapters for the given book code.
         """
-        eC = self.RADict[BBB][7]
+        eC = self.RADict[BBB][len(self.RADict[BBB])-3] # -3 gives second-to-last field
         if eC: return [int(v) for v in eC.split(',')]
     # end of getExpectedChapters
 # end of BibleBooksCodes class

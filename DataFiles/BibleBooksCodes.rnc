@@ -52,5 +52,6 @@ BibleBookCodes = element BibleBookCodes
     element ParatextAbbreviation { xsd:string { length="3" } }?,
     element ParatextNumber { xsd:string { length="2" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
+    element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
     element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
 }
