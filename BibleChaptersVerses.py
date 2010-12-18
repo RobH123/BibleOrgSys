@@ -4,7 +4,7 @@
 # BibleChaptersVerses.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-01 (also update versionString below)
+#   Last modified: 2010-12-18 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,40 +28,48 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.18"
+versionString = "0.30"
 
 
 import os, logging
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
-import BibleBooksCodes
+
+from singleton import singleton
+import Globals
+from BibleBooksCodes import BibleBooksCodes
 
 
-CommandLineOptions = {}
-
-
-class BibleVersificationSystemsConvertor:
+@singleton # Can only ever have one instance
+class _BibleVersificationSystemsConvertor:
     """
     A class to handle data for Bible versification systems.
     """
-    filenameBase = "BibleVersificationSystems"
-    treeTag = "BibleVersificationSystem"
-    headerTag = "header"
-    mainElementTag = "BibleBookVersification"
-    compulsoryAttributes = ()
-    optionalAttributes = ( "omittedVerses", )
-    uniqueAttributes = compulsoryAttributes + optionalAttributes
-    compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "numChapters", "numVerses" )
-    optionalElements = ()
-    uniqueElements = ( "nameEnglish", "referenceAbbreviation" ) + optionalElements
 
     def __init__( self, BibleBooksCodesDict=None ):
         """
         Constructor.
         """
-        self.BibleBooksCodesDict = BibleBooksCodesDict
-        #self.title, self.version, self.date = None, None, None
-        self.XMLSystems, self.Dict = {}, {}
+        self.filenameBase = "BibleVersificationSystems"
+
+        # These fields are used for parsing the XML
+        self.treeTag = "BibleVersificationSystem"
+        self.headerTag = "header"
+        self.mainElementTag = "BibleBookVersification"
+
+        # These fields are used for automatically checking/validating the XML
+        self.compulsoryAttributes = ()
+        self.optionalAttributes = ( "omittedVerses", )
+        self.uniqueAttributes = self.compulsoryAttributes + self.optionalAttributes
+        self.compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "numChapters", "numVerses" )
+        self.optionalElements = ()
+        self.uniqueElements = ( "nameEnglish", "referenceAbbreviation" ) + self.optionalElements
+
+        # These are fields that we will fill later
+        self.XMLSystems, self.DataDict = {}, {}
+
+        # Make sure we have the bible books codes data loaded and available
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
 
     def __str__( self ):
@@ -71,11 +79,11 @@ class BibleVersificationSystemsConvertor:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = ""
+        result = "_BibleVersificationSystemsConvertor object"
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: %s" % ( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: %s" % ( self.date )
-        result += ('\n' if result else '') + "Num versification systems loaded = %i" % ( len(self.XMLSystems) )
+        result += ('\n' if result else '') + "  Num versification systems loaded = %i" % ( len(self.XMLSystems) )
         if 0: # Make it verbose
             for x in self.XMLSystems:
                 result += ('\n' if result else '') + "  %s" % ( x )
@@ -104,61 +112,62 @@ class BibleVersificationSystemsConvertor:
         """
         Load and pre-process the specified versification systems.
         """
+        if not self.XMLSystems: # Only ever do this once
+            if folder==None: folder = "DataFiles/VersificationSystems"
+            for filename in os.listdir( folder ):
+                filepart, extension = os.path.splitext( filename )
+                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEVERSIFICATIONSYSTEM_"):
+                    versificationSystemCode = filepart[25:]
+                    if Globals.verbosityLevel > 1: print( "Loading %s versification system from %s..." % ( versificationSystemCode, filename ) )
+                    self.XMLSystems[versificationSystemCode] = {}
+                    self.XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
+                    assert( self.XMLSystems[versificationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
-        if folder==None: folder = "DataFiles/VersificationSystems"
-        for filename in os.listdir( folder ):
-            filepart, extension = os.path.splitext( filename )
-            if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEVERSIFICATIONSYSTEM_"):
-                versificationSystemCode = filepart[25:]
-                #print( "Loading %s versification system from %s..." % ( versificationSystemCode, filename ) )
-                self.XMLSystems[versificationSystemCode] = {}
-                self.XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse ( os.path.join( folder, filename ) )
-                assert( self.XMLSystems[versificationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
-
-                # Check and remove the header element
-                if self.XMLSystems[versificationSystemCode]["tree"].tag  == BibleVersificationSystemsConvertor.treeTag:
-                    header = self.XMLSystems[versificationSystemCode]["tree"][0]
-                    if header.tag == BibleVersificationSystemsConvertor.headerTag:
-                        self.XMLSystems[versificationSystemCode]["header"] = header
-                        self.XMLSystems[versificationSystemCode]["tree"].remove( header )
-                        if len(header)>1:
-                            logging.info( "Unexpected elements in header" )
-                        elif len(header)==0:
-                            logging.info( "Missing work element in header" )
-                        else:
-                            work = header[0]
-                            if work.tag == "work":
-                                self.XMLSystems[versificationSystemCode]["version"] = work.find("version").text
-                                self.XMLSystems[versificationSystemCode]["date"] = work.find("date").text
-                                self.XMLSystems[versificationSystemCode]["title"] = work.find("title").text
+                    # Check and remove the header element
+                    if self.XMLSystems[versificationSystemCode]["tree"].tag  == self.treeTag:
+                        header = self.XMLSystems[versificationSystemCode]["tree"][0]
+                        if header.tag == self.headerTag:
+                            self.XMLSystems[versificationSystemCode]["header"] = header
+                            self.XMLSystems[versificationSystemCode]["tree"].remove( header )
+                            if len(header)>1:
+                                logging.info( "Unexpected elements in header" )
+                            elif len(header)==0:
+                                logging.info( "Missing work element in header" )
                             else:
-                                logging.warning( "Missing work element in header" )
+                                work = header[0]
+                                if work.tag == "work":
+                                    self.XMLSystems[versificationSystemCode]["version"] = work.find("version").text
+                                    self.XMLSystems[versificationSystemCode]["date"] = work.find("date").text
+                                    self.XMLSystems[versificationSystemCode]["title"] = work.find("title").text
+                                else:
+                                    logging.warning( "Missing work element in header" )
+                        else:
+                            logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
                     else:
-                        logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
-                else:
-                    logging.error( "Expected to load '%s' but got '%s'" % ( BibleVersificationSystemsConvertor.treeTag, self.XMLSystems[versificationSystemCode]["tree"].tag ) )
-                bookCount = 0 # There must be an easier way to do this
-                for subelement in self.XMLSystems[versificationSystemCode]["tree"]:
-                    bookCount += 1
-                logging.info( "    Loaded %i books" % ( bookCount ) )
+                        logging.error( "Expected to load '%s' but got '%s'" % ( self.treeTag, self.XMLSystems[versificationSystemCode]["tree"].tag ) )
+                    bookCount = 0 # There must be an easier way to do this
+                    for subelement in self.XMLSystems[versificationSystemCode]["tree"]:
+                        bookCount += 1
+                    logging.info( "    Loaded %i books" % ( bookCount ) )
 
-                self.validateSystem( self.XMLSystems[versificationSystemCode]["tree"] )
+                    self._validateSystem( self.XMLSystems[versificationSystemCode]["tree"] )
+        return self
     # end of loadSystems
 
-    def validateSystem( self, versificationTree ):
+    def _validateSystem( self, versificationTree ):
         """
         """
         assert( versificationTree )
 
         uniqueDict = {}
-        for elementName in BibleVersificationSystemsConvertor.uniqueElements: uniqueDict["Element_"+elementName] = []
-        for attributeName in BibleVersificationSystemsConvertor.uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
+        for elementName in self.uniqueElements: uniqueDict["Element_"+elementName] = []
+        for attributeName in self.uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
         expectedID = 1
         for k,element in enumerate(versificationTree):
-            if element.tag == BibleVersificationSystemsConvertor.mainElementTag:
+            if element.tag == self.mainElementTag:
                 # Check compulsory attributes on this main element
-                for attributeName in BibleVersificationSystemsConvertor.compulsoryAttributes:
+                for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
                         logging.error( "Compulsory '%s' attribute is missing from %s element in record %i" % ( attributeName, element.tag, k ) )
@@ -166,7 +175,7 @@ class BibleVersificationSystemsConvertor:
                         logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
-                for attributeName in BibleVersificationSystemsConvertor.optionalAttributes:
+                for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
@@ -175,11 +184,11 @@ class BibleVersificationSystemsConvertor:
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
-                    if attributeName not in BibleVersificationSystemsConvertor.compulsoryAttributes and attributeName not in BibleVersificationSystemsConvertor.optionalAttributes:
+                    if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
                         logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i" % ( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
-                for attributeName in BibleVersificationSystemsConvertor.uniqueAttributes:
+                for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
@@ -188,25 +197,25 @@ class BibleVersificationSystemsConvertor:
 
                 # Check compulsory elements
                 ID = element.find("referenceAbbreviation").text
-                for elementName in BibleVersificationSystemsConvertor.compulsoryElements:
+                for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
                         logging.error( "Compulsory '%s' element is missing in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
                     if not element.find( elementName ).text:
                         logging.warning( "Compulsory '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
 
                 # Check optional elements
-                for elementName in BibleVersificationSystemsConvertor.optionalElements:
+                for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
                             logging.warning( "Optional '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
-                    if subelement.tag not in BibleVersificationSystemsConvertor.compulsoryElements and subelement.tag not in BibleVersificationSystemsConvertor.optionalElements:
+                    if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
                         logging.warning( "Additional '%s' element ('%s') found in record with ID '%s' (record %i)" % ( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
-                for elementName in BibleVersificationSystemsConvertor.uniqueElements:
+                for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
@@ -214,26 +223,61 @@ class BibleVersificationSystemsConvertor:
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, k ) )
-    # end of validateSystem
+    # end of _validateSystem
+
+    def checkDuplicates( self ):
+        """
+        Checks for duplicate (redundant) book versification systems.
+
+        Returns True if a duplicate is found.
+        """
+        return False # TODO: fix this
+
+        systemLists, foundDuplicate = {}, False
+        for bookOrderSystemCode in self.XMLSystems.keys():
+            # Get the referenceAbbreviations all into a list
+            bookDataList = []
+            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
+                bookRA = bookElement.text
+                if self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
+                    bookDataList.append( bookRA )
+            # Compare with existing lists
+            for checkSystemCode,checkDataList in systemLists.items():
+                if bookDataList == checkDataList:
+                    logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(bookDataList) ) )
+                    foundDuplicate = True
+            # Add this new list
+            systemLists[bookOrderSystemCode] = bookDataList
+        return foundDuplicate
+    # end of checkDuplicates
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
+        assert( self.XMLSystems )
+        if self.DataDict: # We've already done an import/restructuring -- no need to repeat it
+            return self.DataDict
+
         # We'll create a number of dictionaries
-        self.Dict = {}
+        self.DataDict = {}
         for versificationSystemCode in self.XMLSystems.keys():
             #print( versificationSystemCode )
             # Make the data dictionary for this versification system
             chapterDataDict, omittedVersesDict = OrderedDict(), OrderedDict()
             for bookElement in self.XMLSystems[versificationSystemCode]["tree"]:
-                sReferenceAbbreviation = bookElement.find("referenceAbbreviation").text
-                #print( sReferenceAbbreviation )
-                if self.BibleBooksCodesDict and sReferenceAbbreviation not in self.BibleBooksCodesDict:
-                    logging.error( "Unrecognized '%s' book abbreviation in '%s' versification system" % ( sReferenceAbbreviation, versificationSystemCode ) )
-                numChapters = bookElement.find("numChapters").text
+                BBB = bookElement.find("referenceAbbreviation").text
+                #print( BBB )
+                if not self.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                    logging.error( "Unrecognized '%s' book abbreviation in '%s' versification system" % ( BBB, versificationSystemCode ) )
+                numChapters = bookElement.find("numChapters").text # This is a string
+
+                # Check the chapter data against the expected chapters in the BibleBooksCodes data
+                if numChapters not in self.BibleBooksCodes.getExpectedChaptersList(BBB):
+                    logging.warning( "Expected number of chapters for %s is %s but we got '%s' for %s" % (BBB, self.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
+
                 chapterData, omittedVersesData = OrderedDict(), []
-                chapterData[''] = numChapters
+                chapterData['numChapters'] = numChapters
                 for chapterElement in bookElement.findall("numVerses"):
                     chapter = chapterElement.get("chapter")
                     numVerses = chapterElement.text
@@ -245,20 +289,20 @@ class BibleVersificationSystemsConvertor:
                         for bit in bits:
                             omittedVersesData.append( (chapter, bit,) )
                 # Save it by book reference abbreviation
-                #assert( sReferenceAbbreviation not in bookData )
-                #bookData[sReferenceAbbreviation] = (chapterData, omittedVersesData,)
-                if sReferenceAbbreviation in chapterDataDict:
-                    logging.error( "Duplicate %s in %s" % ( sReferenceAbbreviation, versificationSystemCode ) )
-                chapterDataDict[sReferenceAbbreviation] = chapterData
-                if sReferenceAbbreviation in omittedVersesDict:
-                    logging.error( "Duplicate omitted data for %s in %s" % ( sReferenceAbbreviation, versificationSystemCode ) )
-                omittedVersesDict[sReferenceAbbreviation] = omittedVersesData
+                #assert( BBB not in bookData )
+                #bookData[BBB] = (chapterData, omittedVersesData,)
+                if BBB in chapterDataDict:
+                    logging.error( "Duplicate %s in %s" % ( BBB, versificationSystemCode ) )
+                chapterDataDict[BBB] = chapterData
+                if BBB in omittedVersesDict:
+                    logging.error( "Duplicate omitted data for %s in %s" % ( BBB, versificationSystemCode ) )
+                omittedVersesDict[BBB] = omittedVersesData
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
-            self.Dict[versificationSystemCode] = chapterDataDict, omittedVersesDict
-        return self.Dict
+            self.DataDict[versificationSystemCode] = chapterDataDict, omittedVersesDict
+        return self.DataDict
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -276,9 +320,11 @@ class BibleVersificationSystemsConvertor:
         from datetime import datetime
 
         assert( self.XMLSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleVersificationSystemsConvertor.filenameBase + "_Tables.py" )
-        print( "Exporting to %s..." % ( filepath ) )
+        self.importDataToPython()
+        assert( self.DataDict )
 
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
+        print( "Exporting to %s..." % ( filepath ) )
         versificationSystemDict = self.importDataToPython()
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -287,11 +333,11 @@ class BibleVersificationSystemsConvertor:
             #if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), BibleVersificationSystemsConvertor.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n" )
             myFile.write( "chapterVerseDict = {\n  # Key is versificationSystemName\n  # Fields are versificationSystem\n" )
             for systemName in versificationSystemDict:
-                exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName, "BBB referenceAbbreviation", "tuples containing (emptyString, numChapters) then (chapterNumber, numVerses)" )
+                exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName, "BBB referenceAbbreviation", "tuples containing (\"numChapters\", numChapters) then (chapterNumber, numVerses)" )
             myFile.write( "} # end of chapterVerseDict (%i systems)\n\n" % ( len(versificationSystemDict) ) )
             myFile.write( "omittedVersesDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n" )
             for systemName in versificationSystemDict:
@@ -299,11 +345,85 @@ class BibleVersificationSystemsConvertor:
             myFile.write( "} # end of omittedVersesDict (%i systems)\n\n" % ( len(versificationSystemDict) ) )
     # end of exportDataToPython
 
+    def exportDataToJSON( self, filepath=None ):
+        """
+        Writes the information tables to a .json file that can be easily loaded into a Java program.
+
+        See http://en.wikipedia.org/wiki/JSON.
+        """
+        from datetime import datetime
+        import json
+
+        assert( self.XMLSystems )
+        self.importDataToPython()
+        assert( self.DataDict )
+
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
+        print( "Exporting to %s..." % ( filepath ) )
+        with open( filepath, 'wt' ) as myFile:
+            #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
+            #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
+            #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
+            #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
+            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            json.dump( self.DataDict, myFile, indent=2 )
+            #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
+    # end of exportDataToJSON
+
     def exportDataToC( self, filepath=None ):
         """
         Writes the information tables to a .h file that can be included in c and c++ programs.
         """
-        def exportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
+        def writeStructure( hFile, structName, structure ):
+            """ Writes a typedef to the .h file. """
+            hFile.write( "typedef struct %sEntryStruct {\n" % structName )
+            for declaration in structure.split(';'):
+                adjDeclaration = declaration.strip()
+                if adjDeclaration: hFile.write( "    %s;\n" % adjDeclaration )
+            hFile.write( "} %sEntry;\n\n" % structName )
+        # end of writeStructure
+
+        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
+            """ Exports theDict to the .h and .c files. """
+            def convertEntry( entry ):
+                """ Convert special characters in an entry... """
+                result = ""
+                if isinstance( entry, int ): result += str(entry)
+                elif isinstance( entry, str): result += '"' + str(entry).replace('"','\\"') + '"'
+                else:
+                    for field in entry:
+                        if result: result += ", " # Separate the fields
+                        if field is None: result += '""'
+                        elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
+                        elif isinstance( field, int): result += str(field)
+                        elif isinstance( field, tuple):
+                            tupleResult = ""
+                            for value in field:
+                                if tupleResult: tupleResult += "," # Separate the fields (without a space)
+                                tupleResult += convertEntry( value ) # recursive call
+                            result += "{ %s }" % tupleResult
+                        else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
+                return result
+            # end of convertEntry
+
+            #for dictKey in theDict.keys(): # Have to iterate this :(
+            #    fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
+            #    break # We only check the first (random) entry we get
+            fieldsCount = 2
+
+            cFile.write( "const static %s\n %s[%i] = {\n  // Fields (%i) are %s\n  // Sorted by %s\n" % ( structName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            for dictKey in sorted(theDict.keys()):
+                if isinstance( dictKey, str ):
+                    cFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                elif isinstance( dictKey, int ):
+                    cFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                else:
+                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
+            cFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
+        # end of exportPythonDict
+
+        def XXXexportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
             """Exports theDict to theFile."""
             def convertEntry( entry ):
                 """Convert special characters in an entry..."""
@@ -332,39 +452,84 @@ class BibleVersificationSystemsConvertor:
                 if isinstance( dictKey, str ):
                     #print( dictKey, theDict[dictKey] )
                     theFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
-                elif isinstance( entry, int ):
+                elif isinstance( dictKey, int ):
                     theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
                     logging.error( "Can't handle this type of key data yet: %s" % ( dictKey ) )
             theFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
-        # end of exportPythonDict
+        # end of XXXexportPythonDict
 
         from datetime import datetime
 
         assert( self.XMLSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleVersificationSystemsConvertor.filenameBase + "_Tables.h" )
-        print( "Exporting to %s..." % ( filepath ) )
+        self.importDataToPython()
+        assert( self.DataDict )
 
-        versificationSystemDict = self.importDataToPython()
-        ifdefName = BibleVersificationSystemsConvertor.filenameBase.upper() + "_Tables_h"
-        with open( filepath, 'wt' ) as myFile:
-            myFile.write( "// %s\n//\n" % ( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by BibleVersificationSystemsConvertor.py V%s %s\n//\n" % ( versionString, datetime.now() ) )
-            #if self.title: myFile.write( "// %s\n" % ( self.title ) )
-            #if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
-            #if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), BibleVersificationSystemsConvertor.treeTag ) )
-            myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            myFile.write( "static struct {struct char*, void*, void*} versificationSystemNames[%i] = {\n  // Fields are systemName, systemVersification, systemOmittedVerses\n" % ( len(versificationSystemDict) ) )
-            for systemName in versificationSystemDict:
-                myFile.write( '  { "%s", %s_versificationSystem, %s_omittedVerses },\n' % ( systemName, systemName, systemName ) )
-            myFile.write( "}; // versificationSystemNames (%i entries)\n\n" % ( len(versificationSystemDict) ) )
-            for systemName in versificationSystemDict:
-                myFile.write( "#\n# %s\n" % ( systemName ) )
-                exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, emptyString, numChapters) then pairs of chapterNumber,numVerses" )
-                exportPythonDict( myFile, versificationSystemDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
-                exportPythonDict( myFile, versificationSystemDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
-            myFile.write( "#endif // %s\n" % ( ifdefName ) )
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
+        hFilepath = filepath + '.h'
+        cFilepath = filepath + '.c'
+        print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        ifdefName = self.filenameBase.upper() + "_Tables_h"
+
+        with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
+            myHFile.write( "// %s\n//\n" % ( hFilepath ) )
+            myCFile.write( "// %s\n//\n" % ( cFilepath ) )
+            lines = "// This UTF-8 file was automatically generated by BibleChaptersVerses.py on %s\n//\n" % datetime.now()
+            myHFile.write( lines ); myCFile.write( lines )
+            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), self.treeTag ) )
+            myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
+            myCFile.write( '#include "%s"\n\n' % os.path.basename(hFilepath) )
+
+            # This needs to be thought out better :(
+            # Need to put all CV data for all books into an array
+            #  and then have another level that points into it
+            #    BBB, numChapters, startIndex
+            raise Exception( "Sorry, this c export isn't working yet :(" )
+
+            CHAR = "const unsigned char"
+            BYTE = "const int"
+            N1 = "CVCount"
+            N2 = "CVCounts"
+            N3 = "CVOmitted"
+            N4 = "CVOmits"
+            S1 = "%s* chapterNumberString; %s* numVersesString;" % (CHAR,CHAR)
+            S2 = "%s referenceAbbreviation[3+1]; %sEntry numVersesString[];" % (CHAR,N1)
+            S3 = "%s* chapterNumberString; %s* verseNumberString;" % (CHAR,CHAR)
+            S4 = "%s referenceAbbreviation[3+1]; %sEntry numVersesString[];" % (CHAR,N3)
+            writeStructure( myHFile, N1, S1 )
+            writeStructure( myHFile, N2, S2 )
+            writeStructure( myHFile, N3, S4 )
+            writeStructure( myHFile, N4, S4 )
+            writeStructure( myHFile, "table", "%s* systemName; %sEntry* systemCVCounts; %sEntry* systemOmittedVerses;" % (CHAR,N2,N4) ) # I'm not sure if I need one or two asterisks on those last two
+                                                                                                        # They're supposed to be pointers to an array of structures
+            myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
+            myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
+
+            #myHFile.write( "static struct {struct char*, void*, void*} versificationSystemNames[%i] = {\n  // Fields are systemName, systemVersification, systemOmittedVerses\n" % ( len(versificationSystemDict) ) )
+
+            for systemName,systemInfo in self.DataDict.items(): # Now write out the actual data into the .c file
+                myCFile.write( "\n// %s\n" % ( systemName ) )
+                exportPythonDict( myCFile, systemInfo[0], systemName+"CVDict", N1+"Entry", "referenceAbbreviation", S1 )
+                exportPythonDict( myCFile, systemInfo[1], systemName+"OmittedVersesDict", N2+"Entry", "indexNumber", S2 )
+
+                break # Just do one for now
+#            for systemName in self.DataDict: # Now write out the actual data into the .c file
+#                print( systemName )
+#                myCFile.write( '  { "%s", %s_versificationSystem, %s_omittedVerses },\n' % ( systemName, systemName, systemName ) )
+#            myCFile.write( "}; // versificationSystemNames (%i entries)\n\n" % ( len(self.DataDict) ) )
+#            for systemName in self.DataDict:
+#                print( systemName )
+#                myCFile.write( "#\n# %s\n" % ( systemName ) )
+#                exportPythonDict( myCFile, self.DataDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, (\"numChapters\", numChapters) then pairs of chapterNumber,numVerses" )
+#                exportPythonDict( myCFile, self.DataDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
+#                exportPythonDict( myCFile, self.DataDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
+
+            # Write out the final table of pointers to the above information
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.DataDict) )
+            for systemName in self.DataDict: # Now write out the actual pointer data into the .c file
+                myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"CVDict", systemName+"OmittedVersesDict" ) )
+            myCFile.write( "}; // %i entries\n\n" % len(self.DataDict) )
+            myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
     # end of exportDataToC
 
     def checkVersificationSystem( self, thisSystemName, versificationSchemeToCheck, omittedVersesToCheck=None, exportFlag=False, debugFlag=False ):
@@ -372,16 +537,16 @@ class BibleVersificationSystemsConvertor:
         Check the given versification scheme against all the loaded systems.
         Create a new versification file if it doesn't match any.
         """
-        assert( self.Dict )
+        assert( self.DataDict )
         assert( versificationSchemeToCheck )
         if omittedVersesToCheck is None: omittedVersesToCheck = {}
 
         matchedVersificationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
-        for versificationSystemCode in self.Dict: # Step through the various reference schemes
+        for versificationSystemCode in self.DataDict: # Step through the various reference schemes
             #print( system )
             bookMismatchCount, chapterMismatchCount, verseMismatchCount, omittedVerseMismatchCount, theseErrors = 0, 0, 0, 0, ''
-            CVData, OVData = self.Dict[versificationSystemCode]
+            CVData, OVData = self.DataDict[versificationSystemCode]
 
             # Check verses per chapter
             for BBB in versificationSchemeToCheck.keys():
@@ -446,12 +611,12 @@ class BibleVersificationSystemsConvertor:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleVersificationSystem_"+thisSystemName + ".xml" )
-            print( "Writing %i books to %s..." % ( len(versificationSchemeToCheck), outputFilepath ) )
+            if Globals.verbosityLevel > 1: print( "Writing %i books to %s..." % ( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
                 for BBB in omittedVersesToCheck.keys():
                     totalOmittedVerses += len( omittedVersesToCheck[BBB] )
-                print( "  Have %i omitted verses for %i books" % ( totalOmittedVerses, len(omittedVersesToCheck) ) )
+                if Globals.verbosityLevel > 2: print( "  Have %i omitted verses for %i books" % ( totalOmittedVerses, len(omittedVersesToCheck) ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
@@ -465,14 +630,61 @@ class BibleVersificationSystemsConvertor:
                                 if oc == c: # It's this chapter
                                     omittedVerseString += (',' if omittedVerseString else '') + str(ov)
                         if omittedVerseString:
-                            print( '   ', BBB, c+':'+omittedVerseString )
+                            if Globals.verbosityLevel > 3 or Globals.debugFlag: print( '   ', BBB, c+':'+omittedVerseString )
                             myFile.write( '    <numVerses chapter="%s" omittedVerses="%s">%s</numVerses>\n' % ( c, omittedVerseString, numV ) )
                         else:
                             myFile.write( '    <numVerses chapter="%s">%s</numVerses>\n' % ( c, numV ) )
                     myFile.write( "  </BibleBookVersification>\n" )
                 myFile.write( "\n</BibleVersificationSystem>" )
     # end of checkVersificationSystem
-# end of BibleVersificationSystemsConvertor class
+# end of _BibleVersificationSystemsConvertor class
+
+
+@singleton # Can only ever have one instance
+class BibleVersificationSystems:
+    """
+    Class for handling BibleVersificationSystems.
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+
+    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
+    """
+
+    def __init__( self ): # We can't give this parameters because of the singleton
+        """
+        Constructor: 
+        """
+        self.bvsc = _BibleVersificationSystemsConvertor()
+        self.DataDict = None # We'll import into this in loadData
+    # end of __init__
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible book order.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "BibleVersificationSystems object"
+        for key in self.DataDict:
+            assert( len(self.DataDict[key][0]) == len(self.DataDict[key][1]) )
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.DataDict[key][0]) )
+        return result
+    # end of __str__
+
+    def loadData( self, folder=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        if not self.DataDict: # Don't do this unnecessarily
+            if folder is not None: logging.warning( "Bible versification systems are already loaded -- your given folder of '%s' was ignored" % folder )
+            self.bvsc.loadSystems( folder ) # Load the XML (if not done already)
+            self.DataDict = self.bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self.bvsc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
+
+    # TODO: Add some useful routines in here
+
+# end of BibleVersificationSystems class
 
 
 def main():
@@ -484,29 +696,26 @@ def main():
     global CommandLineOptions
     parser = OptionParser( version="v%s" % ( versionString ) )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="display extra debugging information")
-    CommandLineOptions, args = parser.parse_args()
+    Globals.addStandardOptionsAndProcess( parser )
 
+    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
 
-    # Get the data tables that we need for proper checking
-    bbc = BibleBooksCodes.BibleBooksCodesConvertor()
-    junk, BBCRADict, junk, junk, junk, junk, junk, junk, BBCNameDict = bbc.importDataToPython()
+    if Globals.commandLineOptions.export:
+        bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
+        bvsc.checkDuplicates()
+        bvsc.exportDataToPython() # Produce the .py tables
+        bvsc.exportDataToJSON() # Produce a json output file
+        bvsc.exportDataToC() # Produce the .h and .c tables
 
-    # Adjust the name dict to upper case
-    UC_BBCNameDict = {}
-    for key, entry in BBCNameDict.items():
-        UC_BBCNameDict[key.upper()] = entry
+    else: # Must be demo mode
+        # Demo the convertor object
+        bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
+        bvsc.checkDuplicates()
+        print( bvsc ) # Just print a summary
 
-    # Do a proper load/check
-    bcvs = BibleVersificationSystemsConvertor( BibleBooksCodesDict=BBCRADict )
-    bcvs.loadSystems()
-    VersificationNameDict = bcvs.importDataToPython()
-
-    if CommandLineOptions.export:
-        bcvs.exportDataToPython()
-        bcvs.exportDataToC()
-    else: # not exporting -- must just be a demo run
-        print( bcvs )
+        # Demo the BibleBookOrders object
+        bvs = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bvs ) # Just print a summary
 # end of main
 
 if __name__ == '__main__':

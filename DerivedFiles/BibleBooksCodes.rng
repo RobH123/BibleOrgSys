@@ -3,7 +3,7 @@
   <!--
     BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
       Version 0.93
-      Last modified: 2010-11-30
+      Last modified: 2010-12-16
     
     On Linux, to convert to RNG, use
           trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
@@ -110,7 +110,7 @@
         <element name="expectedChapters">
           <data type="string">
             <param name="minLength">1</param>
-            <param name="maxLength">5</param>
+            <param name="maxLength">7</param>
           </data>
         </element>
       </optional>

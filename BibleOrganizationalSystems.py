@@ -4,7 +4,7 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2010-11-26 (also update versionString below)
+#   Last modified: 2010-12-16 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,13 +28,17 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 """
 
 progName = "Bible Organization Systems handler"
-versionString = "0.12"
+versionString = "0.13"
 
 
 import logging, os.path
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
-import BibleBooksCodes, ISO_639_3, BibleChaptersVerses
+
+from singleton import singleton
+from Globals import ourGlobals
+from BibleBooksCodes import BibleBooksCodes
+from ISO_639_3_Languages import ISO_639_3_Languages
 
 
 class BibleOrganizationalSystemsConvertor:
@@ -52,20 +56,23 @@ class BibleOrganizationalSystemsConvertor:
     optionalElements = ()
     uniqueElements = ( "nameEnglish", "name" ) + optionalElements
 
-    def __init__( self, XMLFilepath=None, ISO639Dict=None, BibleBooksCodesDict=None ):
+    def __init__( self, XMLFilepath=None ):
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
         if XMLFilepath is None:
             XMLFilepath = os.path.join( "DataFiles", BibleOrganizationalSystemsConvertor.filenameBase + ".xml" )
-        self.ISO639Dict, self.BibleBooksCodesDict = ISO639Dict, BibleBooksCodesDict
         self.title, self.version, self.date = None, None, None
         self.header, self.namesTree = None, None
         #self.systems, self.loadedPrefixes = {}, []
         self.load( XMLFilepath )
         self.validate()
         #self.loadSystems()
+
+        # Get the data tables that we need for proper checking
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of __init__
 
     def __str__( self ):
@@ -99,7 +106,7 @@ class BibleOrganizationalSystemsConvertor:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        self.namesTree = ElementTree().parse ( XMLFilepath )
+        self.namesTree = ElementTree().parse( XMLFilepath )
         assert( self.namesTree ) # Fail here if we didn't load anything at all
 
         if self.namesTree.tag  == BibleOrganizationalSystemsConvertor.treeTag:
@@ -221,7 +228,7 @@ class BibleOrganizationalSystemsConvertor:
             for name in element.findall("name"):
                 languageCode = name.get("language")
                 names[languageCode] = name.text
-                if self.ISO639Dict and languageCode not in self.ISO639Dict:
+                if self.ISOLanguages and not self.ISOLanguages.isValidLanguageCode( languageCode ): # Check that we have a valid language code
                     logging.error( "Unrecognized '%s' ISO-639-3 language code in '%s' versification system" % ( languageCode, versificationSystemCode ) )
             assert( names )
 
@@ -332,21 +339,10 @@ def main():
     #bvs1 = BibleOrganizationalSystemsConvertor()
     #print( bvs1 )
 
-    # Get the data tables that we need for proper checking
-    bbc = BibleBooksCodes.BibleBooksCodesConvertor()
-    junk, BBCRADict, junk, junk, junk, junk, junk, junk, BBCNameDict = bbc.importDataToPython()
-    ISO = ISO_639_3.ISO_639_3_Convertor()
-    ISOIDDict, junk = ISO.importDataToPython()
-
     # Do a proper load/check
-    bvs = BibleOrganizationalSystemsConvertor( ISO639Dict=ISOIDDict, BibleBooksCodesDict=BBCRADict )
+    bvs = BibleOrganizationalSystemsConvertor()
     print( bvs )
     VersificationNameDict, VersificationCombinedDict = bvs.importDataToPython()
-
-    # Adjust the name dict
-    UC_BBCNameDict = {}
-    for key, entry in BBCNameDict.items():
-        UC_BBCNameDict[key.upper()] = entry
 # end of main
 
 if __name__ == '__main__':

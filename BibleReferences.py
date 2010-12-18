@@ -4,6 +4,7 @@
 # BibleReferences.py
 #
 # Module for handling Bible references including ranges
+#   Last modified: 2010-12-14 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,11 +25,47 @@
 
 """
 Module for creating and manipulating Bible references.
+
+This module recognises and handles OSIS Bible references.
+    They are of the form bookAbbreviation.chapterNumber.verseNumber
+        e.g., Gen.1.1 or Exod.20.10 or 2Chr.7.6 or Jude.1.2
+    Note that the book abbreviation is not a constant length
+            and may also start with a digit
+        and that the same separator is repeated.
+
+However, the native Bible reference format in this system is more tightly defined
+    e.g., GEN_1:1 or EXO_20:10 or CH2_7:6 or JDE_1:2b
+We can see that
+    1/ The Bible book code is always 3-characters, starting with a letter
+        All letters are UPPERCASE
+    2/ We use an underline character as the book / chapter separator
+    3/ We use a colon as the chapter / verse separator
+    4/ We treat all chapter and verse fields as strings
+    5/ Verse numbers can include a letter suffix a..c
+        representing very approximate portions of a verse
+
+OSIS all defines reference ranges
+    e.g., Gen.1.1-Gen.1.2 or Gen.1.1-Gen.2.3 (inclusive)
+
+Our ranges are slightly different (also inclusive)
+    e.g., Gen_1:1-Gen_1:2 but Gen_1:1-Gen_2:3
+    i.e., using a hyphen for a verse span but xxx for a span that crosses chapters.
+
+OXES is different again.
 """
+
+progName = "Bible References handler"
+versionString = "0.13"
 
 
 import os, logging
-import BibleBookNames, USFMBibleBookCodes, BibleChaptersVerses
+
+#from singleton import singleton
+from Globals import ourGlobals
+from BibleBooksCodes import BibleBooksCodes
+from ISO_639_3_Languages import ISO_639_3_Languages
+
+import BibleBooksNames, BibleChaptersVerses
 
 
 builtinSystems = {
@@ -99,13 +136,17 @@ class BibleSingleReference:
     Class for creating and manipulating single Bible reference objects (no range allowed).
     """
 
-    def __init__( self, systemName, BBNObject, BCVObject ):
+    def __init__( self, systemName ):
         assert( systemName )
         assert( BBNObject )
         assert( BCVObject )
         self.BibleBookNames = BBNObject
         self.BibleChaptersVerses = BCVObject
         self.load( systemName )
+
+        # Get the data tables that we need for proper checking
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of __init__
 
     def __str__( self ):
@@ -457,7 +498,9 @@ class BibleRangeReferences:
 
     def parseWithErrorMsgs( self, referenceString ):
         """
-        Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V) tuples
+        Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V) tuples.
+
+        We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
         #print( "Processing '%s'" % referenceString )
         assert( self.characters )
@@ -679,7 +722,7 @@ class BibleRangeReferences:
         elif status==2: # Got a C but still getting the V hopefully
             if V:
                 status = 3
-        elif status==4: # Must have ended with a seperator character
+        elif status==4: # Must have ended with a separator character
             logging.warning( "Bible reference '%s' ended with a separator character" % referenceString )
             haveWarnings = True
             status = 9;
@@ -704,11 +747,11 @@ class BibleRangeReferences:
 def demo():
     """Demonstrate reading and processing some Bible name databases.
     """
-    BBN = BibleBookNames.BibleBookNames( "English" )
+    BBN = BibleBooksNames.BibleBooksNames( "English" )
     BCV = BibleChaptersVerses.BibleChaptersVerses( "EnglishProtestantSystem" )
 
     BSR = BibleSingleReference( "EnglishSystem", BBN, BCV )
-    #print( BSR )
+    #print( BSR ) # Just print a summary
     print( "\nSingle Reference (good)" )
     print( BSR.parseWithErrorMsgs( "Mat 7:3" ), BSR.parseWithErrorMsgs( "Mat.7:3" ), BSR.parseWithErrorMsgs( "Mat. 7:3" ), BSR.parseWithErrorMsgs( "Mt. 7:3" ), BSR.parseWithErrorMsgs( "Mt.7:3" ) )
     print( BSR.parseWithErrorMsgs( "Jud 7" ), BSR.parseWithErrorMsgs( "Jud. 7" ), BSR.parseWithErrorMsgs( "Jud 1:7" ), BSR.parseWithErrorMsgs( "Jud. 1:7" ) )
@@ -719,7 +762,7 @@ def demo():
     print( BSR.parseWithErrorMsgs( "Mat. 7:3xyz5" ) )
 
     BSRs = BibleSingleReferences( "EnglishSystem", BBN, BCV )
-    #print( BSRs )
+    #print( BSRs ) # Just print a summary
     print( "\n\nSingle References (good)" )
     print( BSRs.parseWithErrorMsgs( "Mat 7:3" ), BSRs.parseWithErrorMsgs( "Mat.7:3" ), BSRs.parseWithErrorMsgs( "Mat. 7:3" ), BSRs.parseWithErrorMsgs( "Mt. 7:3" ), BSRs.parseWithErrorMsgs( "Mt.7:3" ) )
     print( BSRs.parseWithErrorMsgs( "Jud 7" ), BSRs.parseWithErrorMsgs( "Jud. 7" ), BSRs.parseWithErrorMsgs( "Jud 1:7" ), BSRs.parseWithErrorMsgs( "Jud. 1:7" ) )
@@ -732,7 +775,7 @@ def demo():
     print( BSRs.parseWithErrorMsgs( "Mat. 7:3xyz5" ) )
 
     BRRs = BibleRangeReferences( "EnglishSystem", BBN, BCV )
-    #print( BRRs )
+    #print( BRRs ) # Just print a summary
     print( BRRs.makeReferenceString(("MAT", "7", "3")), BRRs.makeReferenceString(("PHM", "1", "3")) )
     #print( "\n\nSingle References for Ranges (good)" )
     #print( BRRs.parseWithErrorMsgs( "Mat 7:3" ), BRRs.parseWithErrorMsgs( "Mat.7:3" ), BRRs.parseWithErrorMsgs( "Mat. 7:3" ), BRRs.parseWithErrorMsgs( "Mt. 7:3" ), BRRs.parseWithErrorMsgs( "Mt.7:3" ) )

@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2010-11-08 (also update versionString below)
+#   Last modified: 2010-12-18 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -26,10 +26,18 @@
 Module for creating and manipulating USFM filenames.
 """
 
+progName = "USFM Bible filenames handler"
+versionString = "0.53"
+
 
 import os
 
+from singleton import singleton
+import Globals
+from BibleBooksCodes import BibleBooksCodes
 
+
+#@singleton # Can only ever have one instance
 class USFMFilenames:
     """
     Class for creating and manipulating USFM Filenames.
@@ -39,8 +47,8 @@ class USFMFilenames:
         """
         Create the object.
         """
-        import BibleBooksCodes
-        self.ParatextCodeNumberTriples = BibleBooksCodes.BibleBooksCodesConvertor().getAllParatextBooksCodeNumberTriples()
+        # Get the data tables that we need for proper checking
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
 
         self.folder = folder
         files = os.listdir( self.folder )
@@ -57,7 +65,7 @@ class USFMFilenames:
                         break
                 matched = False
                 if foundLength>=8 and containsDigits and foundExtBit and foundExtBit[0]=='.':
-                    for paratextBookCode,paratextDigits,bookReferenceCode in self.ParatextCodeNumberTriples:
+                    for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
                         if paratextDigits in foundFileBit and (paratextBookCode in foundFileBit or paratextBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( paratextDigits )
                             paratextBookCodeIndex = foundFileBit.index(paratextBookCode) if paratextBookCode in foundFileBit else foundFileBit.index(paratextBookCode.upper())
@@ -103,7 +111,7 @@ class USFMFilenames:
     def possibleFiles( self ):
         """Return a list of valid USFM filenames"""
         filelist = []
-        for paratextBookCode,paratextDigits,bookReferenceCode in self.ParatextCodeNumberTriples:
+        for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
             filename = "--------" # Eight characters
             filename = filename[:self.digitsIndex] + paratextDigits + filename[self.digitsIndex+len(paratextDigits):]
             filename = filename[:self.paratextBookCodeIndex] + paratextBookCode.upper() if 'BBB' in self.pattern else paratextBookCode + filename[self.paratextBookCodeIndex+len(paratextBookCode):]
@@ -130,6 +138,14 @@ class USFMFilenames:
 def demo():
     """Demonstrate reading and processing some Bible databases.
     """
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v%s" % ( versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
+    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
+
     test = USFMFilenames( '/mnt/Data/Matigsalug/Scripture/MBTV' )
     print( test )
     print( test.possibleFiles() )

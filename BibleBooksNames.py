@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-11-30 (also update versionString below)
+#   Last modified: 2010-12-18 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,38 +28,52 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import os, logging
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
-import BibleBooksCodes, ISO_639_3
+
+from singleton import singleton
+import Globals
+from BibleBooksCodes import BibleBooksCodes
+from ISO_639_3_Languages import ISO_639_3_Languages
 
 
-class BibleBooksNamesSystemsConvertor:
+@singleton # Can only ever have one instance
+class _BibleBooksNamesSystemsConvertor:
     """
     A class to handle data for Bible booksNames systems.
     """
-    filenameBase = "BibleBooksNames"
-    treeTag = "BibleBooksNames"
-    headerTag = "header"
-    mainElementTags = ( "BibleDivisionNames", "BibleBooknameLeaders", "BibleBookNames" )
-    compulsoryAttributes = { 0:(), 1:("standardLeader",), 2:("referenceAbbreviation",) }
-    optionalAttributes = { 0:(), 1:(), 2:() }
-    uniqueAttributes = {}
-    for key in compulsoryAttributes.keys():
-        uniqueAttributes[key] = compulsoryAttributes[key] + optionalAttributes[key]
-    compulsoryElements = { 0:("defaultName","defaultAbbreviation","includesBook",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation",) }
-    optionalElements =  { 0:("inputAbbreviation",), 1:(), 2:("inputAbbreviation",) }
-    uniqueElements = { 0:("defaultName","defaultAbbreviation","inputAbbreviation",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation","inputAbbreviation",) }
 
-    def __init__( self, ISO639Dict=None, BibleBooksCodesDict=None ):
+    def __init__( self ):
         """
         Constructor.
         """
-        self.ISO639Dict, self.BibleBooksCodesDict = ISO639Dict, BibleBooksCodesDict
-        self.systems, self.importedSystems, self.expandedInputSystems = {}, {}, {}
+        self.filenameBase = "BibleBooksNames"
+
+        # These fields are used for parsing the XML
+        self.treeTag = "BibleBooksNames"
+        self.headerTag = "header"
+        self.mainElementTags = ( "BibleDivisionNames", "BibleBooknameLeaders", "BibleBookNames" )
+
+        # These fields are used for automatically checking/validating the XML
+        self.compulsoryAttributes = { 0:(), 1:("standardLeader",), 2:("referenceAbbreviation",) }
+        self.optionalAttributes = { 0:(), 1:(), 2:() }
+        self.uniqueAttributes = {}
+        for key in self.compulsoryAttributes.keys():
+            self.uniqueAttributes[key] = self.compulsoryAttributes[key] + self.optionalAttributes[key]
+        self.compulsoryElements = { 0:("defaultName","defaultAbbreviation","includesBook",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation",) }
+        self.optionalElements =  { 0:("inputAbbreviation",), 1:(), 2:("inputAbbreviation",) }
+        self.uniqueElements = { 0:("defaultName","defaultAbbreviation","inputAbbreviation",), 1:("inputAbbreviation",), 2:("defaultName","defaultAbbreviation","inputAbbreviation",) }
+
+        # These are fields that we will fill later
+        self.XMLSystems, self.importedSystems, self.expandedInputSystems = {}, {}, {}
+
+        # Get the data tables that we need for proper checking
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of __init__
 
     def __str__( self ):
@@ -69,22 +83,22 @@ class BibleBooksNamesSystemsConvertor:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = ""
-        result += ('\n' if result else '') + "Num bookname systems loaded = %i" % ( len(self.systems) )
+        result = "_BibleBooksNamesSystemsConvertor object"
+        result += ('\n' if result else '') + "  Num bookname systems loaded = %i" % ( len(self.XMLSystems) )
         if 0: # Make it verbose
-            for x in self.systems:
+            for x in self.XMLSystems:
                 result += ('\n' if result else '') + "  %s" % ( x )
-                if self.ISO639Dict and self.systems[x]["languageCode"] and self.systems[x]["languageCode"] in self.ISO639Dict:
-                    result += ('\n' if result else '') + "    Language code %s = %s" % ( self.systems[x]["languageCode"], self.ISO639Dict[self.systems[x]["languageCode"]][0] )
-                title = self.systems[x]["title"]
+                if self.ISO639Dict and self.XMLSystems[x]["languageCode"] and self.XMLSystems[x]["languageCode"] in self.ISO639Dict:
+                    result += ('\n' if result else '') + "    Language code %s = %s" % ( self.XMLSystems[x]["languageCode"], self.ISO639Dict[self.XMLSystems[x]["languageCode"]][0] )
+                title = self.XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    %s" % ( title )
-                version = self.systems[x]["version"]
+                version = self.XMLSystems[x]["version"]
                 if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-                date = self.systems[x]["date"]
+                date = self.XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num entries = %i" % ( len(self.systems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Num entries = %i" % ( len(self.XMLSystems[x]["tree"]) )
                 numDivisions, numLeaders, numBooks = 0, 0, 0
-                for element in self.systems[x]["tree"]:
+                for element in self.XMLSystems[x]["tree"]:
                     if element.tag == "BibleDivisionNames":
                         numDivisions += 1
                     elif element.tag == "BibleBooknameLeaders":
@@ -101,46 +115,47 @@ class BibleBooksNamesSystemsConvertor:
         """
         Load and pre-process the specified booksNames systems.
         """
+        if not self.XMLSystems: # Only ever do this once
+            if folder==None: folder = "DataFiles/BookNames"
+            for filename in os.listdir( folder ):
+                filepart, extension = os.path.splitext( filename )
+                if extension.upper() == '.XML' and filepart.upper().startswith(self.filenameBase.upper()+"_"):
+                    booksNamesSystemCode = filepart[len(self.filenameBase)+1:]
+                    print( "Loading %s booksNames system from %s..." % ( booksNamesSystemCode, filename ) )
+                    self.XMLSystems[booksNamesSystemCode] = {}
+                    self.XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_')[0]
+                    self.XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
+                    assert( self.XMLSystems[booksNamesSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
-        if folder==None: folder = "DataFiles/BookNames"
-        for filename in os.listdir( folder ):
-            filepart, extension = os.path.splitext( filename )
-            if extension.upper() == '.XML' and filepart.upper().startswith(BibleBooksNamesSystemsConvertor.filenameBase.upper()+"_"):
-                booksNamesSystemCode = filepart[len(BibleBooksNamesSystemsConvertor.filenameBase)+1:]
-                #print( "Loading %s booksNames system from %s..." % ( booksNamesSystemCode, filename ) )
-                self.systems[booksNamesSystemCode] = {}
-                self.systems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_')[0]
-                self.systems[booksNamesSystemCode]["tree"] = ElementTree().parse ( os.path.join( folder, filename ) )
-                assert( self.systems[booksNamesSystemCode]["tree"] ) # Fail here if we didn't load anything at all
-
-                # Check and remove the header element
-                if self.systems[booksNamesSystemCode]["tree"].tag  == BibleBooksNamesSystemsConvertor.treeTag:
-                    header = self.systems[booksNamesSystemCode]["tree"][0]
-                    if header.tag == BibleBooksNamesSystemsConvertor.headerTag:
-                        self.systems[booksNamesSystemCode]["header"] = header
-                        self.systems[booksNamesSystemCode]["tree"].remove( header )
-                        if len(header)>1:
-                            logging.info( "Unexpected elements in header" )
-                        elif len(header)==0:
-                            logging.info( "Missing work element in header" )
-                        else:
-                            work = header[0]
-                            if work.tag == "work":
-                                self.systems[booksNamesSystemCode]["version"] = work.find("version").text
-                                self.systems[booksNamesSystemCode]["date"] = work.find("date").text
-                                self.systems[booksNamesSystemCode]["title"] = work.find("title").text
+                    # Check and remove the header element
+                    if self.XMLSystems[booksNamesSystemCode]["tree"].tag  == self.treeTag:
+                        header = self.XMLSystems[booksNamesSystemCode]["tree"][0]
+                        if header.tag == self.headerTag:
+                            self.XMLSystems[booksNamesSystemCode]["header"] = header
+                            self.XMLSystems[booksNamesSystemCode]["tree"].remove( header )
+                            if len(header)>1:
+                                logging.info( "Unexpected elements in header" )
+                            elif len(header)==0:
+                                logging.info( "Missing work element in header" )
                             else:
-                                logging.warning( "Missing work element in header" )
+                                work = header[0]
+                                if work.tag == "work":
+                                    self.XMLSystems[booksNamesSystemCode]["version"] = work.find("version").text
+                                    self.XMLSystems[booksNamesSystemCode]["date"] = work.find("date").text
+                                    self.XMLSystems[booksNamesSystemCode]["title"] = work.find("title").text
+                                else:
+                                    logging.warning( "Missing work element in header" )
+                        else:
+                            logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
                     else:
-                        logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
-                else:
-                    logging.error( "Expected to load '%s' but got '%s'" % ( BibleBooksNamesSystemsConvertor.treeTag, self.systems[booksNamesSystemCode]["tree"].tag ) )
-                bookCount = 0 # There must be an easier way to do this
-                for subelement in self.systems[booksNamesSystemCode]["tree"]:
-                    bookCount += 1
-                logging.info( "    Loaded %i books" % ( bookCount ) )
+                        logging.error( "Expected to load '%s' but got '%s'" % ( self.treeTag, self.XMLSystems[booksNamesSystemCode]["tree"].tag ) )
+                    bookCount = 0 # There must be an easier way to do this
+                    for subelement in self.XMLSystems[booksNamesSystemCode]["tree"]:
+                        bookCount += 1
+                    logging.info( "    Loaded %i books" % ( bookCount ) )
 
-                self.validateSystem( booksNamesSystemCode )
+                    self.validateSystem( booksNamesSystemCode )
+        return self
     # end of loadSystems
 
     def validateSystem( self, systemName ):
@@ -148,26 +163,25 @@ class BibleBooksNamesSystemsConvertor:
         Checks for basic formatting/content errors in a Bible book name system.
         """
         assert( systemName )
-        assert( self.systems[systemName]["tree"] )
+        assert( self.XMLSystems[systemName]["tree"] )
 
-        if len(self.systems[systemName]["languageCode"]) != 3:
+        if len(self.XMLSystems[systemName]["languageCode"]) != 3:
             logging.error( "Couldn't find 3-letter language code in '%s' book names system" % ( systemName ) )
-        if self.ISO639Dict: # Check that we have a valid language code
-            if self.systems[systemName]["languageCode"] not in self.ISO639Dict:
-                logging.error( "Unrecognized '%s' ISO-639-3 language code in '%s' book names system" % ( self.systems[systemName]["languageCode"], systemName ) )
+        if self.ISOLanguages and not self.ISOLanguages.isValidLanguageCode( self.XMLSystems[systemName]["languageCode"] ): # Check that we have a valid language code
+            logging.error( "Unrecognized '%s' ISO-639-3 language code in '%s' book names system" % ( self.XMLSystems[systemName]["languageCode"], systemName ) )
 
         uniqueDict = {}
-        for index in range( 0, len(BibleBooksNamesSystemsConvertor.mainElementTags) ):
-            for elementName in BibleBooksNamesSystemsConvertor.uniqueElements[index]: uniqueDict["Element_"+str(index)+"_"+elementName] = []
-            for attributeName in BibleBooksNamesSystemsConvertor.uniqueAttributes[index]: uniqueDict["Attribute_"+str(index)+"_"+attributeName] = []
+        for index in range( 0, len(self.mainElementTags) ):
+            for elementName in self.uniqueElements[index]: uniqueDict["Element_"+str(index)+"_"+elementName] = []
+            for attributeName in self.uniqueAttributes[index]: uniqueDict["Attribute_"+str(index)+"_"+attributeName] = []
 
         expectedID = 1
-        for k,element in enumerate(self.systems[systemName]["tree"]):
-            if element.tag in BibleBooksNamesSystemsConvertor.mainElementTags:
-                index = BibleBooksNamesSystemsConvertor.mainElementTags.index( element.tag )
+        for k,element in enumerate(self.XMLSystems[systemName]["tree"]):
+            if element.tag in self.mainElementTags:
+                index = self.mainElementTags.index( element.tag )
 
                 # Check compulsory attributes on this main element
-                for attributeName in BibleBooksNamesSystemsConvertor.compulsoryAttributes[index]:
+                for attributeName in self.compulsoryAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
                         logging.error( "Compulsory '%s' attribute is missing from %s element in record %i in %s" % ( attributeName, element.tag, k, systemName ) )
@@ -175,7 +189,7 @@ class BibleBooksNamesSystemsConvertor:
                         logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i in %s" % ( attributeName, element.tag, k, systemName ) )
 
                 # Check optional attributes on this main element
-                for attributeName in BibleBooksNamesSystemsConvertor.optionalAttributes[index]:
+                for attributeName in self.optionalAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
@@ -184,11 +198,11 @@ class BibleBooksNamesSystemsConvertor:
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
-                    if attributeName not in BibleBooksNamesSystemsConvertor.compulsoryAttributes[index] and attributeName not in BibleBooksNamesSystemsConvertor.optionalAttributes[index]:
+                    if attributeName not in self.compulsoryAttributes[index] and attributeName not in self.optionalAttributes[index]:
                         logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i in %s" % ( attributeName, attributeValue, element.tag, k, systemName ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
-                for attributeName in BibleBooksNamesSystemsConvertor.uniqueAttributes[index]:
+                for attributeName in self.uniqueAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+str(index)+"_"+attributeName]:
@@ -196,25 +210,25 @@ class BibleBooksNamesSystemsConvertor:
                         uniqueDict["Attribute_"+str(index)+"_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
-                for elementName in BibleBooksNamesSystemsConvertor.compulsoryElements[index]:
+                for elementName in self.compulsoryElements[index]:
                     if element.find( elementName ) is None:
                         logging.error( "Compulsory '%s' element is missing (record %i) in %s" % ( elementName, k, systemName ) )
                     if not element.find( elementName ).text:
                         logging.warning( "Compulsory '%s' element is blank (record %i) in %s" % ( elementName, k, systemName ) )
 
                 # Check optional elements
-                for elementName in BibleBooksNamesSystemsConvertor.optionalElements[index]:
+                for elementName in self.optionalElements[index]:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
                             logging.warning( "Optional '%s' element is blank (record %i) in %s" % ( elementName, k, systemName ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
-                    if subelement.tag not in BibleBooksNamesSystemsConvertor.compulsoryElements[index] and subelement.tag not in BibleBooksNamesSystemsConvertor.optionalElements[index]:
+                    if subelement.tag not in self.compulsoryElements[index] and subelement.tag not in self.optionalElements[index]:
                         logging.warning( "Additional '%s' element ('%s') found (record %i) in %s %s" % ( subelement.tag, subelement.text, k, systemName, element.tag ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
-                for elementName in BibleBooksNamesSystemsConvertor.uniqueElements[index]:
+                for elementName in self.uniqueElements[index]:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+str(index)+"_"+elementName]:
@@ -228,13 +242,17 @@ class BibleBooksNamesSystemsConvertor:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
+        assert( self.XMLSystems )
+        if self.importedSystems: # We've already done an import/restructuring -- no need to repeat it
+            return self.importedSystems
+
         # We'll create a number of dictionaries
         myBookNamesSystemsDict = {}
-        for booksNamesSystemCode in self.systems.keys():
+        for booksNamesSystemCode in self.XMLSystems.keys():
             #print( booksNamesSystemCode )
             # Make the data dictionary for this booksNames system
             myDivisionsNamesList, myBooknameLeadersDict, myBookNamesDict = [], {}, {}
-            for element in self.systems[booksNamesSystemCode]["tree"]:
+            for element in self.XMLSystems[booksNamesSystemCode]["tree"]:
                 if element.tag == "BibleDivisionNames":
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
@@ -248,7 +266,7 @@ class BibleBooksNamesSystemsConvertor:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
-                        if self.BibleBooksCodesDict and BBB not in self.BibleBooksCodesDict:
+                        if not self.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.error( "Unrecognized '%s' book abbreviation in BibleDivisionNames in '%s' booksNames system" % ( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
                             logging.error( "Duplicate '%s' entry in includesBook field for '%s' division in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -265,7 +283,7 @@ class BibleBooksNamesSystemsConvertor:
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
-                    if self.BibleBooksCodesDict and referenceAbbreviation not in self.BibleBooksCodesDict:
+                    if not self.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
                         logging.error( "Unrecognized '%s' book abbreviation in BibleBookNames in '%s' booksNames system" % ( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
@@ -280,6 +298,7 @@ class BibleBooksNamesSystemsConvertor:
             # Now put it into my dictionary for easy access
             myBookNamesSystemsDict[booksNamesSystemCode] = myDivisionsNamesList, myBooknameLeadersDict, myBookNamesDict
         self.importedSystems = myBookNamesSystemsDict
+        return self.importedSystems
     # end of importDataToPython
 
     def expandInputs ( self ):
@@ -444,10 +463,12 @@ class BibleBooksNamesSystemsConvertor:
 
         from datetime import datetime
 
+        assert( self.XMLSystems )
+        self.importDataToPython()
         assert( self.importedSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "_Tables.py" )
-        print( "Exporting to %s..." % ( filepath ) )
 
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
+        print( "Exporting to %s..." % ( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
@@ -455,8 +476,8 @@ class BibleBooksNamesSystemsConvertor:
             #if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), BibleBooksNamesSystemsConvertor.treeTag ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.systems), BibleBooksNamesSystemsConvertor.treeTag ) )
+            #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), self.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n" )
             myFile.write( "\ndivisionNamesList = {\n  # Key is languageCode\n  # Fields are divisionNames\n\n" )
             for systemName in self.importedSystems:
@@ -488,11 +509,36 @@ class BibleBooksNamesSystemsConvertor:
                 myFile.write( "} # end of bookNamesInputDict (%i systems)\n" % ( len(self.importedSystems) ) )
     # end of exportDataToPython
 
+    def exportDataToJSON( self, filepath=None ):
+        """
+        Writes the information tables to a .json file that can be easily loaded into a Java program.
+
+        See http://en.wikipedia.org/wiki/JSON.
+        """
+        from datetime import datetime
+        import json
+
+        assert( self.XMLSystems )
+        self.importDataToPython()
+        assert( self.importedSystems )
+
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
+        print( "Exporting to %s..." % ( filepath ) )
+        with open( filepath, 'wt' ) as myFile:
+            #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
+            #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
+            #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
+            #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
+            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            json.dump( self.importedSystems, myFile, indent=2 )
+            #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
+    # end of exportDataToJSON
+
     def exportDataToC( self, filepath=None ):
         """
         Writes the information tables to a .h file that can be included in c and c++ programs.
         """
-        print( "not written yet" ); halt
         def exportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
             """Exports theDict to theFile."""
             def convertEntry( entry ):
@@ -519,18 +565,22 @@ class BibleBooksNamesSystemsConvertor:
 
         from datetime import datetime
 
+        assert( self.XMLSystems )
+        self.importDataToPython()
         assert( self.importedSystems )
-        if not filepath: filepath = os.path.join( "DerivedFiles", BibleBooksNamesSystemsConvertor.filenameBase + "_Tables.h" )
-        print( "Exporting to %s..." % ( filepath ) )
 
-        ifdefName = BibleBooksNamesSystemsConvertor.filenameBase.upper() + "_Tables_h"
+        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.h" )
+        print( "Exporting to %s..." % ( filepath ) )
+        raise Exception( "C export not written yet -- sorry." )
+
+        ifdefName = self.filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// %s\n//\n" % ( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by BibleBooksNamesSystemsConvertor.py V%s %s\n//\n" % ( versionString, datetime.now() ) )
+            myFile.write( "// This UTF-8 file was automatically generated by BibleBooksNames.py V%s %s\n//\n" % ( versionString, datetime.now() ) )
             if self.title: myFile.write( "// %s\n" % ( self.title ) )
             if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
             if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.namesTree), BibleBooksNamesSystemsConvertor.treeTag ) )
+            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.namesTree), self.treeTag ) )
             myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
             exportPythonDict( myFile, IDDict, "IDDict", "{int id; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "id (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
             exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int id; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "referenceAbbreviation (sorted), SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )
@@ -540,6 +590,50 @@ class BibleBooksNamesSystemsConvertor:
             exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNum; int id; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* EngName;}", "ParatextNumberString (sorted), ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, id, nameEnglish (comment only)" )
             myFile.write( "#endif // %s\n" % ( ifdefName ) )
     # end of exportDataToC
+# end of _BibleBooksNamesSystemsConvertor class
+
+
+@singleton # Can only ever have one instance
+class BibleBooksNames:
+    """
+    Class for handling BibleBooksCodes.
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+
+    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
+    """
+
+    def __init__( self ): # We can't give this parameters because of the singleton
+        """
+        Constructor: 
+        """
+        self.bbnsc = _BibleBooksNamesSystemsConvertor()
+        self.DataDicts = None # We'll import into this in loadData
+    # end of __init__
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible book code.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "BibleBooksNames object"
+        result += ('\n' if result else '') + "  Num loaded bookname systems = %i" % ( len(self.DataDicts) )
+        return result
+    # end of __str__
+
+    def loadData( self, XMLFilepath=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        self.bbnsc.loadSystems( XMLFilepath ) # Load the XML (if not done already)
+        self.DataDicts = self.bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        del self.bbnsc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
+
+    # TODO: Add some useful routines in here
+
+# end of BibleBooksNamess class
 
 
 def main():
@@ -552,35 +646,29 @@ def main():
     parser = OptionParser( version="v%s" % ( versionString ) )
     parser.add_option("-x", "--expand", action="store_true", dest="expand", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="display extra debugging information")
-    CommandLineOptions, args = parser.parse_args()
+    Globals.addStandardOptionsAndProcess( parser )
 
+    if Globals.verbosityLevel>0: print( "%s V%s" % ( progName, versionString ) )
 
-    # Get the data tables that we need for proper checking
-    bbc = BibleBooksCodes.BibleBooksCodesConvertor()
-    junk, BBCRADict, junk, junk, junk, junk, junk, junk, BBCNameDict = bbc.importDataToPython()
-    ISO = ISO_639_3.ISO_639_3_Convertor()
-    ISOIDDict, junk = ISO.importDataToPython()
+    if Globals.commandLineOptions.export:
+        bbnsc = _BibleBooksNamesSystemsConvertor().loadSystems() # Load the XML
+        if Globals.commandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+            bbnsc.expandInputs()
+        bbnsc.exportDataToPython() # Produce the .py tables
+        bbnsc.exportDataToJSON() # Produce a json output file
+        bbnsc.exportDataToC() # Produce the .h and .c tables
 
-    # Adjust the name dict to upper case
-    UC_BBCNameDict = {}
-    for key, entry in BBCNameDict.items():
-        UC_BBCNameDict[key.upper()] = entry
+    else: # Must be demo mode
+        # Demo the convertor object
+        bbnsc = _BibleBooksNamesSystemsConvertor().loadSystems() # Load the XML
+        print( bbnsc ) # Just print a summary
+        if Globals.commandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+            bbnsc.expandInputs()
+        print( bbnsc ) # Just print a summary
 
-    # Do a proper load/check
-    bbns = BibleBooksNamesSystemsConvertor( ISO639Dict=ISOIDDict, BibleBooksCodesDict=BBCRADict )
-    bbns.loadSystems()
-    bbns.importDataToPython()
-    if CommandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
-        bbns.expandInputs()
-
-    if CommandLineOptions.export:
-        bbns.exportDataToPython()
-        bbns.exportDataToC()
-    else: # not exporting -- must just be a demo run
-        #print( bbns )
-        #bbns.expandInputs()
-        print( bbns )
+        # Demo the BibleBooksNames object
+        bbc = BibleBooksNames().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bbc ) # Just print a summary
 # end of main
 
 if __name__ == '__main__':

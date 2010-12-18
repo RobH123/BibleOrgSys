@@ -1,0 +1,15 @@
+{
+  "nSystem_English": {
+    "booknameCase": "ME", 
+    "chapterBridgeCharacter": "-", 
+    "verseBridgeCharacter": "-", 
+    "booknameLength": "ME", 
+    "chapterVerseSeparator": ":", 
+    "punctuationAfterBookAbbreviation": ".", 
+    "spaceAllowedAfterBCS": "E", 
+    "bookChapterSeparator": " ", 
+    "chapterSeparator": ";", 
+    "bookSeparator": ";", 
+    "verseSeparator": ","
+  }
+}
