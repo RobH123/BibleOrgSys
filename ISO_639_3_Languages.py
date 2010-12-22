@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-12-16 (also update versionString below)
+#   Last modified: 2010-12-19 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -92,7 +92,8 @@ class _ISO_639_3_Languages_Convertor:
                 XMLFilepath = os.path.join( "DataFiles", self.filenameBase + ".xml" )
 
             self._load( XMLFilepath )
-            self._validate()
+            if Globals.strictCheckingFlag:
+                self._validate()
         return self
     # end of loadAndValidate
 

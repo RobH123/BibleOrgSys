@@ -4,7 +4,7 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2010-12-18 (also update versionString below)
+#   Last modified: 2010-12-19 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.03"
+versionString = "0.04"
 
 import logging, os.path
 
@@ -179,6 +179,8 @@ def setDebugFlag( newValue=True ):
 def addStandardOptionsAndProcess( parserObject ):
     """ Adds our standardOptions to the command line parser. """
     global commandLineOptions, commandLineArguments
+    global strictCheckingFlag
+    parserObject.add_option("-f", "--fast", action="store_true", dest="fast", default=False, help="disable strict datafile checking")
     parserObject.add_option("-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console")
     parserObject.add_option("-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console")
     parserObject.add_option("-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console")
@@ -190,6 +192,7 @@ def addStandardOptionsAndProcess( parserObject ):
     if debugFlag:
         print( "  commandLineOptions: %s" % commandLineOptions )
         print( "  commandLineArguments: %s" % commandLineArguments )
+    if commandLineOptions.fast: strictCheckingFlag = False
 # end of addStandardOptionsAndProcess
 
 
@@ -201,16 +204,20 @@ def printAllGlobals( indent=None ):
     print( "%sdebugFlag: %s" % ( ' '*indent, debugFlag) )
     print( "%sverbosityString: %s" % ( ' '*indent, verbosityString) )
     print( "%sverbosityLevel: %i" % ( ' '*indent, verbosityLevel) )
+    print( "%sstrictCheckingFlag: %s" % ( ' '*indent, strictCheckingFlag) )
 # end of printAllGlobals()
 
 
 # Global variables
-#
+##################
+
 commandLineOptions, commandLineArguments = None, None
+
 debugFlag = False
 verbosityString = 'Normal'
 verbosityLevel = setVerbosityLevel( verbosityString )
 
+strictCheckingFlag = True
 
 
 def demo():

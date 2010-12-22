@@ -2,7 +2,7 @@
 #
 # runAll.sh
 #
-#   Last modified: 2010-12-16 by RJH
+#   Last modified: 2010-12-22 by RJH
 #
 # Run xmllint on all the XML files in the DataFiles folder
 # Then run Python code for each module
@@ -19,6 +19,7 @@ $Python BibleBooksCodes.py
 $Python BibleChaptersVerses.py
 $Python BibleBookOrders.py
 $Python BibleBooksNames.py
+$Python BiblePunctuationSystems.py
 $Python BibleOrganizationalSystems.py
 
 echo "Running Python module exports..."
@@ -27,6 +28,7 @@ $Python BibleBooksCodes.py --export
 $Python BibleChaptersVerses.py --export
 $Python BibleBookOrders.py --export
 $Python BibleBooksNames.py --export
+$Python BiblePunctuationSystems.py --export
 $Python BibleOrganizationalSystems.py --export
 
 #$Python BibleChaptersVerses.py --scrape
@@ -38,6 +40,7 @@ $Python DerivedFiles/iso_639_3_Languages_Tables.py
 $Python DerivedFiles/BibleBooksCodes_Tables.py
 $Python DerivedFiles/BibleBookOrders_Tables.py
 $Python DerivedFiles/BibleBooksNames_Tables.py
+$Python DerivedFiles/BiblePunctuationSystems_Tables.py
 
 Compile="gcc -c"
 
@@ -47,4 +50,5 @@ $Compile DerivedFiles/iso_639_3_Languages_Tables.c
 $Compile DerivedFiles/BibleBooksCodes_Tables.c
 $Compile DerivedFiles/BibleBookOrders_Tables.c
 $Compile DerivedFiles/BibleBooksNames_Tables.c
+$Compile DerivedFiles/BiblePunctuationSystems_Tables.c
 

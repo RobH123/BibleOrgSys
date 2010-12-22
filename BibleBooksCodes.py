@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-12-18 (also update versionString below)
+#   Last modified: 2010-12-22 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.93"
+versionString = "0.94"
 
 
 import logging, os.path
@@ -70,7 +70,7 @@ class _BibleBooksCodesConvertor:
 
         # These are fields that we will fill later
         self.XMLheader, self.XMLtree = None, None
-        self.DataDicts = {} # Used for import
+        self._dataDicts = {} # Used for import
         self.titleString = self.versionString = self.dateString = ''
     # end of __init__
 
@@ -99,7 +99,8 @@ class _BibleBooksCodesConvertor:
                 XMLFilepath = os.path.join( "DataFiles", self.filenameBase + ".xml" )
 
             self._load( XMLFilepath )
-            self._validate()
+            if Globals.strictCheckingFlag:
+                self._validate()
         return self
     # end of loadAndValidate
 
@@ -216,58 +217,14 @@ class _BibleBooksCodesConvertor:
         if self.XMLtree.tail is not None and self.XMLtree.tail.strip(): logging.error( "Unexpected '%s' tail data after %s element" % ( self.XMLtree.tail, self.XMLtree.tag ) )
     # end of _validate
 
-    def NOLONGERNEEDED_getEnglishName( self, BBB ):
-        """
-        Gets the English bookname (useful as a comment) given the referenceAbbreviation BBB.
-        """
-        assert( self.XMLtree )
-
-        for element in self.XMLtree: # There must be a way to do this without a loop???
-            if element.find("referenceAbbreviation").text == BBB:
-                return element.find("nameEnglish").text
-    # end of getEnglishName
-
-    def NOLONGERNEEDED_getAllParatextBooksCodes( self ):
-        """
-        Return a list of all available Paratext book codes.
-        """
-        assert( self.XMLtree )
-
-        result = []
-        for element in self.XMLtree:
-            if element.find("ParatextAbbreviation") is not None:
-                code = element.find("ParatextAbbreviation").text
-                if code not in result: result.append( code )
-        return result
-    # end of getAllParatextBooksCodes
-
-    def NOLONGERNEEDED_getAllParatextBooksCodeNumberTriples( self ):
-        """
-        Return a list of all available Paratext book codes.
-
-        The list contains tuples of: paratextAbbreviation, paratextNumber, referenceAbbreviation
-        """
-        assert( self.XMLtree )
-
-        found, result = [], []
-        for element in self.XMLtree:
-            if element.find("ParatextAbbreviation") is not None:
-                pA = element.find("ParatextAbbreviation").text
-                pN = element.find("ParatextNumber").text if element.find("ParatextNumber") is not None else ''
-                if pA not in found: # Don't want duplicates (where more than one book maps to a single paratextAbbreviation)
-                    result.append( (pA, pN, element.find("referenceAbbreviation").text,) )
-                    found.append( pA )
-        return result
-    # end of getAllParatextBooksCodeNumberTriples
-
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLtree if you prefer.)
         """
         assert( self.XMLtree )
-        if self.DataDicts: # We've already done an import/restructuring -- no need to repeat it
-            return self.DataDicts
+        if self._dataDicts: # We've already done an import/restructuring -- no need to repeat it
+            return self._dataDicts
 
         # We'll create a number of dictionaries with different elements as the key
         myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}
@@ -301,7 +258,7 @@ class _BibleBooksCodesConvertor:
             if "referenceAbbreviation" in self.compulsoryElements or referenceAbbreviation:
                 if "referenceAbbreviation" in self.uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
                 #myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-                myRADict[referenceAbbreviation] = { "IDNum":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
+                myRADict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
                                                     "ParatextAbbreviation":ParatextAbbreviation, "ParatextNumberString":ParatextNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
@@ -341,10 +298,10 @@ class _BibleBooksCodesConvertor:
             if "nameEnglish" in self.compulsoryElements or ParatextNumberString:
                 if "nameEnglish" in self.uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 myENDict[nameEnglish] = ( intID, referenceAbbreviation )
-        self.DataDicts = { "IDDict":myIDDict, "referenceAbbreviationDict":myRADict, "SBLDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
+        self._dataDicts = { "referenceNumber":myIDDict, "referenceAbbreviationDict":myRADict, "SBLDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "ParatextAbbreviationDict":myPADict, "ParatextNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
                         "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict }
-        return self.DataDicts # Just delete any of the dictionaries that you don't need
+        return self._dataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -366,7 +323,7 @@ class _BibleBooksCodesConvertor:
 
         assert( self.XMLtree )
         self.importDataToPython()
-        assert( self.DataDicts )
+        assert( self._dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -378,11 +335,11 @@ class _BibleBooksCodesConvertor:
             if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
-            dictInfo = { "IDDict":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
+            dictInfo = { "referenceNumber":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
                             "CCELDict":("CCELNumberString",mostEntries), "SBLDict":("SBLAbbreviation",mostEntries), "OSISAbbreviationDict":("OSISAbbreviation",mostEntries), "SwordAbbreviationDict":("SwordAbbreviation",mostEntries),
                             "ParatextAbbreviationDict":("ParatextAbbreviation",mostEntries), "ParatextNumberDict":("ParatextNumberString",mostEntries),
                             "NETBibleAbbreviationDict":("NETBibleAbbreviation",mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation",mostEntries), "EnglishNameDict":("nameEnglish",mostEntries) }
-            for dictName,dictData in self.DataDicts.items():
+            for dictName,dictData in self._dataDicts.items():
                 exportPythonDict( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of %s" % os.path.basename(filepath) )
     # end of exportDataToPython
@@ -398,7 +355,7 @@ class _BibleBooksCodesConvertor:
 
         assert( self.XMLtree )
         self.importDataToPython()
-        assert( self.DataDicts )
+        assert( self._dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -409,7 +366,7 @@ class _BibleBooksCodesConvertor:
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
-            json.dump( self.DataDicts, myFile, indent=2 )
+            json.dump( self._dataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -470,7 +427,7 @@ class _BibleBooksCodesConvertor:
 
         assert( self.XMLtree )
         self.importDataToPython()
-        assert( self.DataDicts )
+        assert( self._dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
@@ -499,7 +456,7 @@ class _BibleBooksCodesConvertor:
             CHAR = "const unsigned char"
             BYTE = "const int"
             dictInfo = {
-                "IDDict":("referenceNumber (integer 1..255)",
+                "referenceNumber":("referenceNumber (integer 1..255)",
                     "%s referenceNumber; %s* ByzantineAbbreviation; %s* CCELNumberString; %s* NETBibleAbbreviation; %s* OSISAbbreviation; %s ParatextAbbreviation[3+1]; %s ParatextNumberString[2+1]; %s* SBLAbbreviation; %s* SwordAbbreviation; %s* nameEnglish; %s* numExpectedChapters; %s* possibleAlternativeBooks; %s referenceAbbreviation[3+1];"
                     % (BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "referenceAbbreviationDict":("referenceAbbreviation",
@@ -515,7 +472,7 @@ class _BibleBooksCodesConvertor:
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "%s* ByzantineAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
                 "EnglishNameDict":("nameEnglish", "%s* nameEnglish; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ) }
 
-            for dictName,dictData in self.DataDicts.items():
+            for dictName,dictData in self._dataDicts.items():
                 exportPythonDict( myHFile, myCFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
 
             myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
@@ -540,7 +497,7 @@ class BibleBooksCodes:
         Constructor: 
         """
         self.bbcc = _BibleBooksCodesConvertor()
-        self.DataDicts = None # We'll import into this in loadData
+        self._dataDicts = None # We'll import into this in loadData
     # end of __init__
 
     def __str__( self ):
@@ -551,16 +508,16 @@ class BibleBooksCodes:
         @rtype: string
         """
         result = "BibleBooksCodes object"
-        result += ('\n' if result else '') + "  Num entries = %i" % ( len(self.DataDicts["referenceAbbreviationDict"]) )
+        result += ('\n' if result else '') + "  Num entries = %i" % ( len(self._dataDicts["referenceAbbreviationDict"]) )
         return result
     # end of __str__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.DataDicts: # Don't do this unnecessarily
+        if not self._dataDicts: # Don't do this unnecessarily
             if XMLFilepath is not None: logging.warning( "Bible books codes are already loaded -- your given filepath of '%s' was ignored" % XMLFilepath )
             self.bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-            self.DataDicts = self.bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            self._dataDicts = self.bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
             del self.bbcc # Now the convertor class (that handles the XML) is no longer needed
         return self
     # end of loadData
@@ -569,20 +526,24 @@ class BibleBooksCodes:
 
     def isValidReferenceAbbreviation( self, BBB ):
         """ Returns True or False. """
-        return BBB in self.DataDicts["referenceAbbreviationDict"]
+        return BBB in self._dataDicts["referenceAbbreviationDict"]
 
     def getAllReferenceAbbreviations( self ):
         """ Returns a list of all possible BBB codes. """
-        return [BBB for BBB in self.DataDicts["referenceAbbreviationDict"]]
-        #return self.DataDicts["referenceAbbreviationDict"].keys() # Why didn't this work?
+        return [BBB for BBB in self._dataDicts["referenceAbbreviationDict"]]
+        #return self._dataDicts["referenceAbbreviationDict"].keys() # Why didn't this work?
+
+    def getReferenceNumber( self, BBB ):
+        """ Return the referenceNumber 1..255 for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["referenceNumber"]
 
     def getOSISAbbreviation( self, BBB ):
         """ Return the OSIS abbrevation string for the given book code (referenceAbbreviation). """
-        return self.DataDicts["referenceAbbreviationDict"][BBB]["OSISAbbreviation"]
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["OSISAbbreviation"]
 
     def getSwordAbbreviation( self, BBB ):
         """ Return the Sword abbrevation string for the given book code (referenceAbbreviation). """
-        return self.DataDicts["referenceAbbreviationDict"][BBB]["SwordAbbreviation"]
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["SwordAbbreviation"]
 
     def getExpectedChaptersList( self, BBB ):
         """
@@ -592,38 +553,27 @@ class BibleBooksCodes:
         Why is it a list?
             Because some books have alternate possible numbers of chapters depending on the Biblical tradition.
         """
-        if BBB not in self.DataDicts["referenceAbbreviationDict"] \
-        or "numExpectedChapters" not in self.DataDicts["referenceAbbreviationDict"][BBB] \
-        or self.DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is None:
+        if BBB not in self._dataDicts["referenceAbbreviationDict"] \
+        or "numExpectedChapters" not in self._dataDicts["referenceAbbreviationDict"][BBB] \
+        or self._dataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is None:
             return []
 
-        eC = self.DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"]
+        eC = self._dataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"]
         if eC: return [v for v in eC.split(',')]
     # end of getExpectedChaptersList
 
     def getSingleChapterBooksList( self ):
         """ Gets a list of single chapter book codes. """
         result = []
-        for BBB in self.DataDicts["referenceAbbreviationDict"]:
-            if self.DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is not None \
-            and self.DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1':
+        for BBB in self._dataDicts["referenceAbbreviationDict"]:
+            if self._dataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is not None \
+            and self._dataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1':
                 result.append( BBB )
         return result
 
     def getOSISSingleChapterBooksList( self ):
         """ Gets a list of OSIS single chapter book abbreviations. """
         return [self.getOSISAbbreviation(BBB) for BBB in self.getSingleChapterBooksList()]
-
-    def getEnglishNameList( self, BBB ):
-        """
-        Returns a list of possible English names for a book.
-
-        Remember: These names are only intended as comments or for some basic module processing.
-            They are not intended to be used for a human interface.
-            The first one in the list is supposed to be the more common.
-        """
-        names = self.DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"]
-        return [name.strip() for name in names.split('/')]
 
     def getAllParatextBooksCodeNumberTriples( self ):
         """
@@ -632,7 +582,7 @@ class BibleBooksCodes:
         The list contains tuples of: paratextAbbreviation, paratextNumber, referenceAbbreviation
         """
         found, result = [], []
-        for BBB, values in self.DataDicts["referenceAbbreviationDict"].items():
+        for BBB, values in self._dataDicts["referenceAbbreviationDict"].items():
             pA = values["ParatextAbbreviation"]
             pN = values["ParatextNumberString"]
             if pA is not None and pN is not None:
@@ -642,6 +592,40 @@ class BibleBooksCodes:
         return result
     # end of getAllParatextBooksCodeNumberTriples
 
+    def getEnglishName_NR( self, BBB ): # NR = not recommended
+        """
+        Returns the first English name for a book.
+
+        Remember: These names are only intended as comments or for some basic module processing.
+            They are not intended to be used for a proper international human interface.
+            The first one in the list is supposed to be the more common.
+        """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"].split('/',1)[0].strip()
+    # end of getEnglishName_NR
+
+    def getEnglishNameList_NR( self, BBB ): # NR = not recommended
+        """
+        Returns a list of possible English names for a book.
+
+        Remember: These names are only intended as comments or for some basic module processing.
+            They are not intended to be used for a proper international human interface.
+            The first one in the list is supposed to be the more common.
+        """
+        names = self._dataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"]
+        return [name.strip() for name in names.split('/')]
+    # end of getEnglishNameList_NR
+
+    def isOldTestament_NR( self, BBB ): # NR = not recommended
+        """ Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book.
+            NOTE: This is not truly international so it's not a recommended function. """
+        return 1 <= self.getReferenceNumber(BBB) <= 39
+    # end of isOldTestament_NR
+
+    def isNewTestament_NR( self, BBB ): # NR = not recommended
+        """ Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book.
+            NOTE: This is not truly international so it's not a recommended function. """
+        return 40 <= self.getReferenceNumber(BBB) <= 66
+    # end of isNewTestament_NR
 # end of BibleBooksCodes class
 
 
@@ -673,8 +657,8 @@ def main():
         print( bbc ) # Just print a summary
         print( "Esther has %s expected chapters" % (bbc.getExpectedChaptersList("EST")) )
         print( "Apocalypse of Ezra has %s expected chapters" % (bbc.getExpectedChaptersList("EZA")) )
-        print( "Names for Genesis are:", bbc.getEnglishNameList("GEN") )
-        print( "Names for Sirach are:", bbc.getEnglishNameList('SIR') )
+        print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
+        print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
         print( "All BBBs:", bbc.getAllReferenceAbbreviations() )
         print( "PT triples:", bbc.getAllParatextBooksCodeNumberTriples() )
         print( "Single chapter books (and OSIS):\n  %s\n  %s" % (bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )

@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-18 (also update versionString below)
+#   Last modified: 2010-12-19 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.17"
+versionString = "0.18"
 
 
 import os, logging
@@ -73,7 +73,8 @@ class _BibleBooksNamesSystemsConvertor:
 
         # Get the data tables that we need for proper checking
         self.BibleBooksCodes = BibleBooksCodes().loadData()
-        self.ISOLanguages = ISO_639_3_Languages().loadData()
+        if Globals.strictCheckingFlag:
+            self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of __init__
 
     def __str__( self ):
@@ -154,7 +155,8 @@ class _BibleBooksNamesSystemsConvertor:
                         bookCount += 1
                     logging.info( "    Loaded %i books" % ( bookCount ) )
 
-                    self.validateSystem( booksNamesSystemCode )
+                    if Globals.strictCheckingFlag:
+                        self.validateSystem( booksNamesSystemCode )
         return self
     # end of loadSystems
 
@@ -642,7 +644,6 @@ def main():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    global CommandLineOptions
     parser = OptionParser( version="v%s" % ( versionString ) )
     parser.add_option("-x", "--expand", action="store_true", dest="expand", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")

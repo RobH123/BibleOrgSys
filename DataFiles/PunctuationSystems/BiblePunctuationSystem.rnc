@@ -1,22 +1,22 @@
-# BibleBookOrder.rnc           Relax NG Compact Syntax schema file
-#   Version 0.50
-#   Last modified: 2010-11-09
+# BiblePunctuationSystem.rnc           Relax NG Compact Syntax schema file
+#   Version 0.01
+#   Last modified: 2010-12-22
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBookOrder.rnc ../DerivedFiles/BibleBookOrder.rng
+#       trang BiblePunctuationSystem.rnc ../DerivedFiles/BiblePunctuationSystem.rng
 # On Linux, to validate against the .rng file, use (with the proper suffix instead of XXX)
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBookOrder.rng BibleBookOrder_XXX.xml
+#       xmllint --noout --relaxng ../DerivedFiles/BiblePunctuationSystem.rng BiblePunctuationSystem_XXX.xml
 # or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBookOrder.rng --valid BibleBookOrder_XXX.xml
+#       xmllint --noout --relaxng ../DerivedFiles/BiblePunctuationSystem.rng --valid BiblePunctuationSystem_XXX.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
 
 # The root element
-start = BibleBookOrderSystem
+start = BiblePunctuationSystemSystem
 
 # A single header, then books
-BibleBookOrderSystem = element BibleBookOrderSystem
+BiblePunctuationSystemSystem = element BiblePunctuationSystemSystem
 {   header,
     element book { attribute id {xsd:positiveInteger { minInclusive="1" maxInclusive="120" } }, xsd:string { length="3" } }+
 }

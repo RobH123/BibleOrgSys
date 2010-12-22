@@ -1,32 +1,35 @@
 # ToDo.txt
 #
-# Last modified: 2010-11-08
+# Last modified: 2010-12-06
 #
 # Top jobs will be done sooner
 #
 
-Add BibleBookOrders
-Fix BibleOrganizationalSystems.py
+Handle Versification mappings
+    Define an internal/canonical versification system
 
-Bring over BibleReferences.py from BibleNameChecker
+Do scraping of versifications
+    Scrape OSIS files
+    Scrape Sword modules
+    Scrape e-Sword modules
+    Scrape Zephania
+    Scrape Biola modules
 
-Load Sword modules
-Load e-Sword modules
-Load Zephania
-Load Biola modules
-    Do scraping of versifications
-
-Start Versification mappings
-
-Bible versions with
+Handle specification Bible versions (i.e., fix BibleOrganizationalSystems.py) with
     Header
         language
         publication date
-    Book orders
-        at the same time it specifies which books are included
-        and long/short book names
+        web link
+        download file format type
+    Book order (at the same time it specifies which books are included)
+    Versification scheme
+    Book names (and allowed book name abbreviations)
+        What about long book names?
 
-List of often left-out verses -- these need to be added to the various BibleVersification schemes (or at least be able to map into them)
+Define an internal/canonical Bible object
+    Use stand-off formatting
+
+Bring over BibleReferences.py from BibleNameChecker
 
 List of typical paragraph breaks
 

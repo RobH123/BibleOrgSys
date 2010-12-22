@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# BibleBookOrders.py
+# BiblePunctuationSystems.py
 #
-# Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
+# Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #   Last modified: 2010-12-19 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
@@ -24,11 +24,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleBookOrder_*.xml to produce C and Python data tables.
+Module handling BiblePunctuation_*.xml to produce C and Python data tables.
 """
 
-progName = "Bible Book Order Systems handler"
-versionString = "0.50"
+progName = "Bible Punctuation Systems handler"
+versionString = "0.02"
 
 
 import os, logging
@@ -37,28 +37,28 @@ from xml.etree.cElementTree import ElementTree
 
 from singleton import singleton
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 @singleton # Can only ever have one instance
-class _BibleBookOrdersConvertor:
+class _BiblePunctuationSystemsConvertor:
     """
-    A class to handle data for Bible book order systems.
+    A class to handle data for Bible punctuation systems.
     """
 
     def __init__( self ):
         """
         Constructor.
         """
-        self.filenameBase = "BibleBookOrders"
+        self.filenameBase = "BiblePunctuationSystems"
 
         # These fields are used for parsing the XML
-        self.treeTag = "BibleBookOrderSystem"
+        self.treeTag = "BiblePunctuationSystem"
         self.headerTag = "header"
-        self.mainElementTag = "book"
+        self.mainElementTags = ( "booknameCase", "booknameLength", "punctuationAfterBookAbbreviation", "bookChapterSeparator", "spaceAllowedAfterBCS",
+                    "chapterBridgeCharacter", "chapterVerseSeparator", "verseSeparator", "verseBridgeCharacter", "chapterSeparator", "bookSeparator" )
 
         # These fields are used for automatically checking/validating the XML
-        self.compulsoryAttributes = ( "id", )
+        self.compulsoryAttributes = ()
         self.optionalAttributes = ()
         self.uniqueAttributes = self.compulsoryAttributes + self.optionalAttributes
         self.compulsoryElements = ()
@@ -68,21 +68,18 @@ class _BibleBookOrdersConvertor:
 
         # These are fields that we will fill later
         self.XMLSystems = {}
-        self.DataDicts, self.DataLists = {}, {} # Used for import
-
-        # Make sure we have the bible books codes data loaded and available
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self.DataDict = {} # Used for import
     # end of __init__
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book order system.
+        This method returns the string representation of a Bible punctuation system.
         
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = "_BibleBookOrdersConvertor object"
-        result += ('\n' if result else '') + "  Num book order systems loaded = %i" % ( len(self.XMLSystems) )
+        result = "_BiblePunctuationSystemsConvertor object"
+        result += ('\n' if result else '') + "  Num punctuation systems loaded = %i" % ( len(self.XMLSystems) )
         if 0: # Make it verbose
             for x in self.XMLSystems:
                 result += ('\n' if result else '') + "  %s" % ( x )
@@ -98,26 +95,26 @@ class _BibleBookOrdersConvertor:
 
     def loadSystems( self, XMLFolder=None ):
         """
-        Load and pre-process the specified book order systems.
+        Load and pre-process the specified punctuation systems.
         """
         if not self.XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
+            if XMLFolder==None: XMLFolder = "DataFiles/PunctuationSystems"
             self.XMLFolder = XMLFolder
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
-                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
-                    bookOrderSystemCode = filepart[15:]
-                    #print( "Loading %s book order system from %s..." % ( bookOrderSystemCode, filename ) )
-                    self.XMLSystems[bookOrderSystemCode] = {}
-                    self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
-                    assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
+                    punctuationSystemCode = filepart[15:]
+                    #print( "Loading %s punctuation system from %s..." % ( punctuationSystemCode, filename ) )
+                    self.XMLSystems[punctuationSystemCode] = {}
+                    self.XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
+                    assert( self.XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.XMLSystems[bookOrderSystemCode]["tree"].tag  == self.treeTag:
-                        header = self.XMLSystems[bookOrderSystemCode]["tree"][0]
+                    if self.XMLSystems[punctuationSystemCode]["tree"].tag  == self.treeTag:
+                        header = self.XMLSystems[punctuationSystemCode]["tree"][0]
                         if header.tag == self.headerTag:
-                            self.XMLSystems[bookOrderSystemCode]["header"] = header
-                            self.XMLSystems[bookOrderSystemCode]["tree"].remove( header )
+                            self.XMLSystems[punctuationSystemCode]["header"] = header
+                            self.XMLSystems[punctuationSystemCode]["tree"].remove( header )
                             if len(header)>1:
                                 logging.info( "Unexpected elements in header" )
                             elif len(header)==0:
@@ -125,49 +122,36 @@ class _BibleBookOrdersConvertor:
                             else:
                                 work = header[0]
                                 if work.tag == "work":
-                                    self.XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
-                                    self.XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
-                                    self.XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
+                                    self.XMLSystems[punctuationSystemCode]["version"] = work.find("version").text
+                                    self.XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
+                                    self.XMLSystems[punctuationSystemCode]["title"] = work.find("title").text
                                 else:
                                     logging.warning( "Missing work element in header" )
                         else:
                             logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
                     else:
-                        logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.XMLSystems[punctuationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self.XMLSystems[bookOrderSystemCode]["tree"]:
+                    for subelement in self.XMLSystems[punctuationSystemCode]["tree"]:
                         bookCount += 1
                     logging.info( "    Loaded %i books" % ( bookCount ) )
 
-                if Globals.strictCheckingFlag:
-                    self._validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+                    if Globals.strictCheckingFlag:
+                        self._validateSystem( self.XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
         return self
     # end of loadSystems
 
-    def _validateSystem( self, bookOrderTree, systemName ):
+    def _validateSystem( self, punctuationTree, systemName ):
         """
         """
-        assert( bookOrderTree )
+        assert( punctuationTree )
 
         uniqueDict = {}
         for elementName in self.uniqueElements: uniqueDict["Element_"+elementName] = []
         for attributeName in self.uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
-        expectedID = 1
-        for k,element in enumerate(bookOrderTree):
-            if element.tag == self.mainElementTag:
-                # Check ascending ID field
-                ID = element.get("id")
-                intID = int( ID )
-                if intID != expectedID:
-                    logging.error( "ID numbers out of sequence in record %i (got %i when expecting %i) for %s" % ( k, intID, expectedID, systemName ) )
-                expectedID += 1
-
-                # Check that this is unique
-                if element.text:
-                    if element.text in uniqueDict:
-                        logging.error( "Found '%s' data repeated in '%s' element in record with ID '%s' (record %i) for %s" % ( element.text, element.tag, ID, k, systemName ) )
-                    uniqueDict[element.text] = None
+        for k,element in enumerate(punctuationTree):
+            if element.tag in self.mainElementTags:
 
                 # Check compulsory attributes on this main element
                 for attributeName in self.compulsoryAttributes:
@@ -229,25 +213,23 @@ class _BibleBookOrdersConvertor:
 
     def checkDuplicates( self ):
         """
-        Checks for duplicate (redundant) book order systems.
+        Checks for duplicate (redundant) punctuation systems.
 
         Returns True if a duplicate is found.
         """
         systemLists, foundDuplicate = {}, False
-        for bookOrderSystemCode in self.XMLSystems.keys():
+        for punctuationSystemCode in self.XMLSystems.keys():
             # Get the referenceAbbreviations all into a list
             bookDataList = []
-            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
+            for bookElement in self.XMLSystems[punctuationSystemCode]["tree"]:
                 bookRA = bookElement.text
-                if self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    bookDataList.append( bookRA )
             # Compare with existing lists
             for checkSystemCode,checkDataList in systemLists.items():
                 if bookDataList == checkDataList:
-                    logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(bookDataList) ) )
+                    logging.error( "%s and %s punctuation systems are identical" % ( punctuationSystemCode, checkSystemCode ) )
                     foundDuplicate = True
             # Add this new list
-            systemLists[bookOrderSystemCode] = bookDataList
+            systemLists[punctuationSystemCode] = bookDataList
         return foundDuplicate
     # end of checkDuplicates
 
@@ -256,34 +238,23 @@ class _BibleBookOrdersConvertor:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
         assert( self.XMLSystems )
-        if self.DataDicts and self.DataLists: # We've already done an import/restructuring -- no need to repeat it
-            return self.DataDicts, self.DataLists
+        if self.DataDict: # We've already done an import/restructuring -- no need to repeat it
+            return self.DataDict
 
-        # We'll create a number of dictionaries
-        for bookOrderSystemCode in self.XMLSystems.keys():
-            #print( bookOrderSystemCode )
-            # Make the data dictionary for this book order system
-            bookDataDict, idDataDict, BBBList = OrderedDict(), OrderedDict(), []
-            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
-                bookRA = bookElement.text
-                ID = bookElement.get( "id" )
-                intID = int( ID )
-                if not self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    logging.error( "Unrecognized '%s' book abbreviation in '%s' book order system" % ( bookRA, bookOrderSystemCode ) )
-                # Save it by book reference abbreviation
-                if bookRA in bookDataDict:
-                    logging.error( "Duplicate %s book reference abbreviations in '%s' book order system" % ( bookRA, bookOrderSystemCode ) )
-                bookDataDict[bookRA] = intID
-                if intID in idDataDict:
-                    logging.error( "Duplicate %i ID (book index) numbers in '%s' book order system" % ( intID, bookOrderSystemCode ) )
-                idDataDict[intID] = bookRA
-                BBBList.append( bookRA )
+        # We'll create a dictionary of dictionaries
+        for punctuationSystemCode in self.XMLSystems.keys():
+            # Make the data dictionary for this punctuation system
+            punctuationDict = {}
+            for element in self.XMLSystems[punctuationSystemCode]["tree"]:
+                tag = element.tag
+                text = element.text
+                if tag in punctuationDict: logging.error( "Multiple %s entries in %s punctuation system" % ( tag, punctuationSystemCode ) )
+                punctuationDict[tag] = text
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
-            self.DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
-            self.DataLists[bookOrderSystemCode] = BBBList # Don't explicitly include the book index numbers, but otherwise the same information in a different form
-        return self.DataDicts, self.DataLists
+            self.DataDict[punctuationSystemCode] = punctuationDict
+        return self.DataDict
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -302,15 +273,14 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
 
-        # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleBookOrders.py V%s %s\n#\n" % ( versionString, datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BiblePunctuationSystems.py V%s %s\n#\n" % ( versionString, datetime.now() ) )
             #if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
@@ -318,15 +288,9 @@ class _BibleBookOrdersConvertor:
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
-            for systemName in self.DataDicts:
-                bookDataDict, idDataDict = self.DataDicts[systemName]
-                exportPythonDict( myFile, bookDataDict, systemName, "referenceAbbreviation", "id" )
-            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.DataDicts) ) )
-            myFile.write( "idDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
-            for systemName in self.DataDicts:
-                bookDataDict, idDataDict = self.DataDicts[systemName]
-                exportPythonDict( myFile, idDataDict, systemName, "id", "referenceAbbreviation" )
-            myFile.write( "} # end of idDataDict (%i systems)\n" % ( len(self.DataDicts) ) )
+            for systemName, systemDict in self.DataDict.items():
+                exportPythonDict( myFile, systemDict, systemName, "referenceAbbreviation", "id" )
+            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.DataDict) ) )
             myFile.write( "# end of %s" % os.path.basename(filepath) )
     # end of exportDataToPython
 
@@ -341,10 +305,10 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
@@ -352,7 +316,7 @@ class _BibleBookOrdersConvertor:
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
-            json.dump( self.DataDicts, myFile, indent=2 )
+            json.dump( self.DataDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -406,18 +370,18 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
             myHFile.write( "// %s\n//\n" % ( hFilepath ) )
             myCFile.write( "// %s\n//\n" % ( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BibleBookOrders.py on %s\n//\n" % datetime.now()
+            lines = "// This UTF-8 file was automatically generated by BiblePunctuationSystems.py on %s\n//\n" % datetime.now()
             myHFile.write( lines ); myCFile.write( lines )
             myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
@@ -425,8 +389,8 @@ class _BibleBookOrdersConvertor:
 
             CHAR = "const unsigned char"
             BYTE = "const int"
-            N1 = "bookOrderByRef"
-            N2 = "bookOrderByIndex"
+            N1 = "punctuationByRef"
+            N2 = "punctuationByIndex"
             S1 = "%s referenceAbbreviation[3+1]; %s indexNumber;" % (CHAR,BYTE)
             S2 = "%s indexNumber; %s referenceAbbreviation[3+1];" % (BYTE,CHAR)
             writeStructure( myHFile, N1, S1 )
@@ -436,116 +400,111 @@ class _BibleBookOrdersConvertor:
             myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
             myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
 
-            for systemName in self.DataDicts: # Now write out the actual data into the .c file
-                bookDataDict, idDataDict = self.DataDicts[systemName]
+            for systemName, systemDict in self.DataDict.items(): # Now write out the actual data into the .c file
                 myCFile.write( "\n// %s\n" % ( systemName ) )
-                exportPythonDict( myCFile, bookDataDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
-                exportPythonDict( myCFile, idDataDict, systemName+"IndexNumberDataDict", N2+"Entry", "indexNumber", S2 )
+                exportPythonDict( myCFile, systemDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.DataDicts) )
-            for systemName in self.DataDicts: # Now write out the actual pointer data into the .c file
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry punctuationSystemTable[%i] = {\n" % len(self.DataDict) )
+            for systemName in self.DataDict: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
-            myCFile.write( "}; // %i entries\n\n" % len(self.DataDicts) )
+            myCFile.write( "}; // %i entries\n\n" % len(self.DataDict) )
             myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
     # end of exportDataToC
 
-    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False, debugFlag=False ):
+    def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
         """
-        Check the given book order scheme against all the loaded systems.
-        Create a new book order file if it doesn't match any.
+        Check the given punctuation scheme against all the loaded systems.
+        Create a new punctuation file if it doesn't match any.
         """
         assert( systemName )
-        assert( bookOrderSchemeToCheck )
+        assert( punctuationSchemeToCheck )
         assert( self.Lists )
-        #print( systemName, bookOrderSchemeToCheck )
+        #print( systemName, punctuationSchemeToCheck )
 
-        matchedBookOrderSystemCodes = []
+        matchedPunctuationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
-        for bookOrderSystemCode in self.Lists: # Step through the various reference schemes
+        for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
-            if self.Lists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #print( "  Matches '%s' book order system" % ( bookOrderSystemCode ) )
+            if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
+                #print( "  Matches '%s' punctuation system" % ( punctuationSystemCode ) )
                 systemMatchCount += 1
-                matchedBookOrderSystemCodes.append( bookOrderSystemCode )
+                matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
-                if len(self.Lists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
-                    for BBB1,BBB2 in zip(self.Lists[bookOrderSystemCode],bookOrderSchemeToCheck):
+                if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
+                    for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match '%s' system (Both have %i books, but %s instead of %s)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
+                    thisError = "    Doesn't match '%s' system (Both have %i books, but %s instead of %s)" % ( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
                 else:
-                    thisError = "    Doesn't match '%s' system (%i books instead of %i)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
+                    thisError = "    Doesn't match '%s' system (%i books instead of %i)" % ( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( "  Matched %s book order (with these %i books)" % ( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                print( "  Matched %s punctuation (with these %i books)" % ( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
             else:
-                print( "  Matched %i book order system(s): %s (with these %i books)" % ( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                print( "  Matched %i punctuation system(s): %s (with these %i books)" % ( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
         else:
-            print( "  Mismatched %i book order systems (with these %i books)" % ( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            print( "  Mismatched %i punctuation systems (with these %i books)" % ( systemMismatchCount, len(punctuationSchemeToCheck) ) )
             if debugFlag: print( allErrors )
             else: print( errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
-            print( "Writing %i books to %s..." % ( len(bookOrderSchemeToCheck), outputFilepath ) )
+            outputFilepath = os.path.join( "ScrapedFiles", "BiblePunctuation_"+systemName + ".xml" )
+            if Globals.verbosityLevel > 1: print( "Writing %i books to %s..." % ( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
-                for n,BBB in enumerate(bookOrderSchemeToCheck):
+                for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="%i">%s</book>\n' % ( n+1,BBB ) )
-                myFile.write( "</BibleBookOrderSystem>" )
-    # end of checkBookOrderSystem
-# end of _BibleBookOrdersConvertor class
+                myFile.write( "</BiblePunctuationSystem>" )
+    # end of checkPunctuationSystem
+# end of _BiblePunctuationSystemsConvertor class
 
 
 @singleton # Can only ever have one instance
-class BibleBookOrders:
+class BiblePunctuationSystems:
     """
-    Class for handling Bible book order systems.
+    Class for handling Bible punctuation systems.
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
-
-    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
         Constructor: 
         """
-        self.bboc = _BibleBookOrdersConvertor()
-        self.DataContainers = None # We'll import into this in loadData
+        self.bpsc = _BiblePunctuationSystemsConvertor()
+        self.Dict = None # We'll import into this in loadData
     # end of __init__
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book order.
+        This method returns the string representation of a Bible punctuation.
         
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = "BibleBooksOrders object"
-        assert( len(self.DataContainers[0]) == len(self.DataContainers[1]) )
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.DataContainers[0]) )
+        result = "BiblePunctuationSystems object"
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.Dict) )
         return result
     # end of __str__
 
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.DataContainers: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '%s' was ignored" % XMLFolder )
-            self.bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-            self.DataContainers = self.bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.bboc # Now the convertor class (that handles the XML) is no longer needed
+        if not self.Dict: # Don't do this unnecessarily
+            if XMLFolder is not None: logging.warning( "Bible punctuation systems are already loaded -- your given folder of '%s' was ignored" % XMLFolder )
+            self.bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+            self.Dict = self.bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self.bpsc # Now the convertor class (that handles the XML) is no longer needed
         return self
     # end of loadData
 
     # TODO: Add some useful routines in here
 
-# end of BibleBookOrders class
+# end of BiblePunctuationSystems class
 
 
 def main():
@@ -558,26 +517,26 @@ def main():
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel>0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
-        bbos = _BibleBookOrdersConvertor().loadSystems() # Load the XML
-        bbos.checkDuplicates()
-        bbos.exportDataToPython() # Produce the .py tables
-        bbos.exportDataToJSON() # Produce a json output file
-        bbos.exportDataToC() # Produce the .h and .c tables
+        bpsc = _BiblePunctuationSystemsConvertor().loadSystems() # Load the XML
+        bpsc.checkDuplicates()
+        bpsc.exportDataToPython() # Produce the .py tables
+        bpsc.exportDataToJSON() # Produce a json output file
+        bpsc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
         # Demo the convertor object
-        bbos = _BibleBookOrdersConvertor().loadSystems() # Load the XML
-        bbos.checkDuplicates()
-        print( bbos ) # Just print a summary
+        bpsc = _BiblePunctuationSystemsConvertor().loadSystems() # Load the XML
+        bpsc.checkDuplicates()
+        print( bpsc ) # Just print a summary
 
-        # Demo the BibleBookOrders object
-        bbo = BibleBookOrders().loadData() # Doesn't reload the XML unnecessarily :)
-        print( bbo ) # Just print a summary
+        # Demo the BiblePunctuationSystems object
+        bps = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bps ) # Just print a summary
 # end of main
 
 if __name__ == '__main__':
     main()
-# end of BibleBookOrders.py
+# end of BiblePunctuationSystems.py

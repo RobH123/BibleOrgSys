@@ -4,7 +4,7 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2010-12-16 (also update versionString below)
+#   Last modified: 2010-12-22 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 """
 
 progName = "Bible Organization Systems handler"
-versionString = "0.13"
+versionString = "0.14"
 
 
 import logging, os.path
@@ -36,7 +36,7 @@ from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
 from singleton import singleton
-from Globals import ourGlobals
+import Globals
 from BibleBooksCodes import BibleBooksCodes
 from ISO_639_3_Languages import ISO_639_3_Languages
 
@@ -328,11 +328,9 @@ def main():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    global CommandLineOptions
     parser = OptionParser( version="v%s" % ( versionString ) )
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="display extra debugging information")
-    CommandLineOptions, args = parser.parse_args()
+    Globals.addStandardOptionsAndProcess( parser )
 
 
     # Do an initial load/check

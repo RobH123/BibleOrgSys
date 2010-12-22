@@ -1,0 +1,115 @@
+# MBT_to_OSIS_controls.txt
+#
+# This is a sample control file for creating an OSIS XML Bible text file
+# You should edit this UTF-8 file for your specific situation
+#
+# Any line with a # in the first column is a comment line ignored by the program
+# Unless otherwise specified, most entries consist of a variable name on the left,
+#   and equals sign (with optional spaces either side), and the assigned value.
+#       e.g., DoThis = True
+# Note that all fieldnames and settings are CASE SENSITIVE
+#
+
+# The following values are copied into the output file
+xmlLanguage = en
+LanguageName = Matigsalug
+osisIDWork = Matigsalug
+osisWork = Matigsalug
+
+# Allowed values are BCV (book/chapter/verse) or BSP (book/section/paragraph)
+osisStructure = BCV
+
+# Allowed values are byBible, byTestament, or byBook
+osisFiles = byBible
+
+# Allowed values are All or None or Header
+#   This affects how many space and newline characters are included in the output file(s)
+osisHumanReadable = All
+
+# This section only applies if byBible is selected above
+osisOutputFilename = MBT_OSIS_Bible.xml
+Title = Matigsalug Bible
+Identifier = Matigsalug
+LogFilename = MBT_OSIS_logfile.txt
+
+# This section only applies if byTestament or byBook is selected above
+# The fields must contain XxXxX which will be automatically replaced by the program
+osisOutputFilenameTemplate = MBT_OSIS_XxXxX.xml
+TitleTemplate = Matigsalug XxXxX
+IdentifierTemplate = Matigsalug XxXxX
+LogFileTemplate = MBT_OSIS_XxXxX_logfile.txt
+
+# This section contains language book names and abbreviations
+# Don't change the left-hand side of the equals sign
+# The right hand side consists of two entries in double quotes, separated by a comma:
+#   The abbreviation for the book
+#   The short name for the book
+# These are used to process cross-references within the text
+GEN = "Hin", "Hinisis"
+EXO = "Iks", "Iksudu"
+LEV = "Lib", "Libitiku"
+NUM = "Num", "Numiru"
+DEU = "Diy", "Diyuturunumiyu"
+JOS = "Huswi", "Huswi"
+JDG = "Tal", "Me Talewukum"
+RUT = "Rut", "Rut"
+SA1 = "1Sam", "1 Samwil"
+SA2 = "2Sam", "2 Samwil"
+KI1 = "1Har", "1 Me Hari"
+KI2 = "2Har", "2 Me Hari"
+CH1 = "1Kru", "1 Krunikas"
+CH2 = "2Kru", "2 Krunikas"
+EZR = "Isd", "Isdras"
+NEH = "Nih", "Nihimiyas"
+EST = "Ist", "Istir"
+JOB = "Hub", "Hub"
+PSA = "Sal", "Me Salmu"
+PRO = "Lal", "Lalahen"
+ECC = "Ikl", "Iklisyastis"
+SNG = "UNS", "Ulahingen ni Sulumun"
+ISA = "Isa", "Isayas"
+JER = "Hir", "Hirimiyas"
+LAM = "Peg", "Pegkalange"
+EZK = "Isi", "Isikil"
+DAN = "Dan", "Danyil"
+HOS = "Hus", "Husiya"
+JOL = "Huwil", "Huwil"
+AMO = "Amu", "Amus"
+OBA = "Abd", "Abdiyas"
+JNA = "Hun", "Hunas"
+MIC = "Mik", "Mikiyas"
+NAH = "Nah", "Nahum"
+HAB = "Hab", "Habakuk"
+ZEP = "Sup", "Supuniyas"
+HAG = "Hag", "Hagiyu"
+ZEC = "Sak", "Sakariyas"
+MAL = "Mal", "Malakyas"
+MAT = "Mat", "Matiyu"
+MRK = "Mar", "Markus"
+LUK = "Luk", "Lukas"
+JHN = "Huw", "Huwan"
+ACT = "Him", "Me Himu"
+ROM = "Rum", "Matig-Ruma"
+CO1 = "1Kur", "1 Matig-Kurintu"
+CO2 = "2Kur", "2 Matig-Kurintu"
+GAL = "Gal", "Matig-Galasya"
+EPH = "Ipi", "Matig-Ipisu"
+PHP = "Pil", "Matig-Pilipu"
+COL = "Kul", "Matig-Kulusas"
+TH1 = "1Tis", "1 Matig-Tisalunika"
+TH2 = "2Tis", "2 Matig-Tisalunika"
+TI1 = "1Tim", "Timutiyu"
+TI2 = "2Tim", "Timutiyu"
+TIT = "Tit", "Titu"
+PHM = "Pilim", "Pilimun"
+HEB = "Hib", "Hibruwanen"
+JAM = "San", "Santiyagu"
+PE1 = "1Pid", "1 Pidru"
+PE2 = "2Pid", "2 Pidru"
+JN1 = "1Huw", "1 Huwan"
+JN2 = "2Huw", "2 Huwan"
+JN3 = "3Huw", "3 Huwan"
+JDE = "Hud", "Hudas"
+REV = "Imp", "Impakita"
+
+## End of xxx_to_OSIS_controls.txt
