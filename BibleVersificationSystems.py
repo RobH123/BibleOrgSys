@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# BibleChaptersVerses.py
+# BibleVersificationSystems.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-19 (also update versionString below)
+#   Last modified: 2010-12-27 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.31"
+versionString = "0.33"
 
 
 import os, logging
@@ -46,7 +46,7 @@ class _BibleVersificationSystemsConvertor:
     A class to handle data for Bible versification systems.
     """
 
-    def __init__( self, BibleBooksCodesDict=None ):
+    def __init__( self ):
         """
         Constructor.
         """
@@ -66,47 +66,11 @@ class _BibleVersificationSystemsConvertor:
         self.uniqueElements = ( "nameEnglish", "referenceAbbreviation" ) + self.optionalElements
 
         # These are fields that we will fill later
-        self.XMLSystems, self.DataDict = {}, {}
+        self.XMLSystems, self._DataDict = {}, {}
 
         # Make sure we have the bible books codes data loaded and available
         self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
-
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible versification system.
-        
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = "_BibleVersificationSystemsConvertor object"
-        #if self.title: result += ('\n' if result else '') + self.title
-        #if self.version: result += ('\n' if result else '') + "Version: %s" % ( self.version )
-        #if self.date: result += ('\n' if result else '') + "Date: %s" % ( self.date )
-        result += ('\n' if result else '') + "  Num versification systems loaded = %i" % ( len(self.XMLSystems) )
-        if 0: # Make it verbose
-            for x in self.XMLSystems:
-                result += ('\n' if result else '') + "  %s" % ( x )
-                title = self.XMLSystems[x]["title"]
-                if title: result += ('\n' if result else '') + "    %s" % ( title )
-                version = self.XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-                date = self.XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
-                totalChapters, totalVerses, totalOmittedVerses = 0, 0, 0
-                for bookElement in self.XMLSystems[x]["tree"]:
-                    totalChapters += int( bookElement.find("numChapters").text )
-                    for chapterElement in bookElement.findall("numVerses"):
-                        totalVerses += int( chapterElement.text )
-                        omittedVerses = chapterElement.get( "omittedVerses" )
-                        if omittedVerses is not None:
-                            totalOmittedVerses += len(omittedVerses.split(','))
-                if totalChapters: result += ('\n' if result else '') + "      Total chapters = %i" % ( totalChapters )
-                if totalVerses: result += ('\n' if result else '') + "      Total verses = %i" % ( totalVerses )
-                if totalOmittedVerses: result += ('\n' if result else '') + "      Total omitted verses = %i" % ( totalOmittedVerses )
-        return result
-    # end of __str__
 
     def loadSystems( self, folder=None ):
         """
@@ -114,11 +78,13 @@ class _BibleVersificationSystemsConvertor:
         """
         if not self.XMLSystems: # Only ever do this once
             if folder==None: folder = "DataFiles/VersificationSystems"
+            if Globals.verbosityLevel > 2: print( "Loading versification systems from %s..." % ( folder ) )
+            filenamePrefix = "BIBLEVERSIFICATIONSYSTEM_"
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
-                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEVERSIFICATIONSYSTEM_"):
-                    versificationSystemCode = filepart[25:]
-                    if Globals.verbosityLevel > 1: print( "Loading %s versification system from %s..." % ( versificationSystemCode, filename ) )
+                if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
+                    versificationSystemCode = filepart[len(filenamePrefix):]
+                    if Globals.verbosityLevel > 3: print( "Loading %s versification system from %s..." % ( versificationSystemCode, filename ) )
                     self.XMLSystems[versificationSystemCode] = {}
                     self.XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
                     assert( self.XMLSystems[versificationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -226,42 +192,52 @@ class _BibleVersificationSystemsConvertor:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, k ) )
     # end of _validateSystem
 
-    def checkDuplicates( self ):
+    def __str__( self ):
         """
-        Checks for duplicate (redundant) book versification systems.
-
-        Returns True if a duplicate is found.
+        This method returns the string representation of a Bible versification system.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
         """
-        return False # TODO: fix this
-
-        systemLists, foundDuplicate = {}, False
-        for bookOrderSystemCode in self.XMLSystems.keys():
-            # Get the referenceAbbreviations all into a list
-            bookDataList = []
-            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
-                bookRA = bookElement.text
-                if self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    bookDataList.append( bookRA )
-            # Compare with existing lists
-            for checkSystemCode,checkDataList in systemLists.items():
-                if bookDataList == checkDataList:
-                    logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(bookDataList) ) )
-                    foundDuplicate = True
-            # Add this new list
-            systemLists[bookOrderSystemCode] = bookDataList
-        return foundDuplicate
-    # end of checkDuplicates
+        result = "_BibleVersificationSystemsConvertor object"
+        #if self.title: result += ('\n' if result else '') + self.title
+        #if self.version: result += ('\n' if result else '') + "Version: %s" % ( self.version )
+        #if self.date: result += ('\n' if result else '') + "Date: %s" % ( self.date )
+        result += ('\n' if result else '') + "  Num versification systems loaded = %i" % ( len(self.XMLSystems) )
+        if 0: # Make it verbose
+            for x in self.XMLSystems:
+                result += ('\n' if result else '') + "  %s" % ( x )
+                title = self.XMLSystems[x]["title"]
+                if title: result += ('\n' if result else '') + "    %s" % ( title )
+                version = self.XMLSystems[x]["version"]
+                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
+                date = self.XMLSystems[x]["date"]
+                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
+                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
+                totalChapters, totalVerses, totalOmittedVerses = 0, 0, 0
+                for bookElement in self.XMLSystems[x]["tree"]:
+                    totalChapters += int( bookElement.find("numChapters").text )
+                    for chapterElement in bookElement.findall("numVerses"):
+                        totalVerses += int( chapterElement.text )
+                        omittedVerses = chapterElement.get( "omittedVerses" )
+                        if omittedVerses is not None:
+                            totalOmittedVerses += len(omittedVerses.split(','))
+                if totalChapters: result += ('\n' if result else '') + "      Total chapters = %i" % ( totalChapters )
+                if totalVerses: result += ('\n' if result else '') + "      Total verses = %i" % ( totalVerses )
+                if totalOmittedVerses: result += ('\n' if result else '') + "      Total omitted verses = %i" % ( totalOmittedVerses )
+        return result
+    # end of __str__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
         assert( self.XMLSystems )
-        if self.DataDict: # We've already done an import/restructuring -- no need to repeat it
-            return self.DataDict
+        if self._DataDict: # We've already done an import/restructuring -- no need to repeat it
+            return self._DataDict
 
         # We'll create a number of dictionaries
-        self.DataDict = {}
+        self._DataDict = {}
         for versificationSystemCode in self.XMLSystems.keys():
             #print( versificationSystemCode )
             # Make the data dictionary for this versification system
@@ -275,7 +251,7 @@ class _BibleVersificationSystemsConvertor:
 
                 # Check the chapter data against the expected chapters in the BibleBooksCodes data
                 if numChapters not in self.BibleBooksCodes.getExpectedChaptersList(BBB):
-                    logging.warning( "Expected number of chapters for %s is %s but we got '%s' for %s" % (BBB, self.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
+                    logging.info( "Expected number of chapters for %s is %s but we got '%s' for %s" % (BBB, self.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
 
                 chapterData, omittedVersesData = OrderedDict(), []
                 chapterData['numChapters'] = numChapters
@@ -299,11 +275,36 @@ class _BibleVersificationSystemsConvertor:
                     logging.error( "Duplicate omitted data for %s in %s" % ( BBB, versificationSystemCode ) )
                 omittedVersesDict[BBB] = omittedVersesData
 
+            if Globals.strictCheckingFlag: # check for duplicates
+                for checkSystemCode in self._DataDict:
+                    checkChapterDataDict, checkOmittedVersesDict = self._DataDict[checkSystemCode]
+                    if checkChapterDataDict==chapterDataDict:
+                        if checkOmittedVersesDict==omittedVersesDict:
+                            logging.error( "%s and %s versification systems are exactly identical" % ( versificationSystemCode, checkSystemCode ) )
+                        else: # only the omitted verse lists differ
+                            logging.warning( "%s and %s versification systems are mostly identical (omitted verse lists differ)" % ( versificationSystemCode, checkSystemCode ) )
+                    else: # check if one is the subset of the other
+                        BBBcombinedSet = set( checkChapterDataDict.keys() ) or set( chapterDataDict.keys() )
+                        different, numCommon = False, 0
+                        for BBB in BBBcombinedSet:
+                            if BBB in checkChapterDataDict and BBB in chapterDataDict: # This book is in both
+                                numCommon += 1
+                                if checkChapterDataDict[BBB] != chapterDataDict[BBB]: different = True
+                        if not different:
+                            different2, numCommon2 = False, 0
+                            for BBB in BBBcombinedSet:
+                                if BBB in checkOmittedVersesDict and BBB in omittedVersesDict: # This book is in both
+                                    numCommon2 += 1
+                                    if checkOmittedVersesDict[BBB] != omittedVersesDict[BBB]: different2 = True
+                            if not different2:
+                                logging.warning( "The %i common books in %s (%i) and %s (%i) versification systems are exactly identical" % ( numCommon, versificationSystemCode, len(chapterDataDict), checkSystemCode, len(checkChapterDataDict) ) )
+                            else: # only the omitted verse lists differ
+                                logging.warning( "The %i common books in %s (%i) and %s (%i) versification systems are mostly identical (omitted verse lists differ)" % ( numCommon, versificationSystemCode, len(chapterDataDict), checkSystemCode, len(checkChapterDataDict) ) )
+
+
             # Now put it into my dictionaries for easy access
-            # This part should be customized or added to for however you need to process the data
-            #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
-            self.DataDict[versificationSystemCode] = chapterDataDict, omittedVersesDict
-        return self.DataDict
+            self._DataDict[versificationSystemCode] = chapterDataDict, omittedVersesDict
+        return self._DataDict
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -322,15 +323,15 @@ class _BibleVersificationSystemsConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         versificationSystemDict = self.importDataToPython()
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleChaptersVerses.py V%s %s\n#\n" % ( versionString, datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BibleVersificationSystems.py V%s %s\n#\n" % ( versionString, datetime.now() ) )
             #if self.title: myFile.write( "# %s\n" % ( self.title ) )
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
@@ -357,18 +358,18 @@ class _BibleVersificationSystemsConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
-            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleVersificationSystems.py on %s\n#\n" % ( datetime.now() ) )
             #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
-            json.dump( self.DataDict, myFile, indent=2 )
+            json.dump( self._DataDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -464,18 +465,18 @@ class _BibleVersificationSystemsConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
             myHFile.write( "// %s\n//\n" % ( hFilepath ) )
             myCFile.write( "// %s\n//\n" % ( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BibleChaptersVerses.py on %s\n//\n" % datetime.now()
+            lines = "// This UTF-8 file was automatically generated by BibleVersificationSystems.py on %s\n//\n" % datetime.now()
             myHFile.write( lines ); myCFile.write( lines )
             myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
@@ -508,28 +509,28 @@ class _BibleVersificationSystemsConvertor:
 
             #myHFile.write( "static struct {struct char*, void*, void*} versificationSystemNames[%i] = {\n  // Fields are systemName, systemVersification, systemOmittedVerses\n" % ( len(versificationSystemDict) ) )
 
-            for systemName,systemInfo in self.DataDict.items(): # Now write out the actual data into the .c file
+            for systemName,systemInfo in self._DataDict.items(): # Now write out the actual data into the .c file
                 myCFile.write( "\n// %s\n" % ( systemName ) )
                 exportPythonDict( myCFile, systemInfo[0], systemName+"CVDict", N1+"Entry", "referenceAbbreviation", S1 )
                 exportPythonDict( myCFile, systemInfo[1], systemName+"OmittedVersesDict", N2+"Entry", "indexNumber", S2 )
 
                 break # Just do one for now
-#            for systemName in self.DataDict: # Now write out the actual data into the .c file
+#            for systemName in self._DataDict: # Now write out the actual data into the .c file
 #                print( systemName )
 #                myCFile.write( '  { "%s", %s_versificationSystem, %s_omittedVerses },\n' % ( systemName, systemName, systemName ) )
-#            myCFile.write( "}; // versificationSystemNames (%i entries)\n\n" % ( len(self.DataDict) ) )
-#            for systemName in self.DataDict:
+#            myCFile.write( "}; // versificationSystemNames (%i entries)\n\n" % ( len(self._DataDict) ) )
+#            for systemName in self._DataDict:
 #                print( systemName )
 #                myCFile.write( "#\n# %s\n" % ( systemName ) )
-#                exportPythonDict( myCFile, self.DataDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, (\"numChapters\", numChapters) then pairs of chapterNumber,numVerses" )
-#                exportPythonDict( myCFile, self.DataDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
-#                exportPythonDict( myCFile, self.DataDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
+#                exportPythonDict( myCFile, self._DataDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, (\"numChapters\", numChapters) then pairs of chapterNumber,numVerses" )
+#                exportPythonDict( myCFile, self._DataDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
+#                exportPythonDict( myCFile, self._DataDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.DataDict) )
-            for systemName in self.DataDict: # Now write out the actual pointer data into the .c file
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self._DataDict) )
+            for systemName in self._DataDict: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"CVDict", systemName+"OmittedVersesDict" ) )
-            myCFile.write( "}; // %i entries\n\n" % len(self.DataDict) )
+            myCFile.write( "}; // %i entries\n\n" % len(self._DataDict) )
             myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
     # end of exportDataToC
 
@@ -538,16 +539,16 @@ class _BibleVersificationSystemsConvertor:
         Check the given versification scheme against all the loaded systems.
         Create a new versification file if it doesn't match any.
         """
-        assert( self.DataDict )
+        assert( self._DataDict )
         assert( versificationSchemeToCheck )
         if omittedVersesToCheck is None: omittedVersesToCheck = {}
 
         matchedVersificationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
-        for versificationSystemCode in self.DataDict: # Step through the various reference schemes
+        for versificationSystemCode in self._DataDict: # Step through the various reference schemes
             #print( system )
             bookMismatchCount, chapterMismatchCount, verseMismatchCount, omittedVerseMismatchCount, theseErrors = 0, 0, 0, 0, ''
-            CVData, OVData = self.DataDict[versificationSystemCode]
+            CVData, OVData = self._DataDict[versificationSystemCode]
 
             # Check verses per chapter
             for BBB in versificationSchemeToCheck.keys():
@@ -655,9 +656,19 @@ class BibleVersificationSystems:
         """
         Constructor: 
         """
-        self.bvsc = _BibleVersificationSystemsConvertor()
-        self.DataDict = None # We'll import into this in loadData
+        self._bvsc = _BibleVersificationSystemsConvertor()
+        self._DataDict = None # We'll import into this in loadData
     # end of __init__
+
+    def loadData( self, folder=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        if not self._DataDict: # Don't do this unnecessarily
+            if folder is not None: logging.warning( "Bible versification systems are already loaded -- your given folder of '%s' was ignored" % folder )
+            self._bvsc.loadSystems( folder ) # Load the XML (if not done already)
+            self._DataDict = self._bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self._bvsc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
 
     def __str__( self ):
         """
@@ -667,25 +678,106 @@ class BibleVersificationSystems:
         @rtype: string
         """
         result = "BibleVersificationSystems object"
-        for key in self.DataDict:
-            assert( len(self.DataDict[key][0]) == len(self.DataDict[key][1]) )
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.DataDict[key][0]) )
+        for key in self._DataDict:
+            assert( len(self._DataDict[key][0]) == len(self._DataDict[key][1]) )
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self._DataDict[key][0]) )
         return result
     # end of __str__
 
-    def loadData( self, folder=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.DataDict: # Don't do this unnecessarily
-            if folder is not None: logging.warning( "Bible versification systems are already loaded -- your given folder of '%s' was ignored" % folder )
-            self.bvsc.loadSystems( folder ) # Load the XML (if not done already)
-            self.DataDict = self.bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.bvsc # Now the convertor class (that handles the XML) is no longer needed
-        return self
-    # end of loadData
+    def getAvailableSystemNames( self ):
+        """ Returns a list of available system name strings. """
+        return [x for x in self._DataDict]
+    # end of getAvailableSystemNames
 
-    # TODO: Add some useful routines in here
+    def isValidSystemName( self, systemName ):
+        """ Returns True or False. """
+        return systemName in self._DataDict
+    # end of isValidSystemName
 
+    def getSystem( self, systemName ):
+        """ Returns the dictionary for the requested system. """
+        if systemName in self._DataDict:
+            return self._DataDict[systemName]
+        # else
+        logging.error( "No '%s' system in Bible Book Orders" % systemName )
+        if Globals.verbosityLevel > 2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
+    # end of getSystem
 # end of BibleVersificationSystems class
+
+
+class BibleVersificationSystem:
+    """
+    Class for handling a particular Bible versification system.
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+    """
+
+    def __init__( self, systemName ):
+        """
+        Constructor: 
+        """
+        self._systemName = systemName
+        self._bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        self._ChapterDataDict, self._OmittedVersesDict = self._bvss.getSystem( self._systemName )
+    # end of __init__
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible versification system.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "BibleVersificationSystem object"
+        result += ('\n' if result else '') + "  %s Bible versification system" % ( self._systemName )
+        #result += ('\n' if result else '') + "  Num values = %i" % ( len(self._Dict) )
+        return result
+    # end of __str__
+
+    def getVersificationSystemName( self ):
+        """ Return the book order system name. """
+        return self._systemName
+    # end of getSystemName
+
+    def numAvailableBooks( self ):
+        """ Returns the number of available books in the versification system.
+            NOTE: This value is not useful for finding the number of books in a particular Bible. """
+        return len( self._ChapterDataDict )
+    # end of numAvailableBooks
+
+    def getNumChapters( self, BBB ):
+        """ Returns the number of chapters (int) in the given book. """
+        return int( self._ChapterDataDict[BBB]['numChapters'] )
+    # end of getNumChapters
+
+    def getNumVerses( self, BBB, C ):
+        """ Returns the number of verses (int) in the given book and chapter. """
+        return int( self._ChapterDataDict[BBB][C] )
+    # end of getNumVerses
+
+    def getNumVersesList( self, BBB ):
+        """ Returns a list containing an integer for each chapter indicating the number of verses. """
+        myList = []
+        for x in self._ChapterDataDict[BBB].keys():
+            if x!='numChapters': myList.append( int( self._ChapterDataDict[BBB][x] ) )
+        return myList
+    # end of getNumVersesList
+
+    def getOmittedVerseList( self, BBB, fullRefs=False ):
+        """ Returns a list of (C,V) tuples noting omitted verses in the given book.
+
+        If fullRefs are requested, the list consists of (BBB,C,V) tuples instead. """
+        if fullRefs:
+            return [(BBB,C,V) for (C,V) in self._OmittedVersesDict[BBB]]
+        # else
+        return self._OmittedVersesDict[BBB]
+    # end of getOmittedVerseList
+
+    def isOmittedVerse( self, BBB, C, V ):
+        """ Returns True/False indicating if the given reference in omitted in this system. """
+        return (C,V) in self._OmittedVersesDict[BBB]
+    # end of isOmittedVerse
+# end of BibleVersificationSystem class
 
 
 def main():
@@ -698,11 +790,10 @@ def main():
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
         bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
-        bvsc.checkDuplicates()
         bvsc.exportDataToPython() # Produce the .py tables
         bvsc.exportDataToJSON() # Produce a json output file
         bvsc.exportDataToC() # Produce the .h and .c tables
@@ -710,14 +801,29 @@ def main():
     else: # Must be demo mode
         # Demo the convertor object
         bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
-        bvsc.checkDuplicates()
         print( bvsc ) # Just print a summary
 
-        # Demo the BibleBookOrders object
-        bvs = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        print( bvs ) # Just print a summary
+        # Demo the BibleVersificationSystems object
+        bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bvss ) # Just print a summary
+        print( "Available system names are: %s" % bvss.getAvailableSystemNames() )
+
+        # Demo a BibleVersificationSystem object -- this is the one most likely to be wanted by a user
+        bvs = BibleVersificationSystem( "NLT96" )
+        if bvs is not None:
+            print( bvs ) # Just print a summary
+            print( "Num available books for %s is %i" % (bvs.getVersificationSystemName(),bvs.numAvailableBooks()) )
+            BBB = 'PRO'
+            print( "%s has %i chapters in %s" % (BBB,bvs.getNumChapters(BBB),bvs.getVersificationSystemName()) )
+            BBB = 'MAT'; C='1'
+            print( "%s %s has %i verses" % (BBB,C,bvs.getNumVerses(BBB,C)) )
+            BBB = 'DAN'
+            print( "Verse list for the %i chapters in %s is: %s" % (bvs.getNumChapters(BBB),BBB,bvs.getNumVersesList(BBB)) )
+            BBB = 'MRK'; C='7'; V='16'
+            print( "%s %s %s is omitted: %s" % (BBB,C,V,bvs.isOmittedVerse(BBB,C,V)) )
+            print( "Omitted verses in %s are: %s" % (BBB,bvs.getOmittedVerseList(BBB)) )
 # end of main
 
 if __name__ == '__main__':
     main()
-# end of BibleChaptersVerses.py
+# end of BibleVersificationSystems.py

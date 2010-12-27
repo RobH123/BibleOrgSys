@@ -15,8 +15,8 @@ ZefaniaLanguage = en
 ZefaniaPublisher = Matigsalug Language Christian Association (MLCA), Inc.
 ZefaniaRights = Copyright (C) 2010, Matigsalug Language Christian Association, Inc.
 ZefaniaContributors =
-ZefanaiaSource = MLCA
-ZefanaiaCoverage = Matgisalugs around the world
+ZefaniaSource = MLCA
+ZefaniaCoverage = Matgisalugs around the world
 
 # Allowed values are byBible, byTestament, or byBook
 #ZefaniaFiles = byBible

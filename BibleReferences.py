@@ -65,7 +65,7 @@ from Globals import ourGlobals
 from BibleBooksCodes import BibleBooksCodes
 from ISO_639_3_Languages import ISO_639_3_Languages
 
-import BibleBooksNames, BibleChaptersVerses
+import BibleBooksNames, BibleVersificationSystems
 
 
 builtinSystems = {

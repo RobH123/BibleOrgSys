@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-19 (also update versionString below)
+#   Last modified: 2010-12-27 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.50"
+versionString = "0.52"
 
 
 import os, logging
@@ -68,33 +68,11 @@ class _BibleBookOrdersConvertor:
 
         # These are fields that we will fill later
         self.XMLSystems = {}
-        self.DataDicts, self.DataLists = {}, {} # Used for import
+        self.__DataDicts, self.__DataLists = {}, {} # Used for import
 
         # Make sure we have the bible books codes data loaded and available
         self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
-
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible book order system.
-        
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = "_BibleBookOrdersConvertor object"
-        result += ('\n' if result else '') + "  Num book order systems loaded = %i" % ( len(self.XMLSystems) )
-        if 0: # Make it verbose
-            for x in self.XMLSystems:
-                result += ('\n' if result else '') + "  %s" % ( x )
-                title = self.XMLSystems[x]["title"]
-                if title: result += ('\n' if result else '') + "    %s" % ( title )
-                version = self.XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-                date = self.XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
-        return result
-    # end of __str__
 
     def loadSystems( self, XMLFolder=None ):
         """
@@ -103,11 +81,13 @@ class _BibleBookOrdersConvertor:
         if not self.XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
             self.XMLFolder = XMLFolder
+            if Globals.verbosityLevel > 2: print( "Loading book order systems from %s..." % ( self.XMLFolder ) )
+            filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
-                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
-                    bookOrderSystemCode = filepart[15:]
-                    #print( "Loading %s book order system from %s..." % ( bookOrderSystemCode, filename ) )
+                if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
+                    bookOrderSystemCode = filepart[len(filenamePrefix):]
+                    if Globals.verbosityLevel > 3: print( "  Loading %s book order system from %s..." % ( bookOrderSystemCode, filename ) )
                     self.XMLSystems[bookOrderSystemCode] = {}
                     self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -140,13 +120,12 @@ class _BibleBookOrdersConvertor:
                     logging.info( "    Loaded %i books" % ( bookCount ) )
 
                 if Globals.strictCheckingFlag:
-                    self._validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+                    self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
         return self
     # end of loadSystems
 
-    def _validateSystem( self, bookOrderTree, systemName ):
-        """
-        """
+    def __validateSystem( self, bookOrderTree, systemName ):
+        """ Do a semi-automatic check of the XML file validity. """
         assert( bookOrderTree )
 
         uniqueDict = {}
@@ -225,39 +204,37 @@ class _BibleBookOrdersConvertor:
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, k ) )
-    # end of _validateSystem
+    # end of __validateSystem
 
-    def checkDuplicates( self ):
+    def __str__( self ):
         """
-        Checks for duplicate (redundant) book order systems.
-
-        Returns True if a duplicate is found.
+        This method returns the string representation of a Bible book order system.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
         """
-        systemLists, foundDuplicate = {}, False
-        for bookOrderSystemCode in self.XMLSystems.keys():
-            # Get the referenceAbbreviations all into a list
-            bookDataList = []
-            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
-                bookRA = bookElement.text
-                if self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    bookDataList.append( bookRA )
-            # Compare with existing lists
-            for checkSystemCode,checkDataList in systemLists.items():
-                if bookDataList == checkDataList:
-                    logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(bookDataList) ) )
-                    foundDuplicate = True
-            # Add this new list
-            systemLists[bookOrderSystemCode] = bookDataList
-        return foundDuplicate
-    # end of checkDuplicates
+        result = "_BibleBookOrdersConvertor object"
+        result += ('\n' if result else '') + "  Num book order systems loaded = %i" % ( len(self.XMLSystems) )
+        if 0: # Make it verbose
+            for x in self.XMLSystems:
+                result += ('\n' if result else '') + "  %s" % ( x )
+                title = self.XMLSystems[x]["title"]
+                if title: result += ('\n' if result else '') + "    %s" % ( title )
+                version = self.XMLSystems[x]["version"]
+                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
+                date = self.XMLSystems[x]["date"]
+                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
+                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
+        return result
+    # end of __str__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
         assert( self.XMLSystems )
-        if self.DataDicts and self.DataLists: # We've already done an import/restructuring -- no need to repeat it
-            return self.DataDicts, self.DataLists
+        if self.__DataDicts and self.__DataLists: # We've already done an import/restructuring -- no need to repeat it
+            return self.__DataDicts, self.__DataLists
 
         # We'll create a number of dictionaries
         for bookOrderSystemCode in self.XMLSystems.keys():
@@ -279,11 +256,15 @@ class _BibleBookOrdersConvertor:
                 idDataDict[intID] = bookRA
                 BBBList.append( bookRA )
 
+            if Globals.strictCheckingFlag: # check for duplicates
+                for checkSystemCode in self.__DataLists:
+                    if self.__DataLists[checkSystemCode] == BBBList:
+                        logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
+
             # Now put it into my dictionaries for easy access
-            # This part should be customized or added to for however you need to process the data
-            self.DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
-            self.DataLists[bookOrderSystemCode] = BBBList # Don't explicitly include the book index numbers, but otherwise the same information in a different form
-        return self.DataDicts, self.DataLists
+            self.__DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
+            self.__DataLists[bookOrderSystemCode] = BBBList # Don't explicitly include the book index numbers, but otherwise the same information in a different form
+        return self.__DataDicts, self.__DataLists
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -302,10 +283,10 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -318,15 +299,15 @@ class _BibleBookOrdersConvertor:
             myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
-            for systemName in self.DataDicts:
-                bookDataDict, idDataDict = self.DataDicts[systemName]
+            for systemName in self.__DataDicts:
+                bookDataDict, idDataDict = self.__DataDicts[systemName]
                 exportPythonDict( myFile, bookDataDict, systemName, "referenceAbbreviation", "id" )
-            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.DataDicts) ) )
+            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.__DataDicts) ) )
             myFile.write( "idDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
-            for systemName in self.DataDicts:
-                bookDataDict, idDataDict = self.DataDicts[systemName]
+            for systemName in self.__DataDicts:
+                bookDataDict, idDataDict = self.__DataDicts[systemName]
                 exportPythonDict( myFile, idDataDict, systemName, "id", "referenceAbbreviation" )
-            myFile.write( "} # end of idDataDict (%i systems)\n" % ( len(self.DataDicts) ) )
+            myFile.write( "} # end of idDataDict (%i systems)\n" % ( len(self.__DataDicts) ) )
             myFile.write( "# end of %s" % os.path.basename(filepath) )
     # end of exportDataToPython
 
@@ -341,10 +322,10 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
@@ -352,7 +333,7 @@ class _BibleBookOrdersConvertor:
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
-            json.dump( self.DataDicts, myFile, indent=2 )
+            json.dump( self.__DataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -406,12 +387,12 @@ class _BibleBookOrdersConvertor:
 
         assert( self.XMLSystems )
         self.importDataToPython()
-        assert( self.DataDicts and self.DataLists )
+        assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -436,17 +417,17 @@ class _BibleBookOrdersConvertor:
             myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
             myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
 
-            for systemName in self.DataDicts: # Now write out the actual data into the .c file
-                bookDataDict, idDataDict = self.DataDicts[systemName]
+            for systemName in self.__DataDicts: # Now write out the actual data into the .c file
+                bookDataDict, idDataDict = self.__DataDicts[systemName]
                 myCFile.write( "\n// %s\n" % ( systemName ) )
                 exportPythonDict( myCFile, bookDataDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
                 exportPythonDict( myCFile, idDataDict, systemName+"IndexNumberDataDict", N2+"Entry", "indexNumber", S2 )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.DataDicts) )
-            for systemName in self.DataDicts: # Now write out the actual pointer data into the .c file
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.__DataDicts) )
+            for systemName in self.__DataDicts: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
-            myCFile.write( "}; // %i entries\n\n" % len(self.DataDicts) )
+            myCFile.write( "}; // %i entries\n\n" % len(self.__DataDicts) )
             myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
     # end of exportDataToC
 
@@ -503,7 +484,7 @@ class _BibleBookOrdersConvertor:
 
 
 @singleton # Can only ever have one instance
-class BibleBookOrders:
+class BibleBookOrderSystems:
     """
     Class for handling Bible book order systems.
 
@@ -516,9 +497,20 @@ class BibleBookOrders:
         """
         Constructor: 
         """
-        self.bboc = _BibleBookOrdersConvertor()
-        self.DataContainers = None # We'll import into this in loadData
+        self.__bboc = _BibleBookOrdersConvertor()
+        self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of __init__
+
+    def loadData( self, XMLFolder=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
+            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '%s' was ignored" % XMLFolder )
+            self.__bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+            self.__DataDicts, self.__DataLists = self.__bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            assert( len(self.__DataDicts) == len(self.__DataLists) )
+            del self.__bboc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
 
     def __str__( self ):
         """
@@ -528,24 +520,102 @@ class BibleBookOrders:
         @rtype: string
         """
         result = "BibleBooksOrders object"
-        assert( len(self.DataContainers[0]) == len(self.DataContainers[1]) )
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.DataContainers[0]) )
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.__DataDicts) )
         return result
     # end of __str__
 
-    def loadData( self, XMLFolder=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.DataContainers: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '%s' was ignored" % XMLFolder )
-            self.bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-            self.DataContainers = self.bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.bboc # Now the convertor class (that handles the XML) is no longer needed
-        return self
-    # end of loadData
+    def getAvailableBookOrderSystemNames( self ):
+        """ Returns a list of available system name strings. """
+        return [x for x in self.__DataLists]
+    # end of getAvailableBookOrderSystemNames
 
-    # TODO: Add some useful routines in here
+    def getBookOrderSystem( self, systemName ):
+        """ Returns two dictionaries and a list object."""
+        if systemName in self.__DataDicts:
+            return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
+        # else
+        logging.error( "No '%s' system in Bible Book Orders" % systemName )
+        if Globals.verbosityLevel > 2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
+    # end of getBookOrderSystem
 
-# end of BibleBookOrders class
+    def numBooks( self, systemName ):
+        """ Returns the number of books in this system. """
+        return len( self.__DataLists[systemName] )
+    # end of numBooks
+
+    def containsBook( self, systemName, BBB ):
+        """ Return True if the book is in this system. """
+        return BBB in self.__DataLists[systemName]
+    # end of containsBook
+
+    def getBookList( self, systemName ):
+        """ Returns the list of BBB book reference abbreviations in the correct order. """
+        return self.__DataLists[systemName]
+    # end of getBookList
+# end of BibleBookOrderSystems class
+
+
+class BibleBookOrderSystem:
+    """
+    Class for handling an individual Bible book order system.
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+
+    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
+    """
+
+    def __init__( self, systemName ):
+        """
+        Constructor: 
+        """
+        self.__systemName = systemName
+        self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        self.__BookOrderBookDict, self.__BookOrderNumberDict, self.__BookOrderList = self.__bbos.getBookOrderSystem( self.__systemName )
+    # end of __init__
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible book order.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "BibleBooksOrder object"
+        result += ('\n' if result else '') + "  %s book order system" % ( self.__systemName )
+        result += ('\n' if result else '') + "  Num books = %i" % ( self.numBooks() )
+        return result
+    # end of __str__
+
+    def getBookOrderSystemName( self ):
+        """ Return the book order system name. """
+        return self.__systemName
+    # end of getBookOrderSystemName
+
+    def numBooks( self ):
+        """ Returns the number of books in this system. """
+        return len( self.__BookOrderList )
+    # end of numBooks
+
+    def containsBook( self, BBB ):
+        """ Return True if the book is in this system. """
+        return BBB in self.__BookOrderList
+    # end of containsBook
+
+    def getBookPosition( self, BBB ):
+        """ Returns the book position number (1..n). """
+        return self.__BookOrderBookDict[BBB]
+    # end of getBookPosition
+
+    def getBookAtPosition( self, n ):
+        """ Returns the BBB book reference abbreviation for the position number (1..n). """
+        return self.__BookOrderNumberDict[n]
+    # end of getBookAtPosition
+
+    def getBookList( self ):
+        """ Returns the list of BBB book reference abbreviations in the correct order. """
+        return self.__BookOrderList
+    # end of getBookList
+# end of BibleBookOrderSystem class
 
 
 def main():
@@ -558,24 +628,39 @@ def main():
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel>0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
-        bbos = _BibleBookOrdersConvertor().loadSystems() # Load the XML
-        bbos.checkDuplicates()
-        bbos.exportDataToPython() # Produce the .py tables
-        bbos.exportDataToJSON() # Produce a json output file
-        bbos.exportDataToC() # Produce the .h and .c tables
+        bbosc = _BibleBookOrdersConvertor().loadSystems() # Load the XML
+        bbosc.exportDataToPython() # Produce the .py tables
+        bbosc.exportDataToJSON() # Produce a json output file
+        bbosc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
         # Demo the convertor object
-        bbos = _BibleBookOrdersConvertor().loadSystems() # Load the XML
-        bbos.checkDuplicates()
-        print( bbos ) # Just print a summary
+        bbosc = _BibleBookOrdersConvertor().loadSystems() # Load the XML
+        print( bbosc ) # Just print a summary
 
         # Demo the BibleBookOrders object
-        bbo = BibleBookOrders().loadData() # Doesn't reload the XML unnecessarily :)
-        print( bbo ) # Just print a summary
+        bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bbos ) # Just print a summary
+        print( "Available system names are: %s" % bbos.getAvailableBookOrderSystemNames() )
+        systemName = "VulgateBible"
+        print( "Number of books in %s is %i" % (systemName, bbos.numBooks(systemName) ) )
+        systemName = "Septuagint"; BBB="ROM"
+        print( "%s is in %s: %s" % (BBB, systemName, bbos.containsBook(systemName,BBB) ) )
+        systemName = "ModernJewish"
+        print( "Booklist for %s is %s" % (systemName, bbos.getBookList(systemName) ) )
+
+        # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
+        bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )
+        if bbo is not None:
+            print( bbo ) # Just print a summary
+            print( "Num books is %i" % bbo.numBooks() )
+            print( "The 3rd book is %s" % bbo.getBookAtPosition(3) )
+            print( "Contains Psalms: %s" % bbo.containsBook("PSA") )
+            print( "Luke is book #%i" % bbo.getBookPosition("LUK") )
+            print( "Book list is: %s" % bbo.getBookList() )
 # end of main
 
 if __name__ == '__main__':

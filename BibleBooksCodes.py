@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2010-12-22 (also update versionString below)
+#   Last modified: 2010-12-27 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -52,51 +52,36 @@ class _BibleBooksCodesConvertor:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        self.filenameBase = "BibleBooksCodes"
+        self._filenameBase = "BibleBooksCodes"
 
         # These fields are used for parsing the XML
-        self.treeTag = "BibleBooksCodes"
-        self.headerTag = "header"
-        self.mainElementTag = "BibleBookCodes"
+        self._treeTag = "BibleBooksCodes"
+        self._headerTag = "header"
+        self._mainElementTag = "BibleBookCodes"
 
         # These fields are used for automatically checking/validating the XML
-        self.compulsoryAttributes = ()
-        self.optionalAttributes = ()
-        self.uniqueAttributes = self.compulsoryAttributes + self.optionalAttributes
-        self.compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
-        self.optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
-        #self.uniqueElements = self.compulsoryElements + self.optionalElements
-        self.uniqueElements = self.compulsoryElements # Relax the checking
+        self._compulsoryAttributes = ()
+        self._optionalAttributes = ()
+        self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
+        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
+        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
+        #self._uniqueElements = self._compulsoryElements + self.optionalElements
+        self._uniqueElements = self._compulsoryElements # Relax the checking
 
         # These are fields that we will fill later
-        self.XMLheader, self.XMLtree = None, None
+        self._XMLheader, self._XMLtree = None, None
         self._dataDicts = {} # Used for import
         self.titleString = self.versionString = self.dateString = ''
     # end of __init__
-
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible book code.
-        
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = "_BibleBooksCodesConvertor object"
-        if self.titleString: result += ('\n' if result else '') + "  Title: %s" % ( self.titleString )
-        if self.versionString: result += ('\n' if result else '') + "  Version: %s" % ( self.versionString )
-        if self.dateString: result += ('\n' if result else '') + "  Date: %s" % ( self.dateString )
-        if self.XMLtree is not None: result += ('\n' if result else '') + "  Num entries = %i" % ( len(self.XMLtree) )
-        return result
-    # end of __str__
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
         """
-        if self.XMLtree is None: # We mustn't have already have loaded the data
+        if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFilepath is None:
-                XMLFilepath = os.path.join( "DataFiles", self.filenameBase + ".xml" )
+                XMLFilepath = os.path.join( "DataFiles", self._filenameBase + ".xml" )
 
             self._load( XMLFilepath )
             if Globals.strictCheckingFlag:
@@ -111,17 +96,17 @@ class _BibleBooksCodesConvertor:
         """
         assert( XMLFilepath )
         self.XMLFilepath = XMLFilepath
-        assert( self.XMLtree is None or len(self.XMLtree)==0 ) # Make sure we're not doing this twice
+        assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 1: print( "Loading BibleBooksCodes XML file from '%s'..." % XMLFilepath )
-        self.XMLtree = ElementTree().parse( XMLFilepath )
-        assert( self.XMLtree ) # Fail here if we didn't load anything at all
+        if Globals.verbosityLevel > 2: print( "Loading BibleBooksCodes XML file from '%s'..." % self.XMLFilepath )
+        self._XMLtree = ElementTree().parse( self.XMLFilepath )
+        assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
-        if self.XMLtree.tag == self.treeTag:
-            header = self.XMLtree[0]
-            if header.tag == self.headerTag:
+        if self._XMLtree.tag == self._treeTag:
+            header = self._XMLtree[0]
+            if header.tag == self._headerTag:
                 self.XMLheader = header
-                self.XMLtree.remove( header )
+                self._XMLtree.remove( header )
                 if len(header)>1:
                     logging.info( "Unexpected elements in header" )
                 elif len(header)==0:
@@ -135,27 +120,27 @@ class _BibleBooksCodesConvertor:
                     else:
                         logging.warning( "Missing work element in header" )
             else:
-                logging.warning( "Missing header element (looking for '%s' tag)" % ( self.headerTag ) )
+                logging.warning( "Missing header element (looking for '%s' tag)" % ( self._headerTag ) )
             if header.tail is not None and header.tail.strip(): logging.error( "Unexpected '%s' tail data after header" % ( element.tail ) )
         else:
-            logging.error( "Expected to load '%s' but got '%s'" % ( self.treeTag, self.XMLtree.tag ) )
+            logging.error( "Expected to load '%s' but got '%s'" % ( self._treeTag, self._XMLtree.tag ) )
     # end of _load
 
     def _validate( self ):
         """
         Check/validate the loaded data.
         """
-        assert( self.XMLtree )
+        assert( self._XMLtree )
 
         uniqueDict = {}
-        for elementName in self.uniqueElements: uniqueDict["Element_"+elementName] = []
-        for attributeName in self.uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
+        for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
+        for attributeName in self._uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
         expectedID = 1
-        for j,element in enumerate(self.XMLtree):
-            if element.tag == self.mainElementTag:
+        for j,element in enumerate(self._XMLtree):
+            if element.tag == self._mainElementTag:
                 # Check compulsory attributes on this main element
-                for attributeName in self.compulsoryAttributes:
+                for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
                         logging.error( "Compulsory '%s' attribute is missing from %s element in record %i" % ( attributeName, element.tag, j ) )
@@ -163,7 +148,7 @@ class _BibleBooksCodesConvertor:
                         logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
-                for attributeName in self.optionalAttributes:
+                for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
@@ -172,11 +157,11 @@ class _BibleBooksCodesConvertor:
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
-                    if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
+                    if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
                         logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i" % ( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
-                for attributeName in self.uniqueAttributes:
+                for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
@@ -187,25 +172,25 @@ class _BibleBooksCodesConvertor:
                 ID = element.find("referenceAbbreviation").text
 
                 # Check compulsory elements
-                for elementName in self.compulsoryElements:
+                for elementName in self._compulsoryElements:
                     if element.find( elementName ) is None:
                         logging.error( "Compulsory '%s' element is missing in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
                     elif not element.find( elementName ).text:
                         logging.warning( "Compulsory '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
 
                 # Check optional elements
-                for elementName in self.optionalElements:
+                for elementName in self._optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
                             logging.warning( "Optional '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
-                    if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
+                    if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
                         logging.warning( "Additional '%s' element ('%s') found in record with ID '%s' (record %i)" % ( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
-                for elementName in self.uniqueElements:
+                for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
@@ -214,21 +199,36 @@ class _BibleBooksCodesConvertor:
             else:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, j ) )
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '%s' tail data after %s element in record %i" % ( element.tail, element.tag, j ) )
-        if self.XMLtree.tail is not None and self.XMLtree.tail.strip(): logging.error( "Unexpected '%s' tail data after %s element" % ( self.XMLtree.tail, self.XMLtree.tag ) )
+        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( "Unexpected '%s' tail data after %s element" % ( self._XMLtree.tail, self._XMLtree.tag ) )
     # end of _validate
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible book code.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "_BibleBooksCodesConvertor object"
+        if self.titleString: result += ('\n' if result else '') + "  Title: %s" % ( self.titleString )
+        if self.versionString: result += ('\n' if result else '') + "  Version: %s" % ( self.versionString )
+        if self.dateString: result += ('\n' if result else '') + "  Date: %s" % ( self.dateString )
+        if self._XMLtree is not None: result += ('\n' if result else '') + "  Num entries = %i" % ( len(self._XMLtree) )
+        return result
+    # end of __str__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self.XMLtree if you prefer.)
+        (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
-        assert( self.XMLtree )
+        assert( self._XMLtree )
         if self._dataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self._dataDicts
 
         # We'll create a number of dictionaries with different elements as the key
         myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}
-        for element in self.XMLtree:
+        for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
@@ -255,48 +255,48 @@ class _BibleBooksCodesConvertor:
             # This part should be customized or added to for however you need to process the data
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
             #   The referenceAbbreviation is UPPER CASE by definition
-            if "referenceAbbreviation" in self.compulsoryElements or referenceAbbreviation:
-                if "referenceAbbreviation" in self.uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
+            if "referenceAbbreviation" in self._compulsoryElements or referenceAbbreviation:
+                if "referenceAbbreviation" in self._uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
                 #myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
                 myRADict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
                                                     "ParatextAbbreviation":ParatextAbbreviation, "ParatextNumberString":ParatextNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
-            if "referenceNumber" in self.compulsoryElements or ID:
-                if "referenceNumber" in self.uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
+            if "referenceNumber" in self._compulsoryElements or ID:
+                if "referenceNumber" in self._uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
                 #myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
                 myIDDict[intID] = { "referenceAbbreviation":referenceAbbreviation, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
                                     "ParatextAbbreviation":ParatextAbbreviation, "ParatextNumberString":ParatextNumberString,
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
-            if "SBLAbbreviation" in self.compulsoryElements or SBLAbbreviation:
-                if "SBLAbbreviation" in self.uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
+            if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
+                if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
                 mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, )
-            if "OSISAbbreviation" in self.compulsoryElements or OSISAbbreviation:
-                if "OSISAbbreviation" in self.uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
+            if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
+                if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
                 myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation )
-            if "SwordAbbreviation" in self.compulsoryElements or SwordAbbreviation:
-                if "SwordAbbreviation" in self.uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
+            if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
+                if "SwordAbbreviation" in self._uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
                 mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, )
-            if "CCELNumberString" in self.compulsoryElements or CCELNumberString:
-                if "CCELNumberString" in self.uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
+            if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
+                if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
                 myCCELDict[CCELNumberString] = ( intID, referenceAbbreviation, )
-            if "ParatextAbbreviation" in self.compulsoryElements or ParatextAbbreviation:
-                if "ParatextAbbreviation" in self.uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
+            if "ParatextAbbreviation" in self._compulsoryElements or ParatextAbbreviation:
+                if "ParatextAbbreviation" in self._uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
                 myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, ParatextNumberString, )
-            if "ParatextNumberString" in self.compulsoryElements or ParatextNumberString:
-                if "ParatextNumberString" in self.uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
+            if "ParatextNumberString" in self._compulsoryElements or ParatextNumberString:
+                if "ParatextNumberString" in self._uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
                 myPNDict[ParatextNumberString] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
-            if "NETBibleAbbreviation" in self.compulsoryElements or NETBibleAbbreviation:
-                if "NETBibleAbbreviation" in self.uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
+            if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
+                if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 myNETDict[NETBibleAbbreviation] = ( intID, referenceAbbreviation, )
-            if "ByzantineAbbreviation" in self.compulsoryElements or ByzantineAbbreviation:
-                if "ByzantineAbbreviation" in self.uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
+            if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
+                if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 myBzDict[ByzantineAbbreviation] = ( intID, referenceAbbreviation, )
-            if "nameEnglish" in self.compulsoryElements or ParatextNumberString:
-                if "nameEnglish" in self.uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
+            if "nameEnglish" in self._compulsoryElements or ParatextNumberString:
+                if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 myENDict[nameEnglish] = ( intID, referenceAbbreviation )
         self._dataDicts = { "referenceNumber":myIDDict, "referenceAbbreviationDict":myRADict, "SBLDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "ParatextAbbreviationDict":myPADict, "ParatextNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
@@ -321,11 +321,11 @@ class _BibleBooksCodesConvertor:
 
         from datetime import datetime
 
-        assert( self.XMLtree )
+        assert( self._XMLtree )
         self.importDataToPython()
         assert( self._dataDicts )
 
-        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# %s\n#\n" % ( filepath ) )
@@ -333,7 +333,7 @@ class _BibleBooksCodesConvertor:
             if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
             if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
-            myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self._XMLtree), self._treeTag ) )
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
             dictInfo = { "referenceNumber":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
                             "CCELDict":("CCELNumberString",mostEntries), "SBLDict":("SBLAbbreviation",mostEntries), "OSISAbbreviationDict":("OSISAbbreviation",mostEntries), "SwordAbbreviationDict":("SwordAbbreviation",mostEntries),
@@ -353,11 +353,11 @@ class _BibleBooksCodesConvertor:
         from datetime import datetime
         import json
 
-        assert( self.XMLtree )
+        assert( self._XMLtree )
         self.importDataToPython()
         assert( self._dataDicts )
 
-        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.json" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
@@ -365,7 +365,7 @@ class _BibleBooksCodesConvertor:
             #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
-            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self._XMLtree), self._treeTag ) )
             json.dump( self._dataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
@@ -425,15 +425,15 @@ class _BibleBooksCodesConvertor:
 
         from datetime import datetime
 
-        assert( self.XMLtree )
+        assert( self._XMLtree )
         self.importDataToPython()
         assert( self._dataDicts )
 
-        if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
+        if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
-        ifdefName = self.filenameBase.upper() + "_Tables_h"
+        ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
             myHFile.write( "// %s\n//\n" % ( hFilepath ) )
@@ -449,7 +449,7 @@ class _BibleBooksCodesConvertor:
             if self.dateString:
                 lines = "//  Date: %s\n//\n" % self.dateString
                 myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self._XMLtree), self._treeTag ) )
             myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
             myCFile.write( '#include "%s"\n\n' % os.path.basename(hFilepath) )
 
@@ -496,9 +496,19 @@ class BibleBooksCodes:
         """
         Constructor: 
         """
-        self.bbcc = _BibleBooksCodesConvertor()
+        self._bbcc = _BibleBooksCodesConvertor()
         self._dataDicts = None # We'll import into this in loadData
     # end of __init__
+
+    def loadData( self, XMLFilepath=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        if not self._dataDicts: # Don't do this unnecessarily
+            if XMLFilepath is not None: logging.warning( "Bible books codes are already loaded -- your given filepath of '%s' was ignored" % XMLFilepath )
+            self._bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
+            self._dataDicts = self._bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self._bbcc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
 
     def __str__( self ):
         """
@@ -511,18 +521,6 @@ class BibleBooksCodes:
         result += ('\n' if result else '') + "  Num entries = %i" % ( len(self._dataDicts["referenceAbbreviationDict"]) )
         return result
     # end of __str__
-
-    def loadData( self, XMLFilepath=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self._dataDicts: # Don't do this unnecessarily
-            if XMLFilepath is not None: logging.warning( "Bible books codes are already loaded -- your given filepath of '%s' was ignored" % XMLFilepath )
-            self.bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-            self._dataDicts = self.bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.bbcc # Now the convertor class (that handles the XML) is no longer needed
-        return self
-    # end of loadData
-
-    # TODO: Add more useful routines in here
 
     def isValidReferenceAbbreviation( self, BBB ):
         """ Returns True or False. """
@@ -639,7 +637,7 @@ def main():
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h/.c formats suitable for directly including into other programs, as well as .json.")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
         bbcc = _BibleBooksCodesConvertor().loadAndValidate() # Load the XML

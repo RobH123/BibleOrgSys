@@ -195,26 +195,26 @@ class USFMBibleBook:
         assert( self.lines )
 
         versification, omittedVerses = [], []
-        chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
-        verseText, verseNumber, lastVerseNumber = '0', 0, 0
+        chapterText, chapterNumberString, lastChapterNumber = '0', 0, 0
+        verseText, verseNumberString, lastVerseNumber = '0', 0, 0
         for marker,text in self.lines:
             #print( marker, text )
             if marker == 'c':
-                if chapterNumber > 0:
+                if chapterNumberString > 0:
                     versification.append( (chapterText, str(lastVerseNumber),) )
                 chapterText = text.strip()
                 if ' ' in chapterText:
                     logging.warning( "Unexpected space in USFM chapter number field '%s' after chapter %i of %s" % ( chapterText, lastChapterNumber, self.bookReferenceCode ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #print( "%s chapter %s" % ( self.bookReferenceCode, chapterText ) )
-                chapterNumber = int( chapterText)
-                if chapterNumber != lastChapterNumber+1:
-                    logging.error( "USFM chapter numbers out of sequence in Bible book %s (%i after %i)" % ( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
-                lastChapterNumber = chapterNumber
-                verseText, verseNumber, lastVerseNumber = '0', 0, 0
+                chapterNumberString = int( chapterText)
+                if chapterNumberString != lastChapterNumber+1:
+                    logging.error( "USFM chapter numbers out of sequence in Bible book %s (%i after %i)" % ( self.bookReferenceCode, chapterNumberString, lastChapterNumber ) )
+                lastChapterNumber = chapterNumberString
+                verseText, verseNumberString, lastVerseNumber = '0', 0, 0
             elif marker == 'v':
                 if not text:
-                    logging.warning( "Missing USFM verse number after %i in chapter %i of %s" % ( lastVerseNumber, chapterNumber, self.bookReferenceCode ) )
+                    logging.warning( "Missing USFM verse number after %i in chapter %i of %s" % ( lastVerseNumber, chapterNumberString, self.bookReferenceCode ) )
                     continue
                 try:
                     verseText = text.split( None, 1 )[0]
@@ -230,25 +230,25 @@ class USFMBibleBook:
                         verseText = verseText.replace( char, '' )
                 if '-' or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
-                    verseNumber = bits[0]
+                    verseNumberString = bits[0]
                     endVerseNumber = bits[1]
-                    if int(verseNumber) >= int(endVerseNumber):
-                        logging.error( "USFM verse range out of sequence in Bible book %s %s (%s-%s)" % ( self.bookReferenceCode, chapterText, verseNumber, endVerseNumber ) )
+                    if int(verseNumberString) >= int(endVerseNumber):
+                        logging.error( "USFM verse range out of sequence in Bible book %s %s (%s-%s)" % ( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
                 elif ',' in verseText: # we have a range like 7,8
                     bits = verseText.split( ',', 1 )
-                    verseNumber = bits[0]
+                    verseNumberString = bits[0]
                     endVerseNumber = bits[1]
-                    if int(verseNumber) >= int(endVerseNumber):
-                        logging.error( "USFM verse range out of sequence in Bible book %s %s (%s-%s)" % ( self.bookReferenceCode, chapterText, verseNumber, endVerseNumber ) )
+                    if int(verseNumberString) >= int(endVerseNumber):
+                        logging.error( "USFM verse range out of sequence in Bible book %s %s (%s-%s)" % ( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
                 else: # Should be just a single verse number
-                    verseNumber = verseText
-                    endVerseNumber = verseNumber
-                if int(verseNumber) != int(lastVerseNumber)+1:
-                    if int(verseNumber) <= int(lastVerseNumber):
+                    verseNumberString = verseText
+                    endVerseNumber = verseNumberString
+                if int(verseNumberString) != int(lastVerseNumber)+1:
+                    if int(verseNumberString) <= int(lastVerseNumber):
                         logging.warning( "USFM verse numbers out of sequence in Bible book %s %s (%s after %s)" % ( self.bookReferenceCode, chapterText, verseText, lastVerseNumber ) )
                     else: # Must be missing some verse numbers
-                        logging.info( "Missing USFM verse number(s) between %s and %s in Bible book %s %s" % ( lastVerseNumber, verseNumber, self.bookReferenceCode, chapterText ) )
-                        for number in range( int(lastVerseNumber)+1, int(verseNumber) ):
+                        logging.info( "Missing USFM verse number(s) between %s and %s in Bible book %s %s" % ( lastVerseNumber, verseNumberString, self.bookReferenceCode, chapterText ) )
+                        for number in range( int(lastVerseNumber)+1, int(verseNumberString) ):
                             omittedVerses.append( (chapterText, str(number),) )
                 lastVerseNumber = endVerseNumber
         versification.append( (chapterText, str(lastVerseNumber),) ) # Append the verse count for the final chapter
@@ -322,6 +322,393 @@ class USFMBible:
         return totalVersification, totalOmittedVerses
     # end of getVersification
 
+
+    def toMediaWiki( self, controlFileFolder, controlFilename ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 Zefania XML file.
+
+        This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
+            but more fields can be discovered by looking at downloaded files.
+        """
+        # Get the data tables that we need for proper checking
+        MediaWikiControls = {}
+        ControlFiles.readControlFile( controlFileFolder, controlFilename, MediaWikiControls )
+        #print( MediaWikiControls )
+        unhandledMarkers = set()
+
+        bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
+        #for BBB in BBC_BBBDict.keys(): # Pre-process the language booknames
+        for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
+            if BBB in MediaWikiControls and MediaWikiControls[BBB]:
+                bits = MediaWikiControls[BBB].split(',')
+                if len(bits)!=2: logging.error( "Unrecognized language book abbreviation and name for %s: '%'" % ( BBB, MediaWikiControls[BBB] ) )
+                bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
+                if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
+                if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
+
+        toWikiMediaGlobals = { "vRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'' } # These are our global variables
+
+        def convertReferenceToOSISRef( text, bRef, cRef ):
+            """
+            Takes a text reference (like '3:2' or '3:2: ' or '3: ' )
+                and converts it to an OSIS reference string like "Esth.3.2" or "Phlm.1.3.
+
+            Note that we might have trailing spaces in the text field.
+
+            We simply discard any information about ranges, e.g., 1:17-18
+            """
+            #print( "convertReferenceToOSISRef got", "'"+text+"'", bRef, cRef )
+            allowedVerseSpecifiers = ('a', 'b', 'c', 'd') # For specifying part of a verse, e.g., John 3:16 a
+
+            adjText = text
+            if '-' in text or '–' in text or '—' in text: # Also looks for en-dash and em-dash
+                adjText = adjText.replace('–','-').replace('—','-') # Make sure it's a hyphen
+                ix = adjText.index('-')
+                adjText = adjText[:ix] # Discard the second bit of the range
+                logging.info( "convertReferenceToOSISRef discarded range info from %s '%s'" % (cRef,text) )
+
+            tokens = adjText.split()
+            token1 = tokens[0]
+            if len(tokens) == 1 \
+            or (len(tokens)==2 and tokens[1] in allowedVerseSpecifiers): # It's telling about a portion of a verse (which OSIS doesn't handle I don't think) -- we'll completely ignore it
+                if token1.isdigit(): # Assume it's a verse number
+                    osisRef = cRef + '.' + token1
+                elif token1 in allowedVerseSpecifiers: # Just have something like b, so we have to use the previous verse reference
+                    assert( toWikiMediaGlobals["lastRef"] )
+                    osisRef = toWikiMediaGlobals["lastRef"] # From the last call
+                else: # it must have some punctuation in it
+                    punctCount = 0
+                    for char in ',.:': punctCount += token1.count( char )
+                    if punctCount == 1:
+                        if token1.endswith(':') and bRef in self.OneChapterOSISBookCodes:
+                            V = token1[:-1] # Remove the final colon
+                            if not V.isdigit(): logging.warning( "Unable to recognize 1-punct reference format %s '%s' from '%s'" % (cRef, token1, text) )
+                            osisRef = bRef + '.1.' + V
+                            toWikiMediaGlobals["lastRef"] = osisRef
+                        else: # Probably a CV reference like 8:2
+                            CV = token1.replace(',','.').replace(':','.') # Make sure it's a dot
+                            CVtokens = CV.split('.'); assert( len(CVtokens) == 2 )
+                            for CVtoken in CVtokens: # Just double check that we're on the right track
+                                if not CVtoken.isdigit(): logging.warning( "Unable to recognize 2nd 1-punct reference format %s '%s' from '%s'" % (cRef, token1, text) ); break
+                            osisRef = bRef + '.' + CVtokens[0] + '.' + CVtokens[1]
+                            toWikiMediaGlobals["lastRef"] = osisRef
+                    elif punctCount==2: # We have two punctuation characters in the reference
+                        if token1.endswith(':'): # Let's try handling a final colon
+                            CV = token1.replace(',','.',1).replace(':','.',1) # Make sure that the first punctuation character is a dot
+                            CVtokens = CV.replace(':','',1).split('.'); assert( len(CVtokens) == 2 )
+                            for CVtoken in CVtokens: # Just double check that we're on the right track
+                                if not CVtoken.isdigit(): logging.warning( "Unable to recognize 2-punct reference format %s '%s' from '%s'" % (cRef, token1, text) ); break
+                            osisRef = bRef + '.' + CVtokens[0] + '.' + CVtokens[1]
+                            toWikiMediaGlobals["lastRef"] = osisRef
+                        else:
+                            print( "convertReferenceToOSISRef got", "'"+text+"'", bRef, cRef ); raise Exception( "No code yet to handle references with multiple punctuation characters", text, token1 )
+                    else: # We have >2 punctuation characters in the reference
+                        print( "convertReferenceToOSISRef got", "'"+text+"'", bRef, cRef, toWikiMediaGlobals["vRef"] )
+                        logging.critical( "No code yet to handle references with more than two punctuation characters '%s' '%s'" % (text, token1) )
+                        osisRef = 'XXX3p'
+            else:
+                print( "convertReferenceToOSISRef got", "'"+text+"'", bRef, cRef, toWikiMediaGlobals["vRef"] )
+                logging.critical( "No code yet to handle multiple tokens in a reference: %s" % tokens )
+                osisRef = 'XXXmt'
+            #print( "convertReferenceToOSISRef returns", osisRef )
+            # TODO: We need to call a routine now to actually validate this reference
+            return osisRef
+        # end of convertReferenceToOSISRef
+
+# TODO: Need to handle footnotes \f + \fr ref \fk key \ft text \f* 	becomes <ref><!--\fr ref \fk key \ft-->text</ref>
+# TODO: Need to handle cross-references
+        def writeBook( writerObject, BBB, bkData ):
+            """Writes a book to the MediaWiki writerObject."""
+
+            def processXRefsAndFootnotes( verse ):
+                """Convert cross-references and footnotes and return the adjusted verse text."""
+
+                def processXRef( USFMxref ):
+                    """
+                    Return the OSIS code for the processed cross-reference (xref).
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <note type="crossReference" n="1">2:2: <reference>Lib 19:9-10; Diy 24:19.</reference></note> (Crosswire -- invalid OSIS -- which then needs to be converted)
+                    <note type="crossReference" osisRef="Ruth.2.2" osisID="Ruth.2.2!crossreference.1" n="-"><reference type="source" osisRef="Ruth.2.2">2:2: </reference><reference osisRef="-">Lib 19:9-10</reference>; <reference osisRef="Ruth.Diy.24!:19">Diy 24:19</reference>.</note> (Snowfall)
+                    \\x - \\xo 3:5: a \\xt Rum 11:1; \\xo b \\xt Him 23:6; 26:5.\\xt*\\x* is more complex still.
+                    """
+                    toWikiMediaGlobals["XRefNum"] += 1
+                    OSISxref = '<note osisID="%s!crossreference.%s" osisRef="%s" type="crossReference">' % (toWikiMediaGlobals["XRefNum"],toWikiMediaGlobals["vRef"], toWikiMediaGlobals["vRef"])
+                    for j,token in enumerate(USFMxref.split('\\')):
+                        #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        if j==0: # The first token (but the x has already been removed)
+                            rest = token.strip()
+                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): %s '%s' from '%s'" % (cRef, token, text) )
+                        elif token.startswith('xo '): # xref reference follows
+                            osisRef = convertReferenceToOSISRef( token[3:], bRef, cRef )
+                            OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,token[3:])
+                        elif token.startswith('xt '): # xref text follows
+###### This code needs to be re-written using the BibleReferences module .......................... XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                            xrefText = token[3:]
+                            endsWithPeriod = False;
+                            if xrefText[-1]=='.': endsWithPeriod = True; xrefText = xrefText[:-1]
+                            #print( "xrefText", "'"+xrefText+"'" )
+                            # Here we ethnocentrically assume that multiple tokens will be separated by semicolons, e.g., 7:2; 8:5
+                            subTokens = xrefText.split(';')
+                            #print( "subTokens", subTokens )
+                            osisBook = xRefChapter = ''
+                            for k,referenceString in enumerate(subTokens):
+                                for bit in referenceString.split():
+                                    #print( "bit", bit )
+                                    if bit in bookAbbrevDict: # Assume it's a bookname abbreviation
+                                        BBB = bookAbbrevDict[bit]
+                                        osisBook = self.BibleBooksCodes.getOSISAbbreviation( BBB )
+                                        #print( BBB, "osisBook", osisBook )
+                                    else: # Assume it's the actual reference
+                                        if not osisBook: raise Exception( "Book code seems to be wrong or missing for xRef", bit, "from", USFMxref, "at", toWikiMediaGlobals["vRef"] )
+                                        punctCount = 0
+                                        for char in ',.:-–': # included hyphen and en-dash in here (but not em-dash —)
+                                            #print( '', char, bit.count(char), punctCount )
+                                            punctCount += bit.count( char )
+                                        #print( "punctCount is %i for '%s' in '%s'" % (punctCount,bit,referenceString) )
+                                        if punctCount==0: # That's nice and easy
+                                            if bit.isdigit() and BBB in self.OneChapterBBBBookCodes: # Then presumably a verse number
+                                                xrefChapter = '1'
+                                                osisRef = osisBook + '.' + xrefChapter + '.' + bit
+                                                OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            else:
+                                                logRoutine = logging.info if bit=='(LXX)' else logging.error # Sorry, this is a crude hack to avoid unnecessary error messages
+                                                logRoutine( "Ignoring '%s' in xRef %s '%s' from '%s' (zero relevant punctuation)" % (bit,cRef, referenceString, text) )
+                                        elif punctCount==1: # That's also nice and easy
+                                            CV = bit.replace(',','.').replace(':','.') # Make sure it's a dot
+                                            CVtokens = CV.split('.')
+                                            CVtoken1 = CVtokens[0]
+                                            if len(CVtokens)==1:
+                                                if '-' in CVtoken1 or '–' in CVtoken1 and BBB not in self.OneChapterBBBBookCodes: # Could be something like spanning multiple chapters. e.g., Num 22-24
+                                                    CBits = CVtoken1.replace('–','-').split('-')
+                                                    assert( len(CBits) == 2 )
+                                                    osisRef = osisBook + '.' + CBits[0] # Just ignore the second part of the range here
+                                                elif BBB in self.OneChapterBBBBookCodes:
+                                                    if not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    xrefChapter = '1'
+                                                    osisRef = osisBook + '.' + xrefChapter + '.' + CVtoken1
+                                                else: raise Exception( "Confused about cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
+                                            elif len(CVtokens) == 2:
+                                                for CVtoken in CVtokens: # Just double check that we're on the right track
+                                                    if not CVtoken.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                xrefChapter = CVtoken1
+                                                osisRef = osisBook + '.' + xrefChapter + '.' + CVtokens[1]
+                                            else: raise Exception( "Seems like the wrong number of CV bits in cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
+                                            OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                        elif punctCount==2:
+                                            if '-' in bit or '–' in bit: # Could have something like 7:1-4 with hyphen or en-dash
+                                                CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
+                                                CVtokens = CV.split('.')
+                                                CVtoken1 = CVtokens[0]
+                                                assert( len(CVtokens) == 2 )
+                                                # Just double check that we're on the right track
+                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                verseRangeBits = CVtokens[1].split('-')
+                                                assert( len(verseRangeBits) == 2 )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
+                                                xRefChapter = CVtoken1
+                                                xrefCref  = osisBook + '.' + xRefChapter
+                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                # Let's guess how to do this since we don't know for sure yet
+                                                OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            elif ',' in bit: # Could have something like 7:1,4
+                                                CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
+                                                CVtokens = CV.split('.')
+                                                CVtoken1 = CVtokens[0]
+                                                assert( len(CVtokens) == 2 )
+                                                # Just double check that we're on the right track
+                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                verseRangeBits = CVtokens[1].split(',')
+                                                assert( len(verseRangeBits) == 2 )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
+                                                xRefChapter = CVtoken1
+                                                xrefCref  = osisBook + '.' + xRefChapter
+                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                # Let's guess how to do this since we don't know for sure yet
+                                                OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            else:
+                                                raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
+                                        elif punctCount==3:
+                                            logging.critical( "Need to write code to handle this xref case: %s '%s' from '%s'" % (cRef, referenceString, text) ); continue
+                                            if '-' in bit or '–' in bit: # Could have something like 7:1-8:4 with hyphen or en-dash
+                                                CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
+                                                CVtokens = CV.split('.')
+                                                CVtoken1 = CVtokens[0]
+                                                assert( len(CVtokens) == 2 )
+                                                # Just double check that we're on the right track
+                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                verseRangeBits = CVtokens[1].split('-')
+                                                assert( len(verseRangeBits) == 2 )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
+                                                xRefChapter = CVtoken1
+                                                xrefCref  = osisBook + '.' + xRefChapter
+                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                # Let's guess how to do this since we don't know for sure yet
+                                                OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            elif ',' in bit: # Could have something like 7:1,4,9
+                                                CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
+                                                CVtokens = CV.split('.')
+                                                CVtoken1 = CVtokens[0]
+                                                assert( len(CVtokens) == 2 )
+                                                # Just double check that we're on the right track
+                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                verseRangeBits = CVtokens[1].split(',')
+                                                assert( len(verseRangeBits) == 2 )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
+                                                xRefChapter = CVtoken1
+                                                xrefCref  = osisBook + '.' + xRefChapter
+                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                # Let's guess how to do this since we don't know for sure yet
+                                                OSISxref += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            else:
+                                                raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
+                                        else:
+                                            print( "processXRef", punctCount )
+                                            logging.error( "No code yet for xRef with more than 3 punctuation characters %s from %s at %s" % (bit, USFMxref, toWikiMediaGlobals["vRef"]) )
+                        elif token.startswith('x '): # another whole xref entry follows
+                            rest = token[2:].strip()
+                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): %s '%s' from '%s'" % (cRef, token, text) )
+                        elif token in ('xt*', 'x*'):
+                            pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( "Unprocessed '%s' token in %s xref '%s'" % (token, toWikiMediaGlobals["vRef"], USFMxref) )
+                    OSISxref += '</note>'
+                    #print( '', OSISxref )
+                    return OSISxref
+                # end of processXRef
+
+                def processFootnote( USFMfootnote ):
+                    """
+                    Return the OSIS code for the processed footnote.
+
+                    NOTE: The parameter here already has the /f and /f* removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <note n="1">1:20 Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Crosswire)
+                    <note osisRef="Ruth.1.20" osisID="Ruth.1.20!footnote.1" n="+"><reference type="source" osisRef="Ruth.1.20">1:20 </reference>Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’</note> (Snowfall)
+                    """
+                    toWikiMediaGlobals["FootnoteNum"] += 1
+                    OSISfootnote = '<note osisRef="%s" osisID="%s!footnote.%s">' % (toWikiMediaGlobals["vRef"],toWikiMediaGlobals["vRef"],toWikiMediaGlobals["FootnoteNum"])
+                    for j,token in enumerate(USFMfootnote.split('\\')):
+                        #print( "processFootnote", j, token, USFMfootnote )
+                        if j==0: continue # ignore the + for now
+                        elif token.startswith('fr '): # footnote reference follows
+                            osisRef = convertReferenceToOSISRef( token[3:], bRef, cRef )
+                            OSISfootnote += '<reference osisRef="%s" type="source">%s</reference>' % (osisRef,token[3:])
+                        elif token.startswith('ft '): # footnote text follows
+                            OSISfootnote += token[3:]
+                        elif token.startswith('fq '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
+                            OSISfootnote += '<catchWord>%s</catchWord>' % token[3:] # Note that the trailing space goes in the catchword here -- seems messy
+                        elif token in ('ft*','fq*'):
+                            pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( "Unprocessed '%s' token in %s footnote '%s'" % (token, toWikiMediaGlobals["vRef"], USFMfootnote) )
+                    OSISfootnote += '</note>'
+                    #print( '', OSISfootnote )
+                    return OSISfootnote
+                # end of processFootnote
+
+                while '\\x ' in verse and '\\x*' in verse: # process cross-references (xrefs)
+                    ix1 = verse.index('\\x ')
+                    ix2 = verse.find('\\x* ') # Note the extra space here at the end
+                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
+                        ix2 = verse.index('\\x*')
+                        ix2b = ix2 + 3 # Where the xref ends
+                        logging.warning( 'No space after xref entry in %s' % toWikiMediaGlobals["vRef"] )
+                    else: ix2b = ix2 + 4
+                    xref = verse[ix1+3:ix2]
+                    osisXRef = processXRef( xref )
+                    #print( osisXRef )
+                    verse = verse[:ix1] + osisXRef + verse[ix2b:]
+                while '\\f ' in verse and '\\f*' in verse: # process footnotes
+                    ix1 = verse.index('\\f ')
+                    ix2 = verse.find('\\f*')
+#                    ix2 = verse.find('\\f* ') # Note the extra space here at the end -- doesn't always work if there's two footnotes within one verse!!!
+#                    if ix2 == -1: # Didn't find it so must be no space after the asterisk
+#                        ix2 = verse.index('\\f*')
+#                        ix2b = ix2 + 3 # Where the footnote ends
+#                        #logging.warning( 'No space after footnote entry in %s' % toWikiMediaGlobals["vRef"] )
+#                    else: ix2b = ix2 + 4
+                    footnote = verse[ix1+3:ix2]
+                    osisFootnote = processFootnote( footnote )
+                    #print( osisFootnote )
+                    verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
+#                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
+                return verse
+            # end of processXRefsAndFootnotes
+
+            bRef = self.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
+            for marker,text in bkData.lines: # Process USFM lines
+                if marker in ("id","h","mt1"):
+                    writerObject.writeLineComment( '\\%s %s' % ( marker, text ) )
+                    bookName = text # in case there's no toc2 entry later
+                elif marker=="toc2":
+                    bookName = text
+                elif marker=="li":
+                    # :<!-- \li -->text
+                    writerObject.writeLineText( ":" )
+                    writerObject.writeLineComment( '\\li' )
+                    writerObject.writeLineText( text )
+                elif marker=="c":
+                    chapterNumberString = text
+                    cRef = bRef + '.' + chapterNumberString
+                    # Bible:BookName_#
+                    writerObject.writeLineText( 'Bible:%s_%s' % (bookName, chapterNumberString) )
+                elif marker=="s1":
+                    # === text ===
+                    writerObject.writeLineText( '=== %s ===' % text )
+                elif marker=="r":
+                    # <span class="srefs">text</span> 
+                    writerObject.writeLineOpenClose( 'span', text, ('class','srefs') )
+                elif marker=="p":
+                    writerObject.writeNewLine(); writerObject.writeNewLine();
+                elif marker=="v":
+                    verseNumberString = text.split()[0] # Get the first token which is the first number
+                    verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
+                    if not verseText: # this is an empty (untranslated) verse
+                        adjText = '- - -' # but we'll put in a filler
+                    else: adjText = processXRefsAndFootnotes( verseText )
+                    # <span id="chapter#_#"><sup>#</sup> text</span> 
+                    writerObject.writeLineOpenClose( 'span', '<sup>%s</sup> %s' % (verseNumberString,adjText), ('id',"chapter%s_%s" % (chapterNumberString, verseNumberString) ), noTextCheck=True )
+                elif marker=="q1":
+                    adjText = processXRefsAndFootnotes( verseText )
+                    writerObject.writeLineText( ':%s' % adjText, noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
+                elif marker=="q2":
+                    adjText = processXRefsAndFootnotes( verseText )
+                    writerObject.writeLineText( '::%s' % adjText, noTextCheck=True )
+                elif marker=='m': # Margin/Flush-left paragraph
+                    adjText = processXRefsAndFootnotes( verseText )
+                    writerObject.writeLineText( '::%s' % adjText, noTextCheck=True )
+                else:
+                    unhandledMarkers.add( marker )
+        # end of writeBook
+
+        if Globals.verbosityLevel>1: print( "Exporting to MediaWiki format..." )
+        outputFolder = "OutputFiles"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        xw = XMLWriter().setOutputFilePath( os.path.join( outputFolder, MediaWikiControls["MediaWikiOutputFilename"] ) )
+        xw.setHumanReadable()
+        xw.start()
+        for BBB,bookData in self.books.items():
+            writeBook( xw, BBB, bookData )
+        xw.close()
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were %s" % unhandledMarkers )
+    # end of toMediaWiki
+
+
+
     def toZefania_XML( self, controlFileFolder, controlFilename ):
         """
         Using settings from the given control file,
@@ -334,6 +721,7 @@ class USFMBible:
         ZefaniaControls = {}
         ControlFiles.readControlFile( controlFileFolder, controlFilename, ZefaniaControls )
         #print( ZefaniaControls )
+        unhandledMarkers = set()
 
         def writeHeader( writerObject ):
             """Writes the Zefania header to the Zefania XML writerObject."""
@@ -359,19 +747,21 @@ class USFMBible:
             """Writes a book to the Zefania XML writerObject."""
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',self.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',self.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',self.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             haveOpenChapter = False
-            for marker,text in bkData.lines:
+            for marker,text in bkData.lines: # Process USFM lines
                 if marker=="c":
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
                 elif marker=="v":
-                    verseNumber = text.split()[0] # Get the first token which is the first number
-                    verseText = text[len(verseNumber)+1:].lstrip() # Get the rest of the string which is the verse text
+                    verseNumberString = text.split()[0] # Get the first token which is the first number
+                    verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
-                    if not verseText: # this is an empty verse
+                    if not verseText: # this is an empty (untranslated) verse
                         verseText = '- - -' # but we'll put in a filler
-                    writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumber) )
+                    writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
+                else:
+                    unhandledMarkers.add( marker )
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
@@ -391,7 +781,9 @@ class USFMBible:
                 writeBook( xw, BBB, bookData )
         xw.writeLineClose( 'XMLBible' )
         xw.close()
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were %s" % unhandledMarkers )
     # end of toZefania_XML
+
 
     def toOSIS_XML( self, controlFileFolder, controlFilename ):
         """
@@ -657,7 +1049,7 @@ class USFMBible:
                                                 if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
                                                 verseRangeBits = CVtokens[1].split('-')
                                                 assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                                                 xRefChapter = CVtoken1
                                                 xrefCref  = osisBook + '.' + xRefChapter
                                                 osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
@@ -673,7 +1065,7 @@ class USFMBible:
                                                 if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
                                                 verseRangeBits = CVtokens[1].split(',')
                                                 assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                                                 xRefChapter = CVtoken1
                                                 xrefCref  = osisBook + '.' + xRefChapter
                                                 osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
@@ -782,20 +1174,20 @@ class USFMBible:
                     <verse sID="Esth.9.16" osisID="Esth.9.16 Esth.9.17"/>text<verse eID="Esth.9.16"/> (Crosswire)
                     <verse sID="Esth.9.16-Esth.9.17" osisID="Esth.9.16 Esth.9.17" n="16-17"/>text<verse eID="Esth.9.16-Esth.9.17"/> (Snowfall)
                 """
-                verseNumber = text.split()[0] # Get the first token which is the first number
-                verseText = text[len(verseNumber)+1:].lstrip() # Get the rest of the string which is the verse text
-                if '-' in verseNumber:
-                    bits = verseNumber.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                verseNumberString = text.split()[0] # Get the first token which is the first number
+                verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
+                if '-' in verseNumberString:
+                    bits = verseNumberString.split('-')
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                     toOSISGlobals["vRef"]  = cRef + '.' + bits[0]
                     vRef2 = cRef + '.' + bits[1]
                     sID    = toOSISGlobals["vRef"] + '-' + vRef2
                     osisID = toOSISGlobals["vRef"] + ' ' + vRef2
-                elif ',' in verseNumber:
+                elif ',' in verseNumberString:
                     raise Exception( "not written yet for comma in versenumber" )
-                elif verseNumber.isdigit():
-                    sID = osisID = toOSISGlobals["vRef"] = cRef + '.' + verseNumber
-                else: logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                elif verseNumberString.isdigit():
+                    sID = osisID = toOSISGlobals["vRef"] = cRef + '.' + verseNumberString
+                else: logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                 adjText = processXRefsAndFootnotes( verseText )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] )
                 writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -854,7 +1246,7 @@ class USFMBible:
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
-            for marker,text in bkData.lines:
+            for marker,text in bkData.lines: # Process USFM lines
                 if marker in ( 'id', 'h', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1': writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1':
@@ -1261,7 +1653,7 @@ class USFMBible:
                                                 if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
                                                 verseRangeBits = CVtokens[1].split('-')
                                                 assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                                                 xRefChapter = CVtoken1
                                                 xrefCref  = osisBook + '.' + xRefChapter
                                                 osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
@@ -1277,7 +1669,7 @@ class USFMBible:
                                                 if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
                                                 verseRangeBits = CVtokens[1].split(',')
                                                 assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                                                 xRefChapter = CVtoken1
                                                 xrefCref  = osisBook + '.' + xRefChapter
                                                 osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
@@ -1386,20 +1778,20 @@ class USFMBible:
                     <verse sID="Esth.9.16" osisID="Esth.9.16 Esth.9.17"/>text<verse eID="Esth.9.16"/> (Crosswire)
                     <verse sID="Esth.9.16-Esth.9.17" osisID="Esth.9.16 Esth.9.17" n="16-17"/>text<verse eID="Esth.9.16-Esth.9.17"/> (Snowfall)
                 """
-                verseNumber = text.split()[0] # Get the first token which is the first number
-                verseText = text[len(verseNumber)+1:].lstrip() # Get the rest of the string which is the verse text
-                if '-' in verseNumber:
-                    bits = verseNumber.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                verseNumberString = text.split()[0] # Get the first token which is the first number
+                verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
+                if '-' in verseNumberString:
+                    bits = verseNumberString.split('-')
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                     toSwordGlobals["vRef"]  = cRef + '.' + bits[0]
                     vRef2 = cRef + '.' + bits[1]
                     sID    = toSwordGlobals["vRef"] + '-' + vRef2
                     osisID = toSwordGlobals["vRef"] + ' ' + vRef2
-                elif ',' in verseNumber:
+                elif ',' in verseNumberString:
                     raise Exception( "not written yet for comma in versenumber" )
-                elif verseNumber.isdigit():
-                    sID = osisID = toSwordGlobals["vRef"] = cRef + '.' + verseNumber
-                else: logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumber,cRef) )
+                elif verseNumberString.isdigit():
+                    sID = osisID = toSwordGlobals["vRef"] = cRef + '.' + verseNumberString
+                else: logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
                 adjText = processXRefsAndFootnotes( verseText )
                 writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 writeIndexEntry( writerObject, indexFile )
@@ -1470,7 +1862,7 @@ class USFMBible:
             writerObject.writeLineOpenSelfclose( 'div', [('osisID',bRef), getSID(), ('type',"book")] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
-            for marker,text in bkData.lines:
+            for marker,text in bkData.lines: # Process USFM lines
                 if marker in ( 'id', 'h', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1': writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1':
@@ -1680,9 +2072,10 @@ def main():
 
     if Globals.commandLineOptions.export:
         if Globals.verbosityLevel > 0: print( "NOTE: This is %s V%s -- i.e., still just alpha quality software!" % ( progName, versionString ) )
-        #uB.toZefania_XML( '', os.path.join( 'ControlFiles', "MBT_to_Zefania_controls.txt" ) )
-        #uB.toOSIS_XML( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) )
-        uB.toSwordModule( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) ) # We use the same OSIS controls
+        uB.toZefania_XML( '', os.path.join( 'ControlFiles', "MBT_to_Zefania_controls.txt" ) )
+        uB.toOSIS_XML( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) )
+        uB.toMediaWiki( '', os.path.join( 'ControlFiles', "MBT_to_MediaWiki_controls.txt" ) )
+        uB.toSwordModule( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) ) # We use the same OSIS controls (except for the output filename)
         #uB.toBible( os.path.join( 'ScrapedFiles', "TestBible.module" ) )
 
 if __name__ == '__main__':

@@ -2,10 +2,17 @@
 
 <!--
 This file gives a table of available Bible organizational systems including
-    A unique ID number (1..n for processing only)
     A unique English organizational system name (as a comment only)
         (This table should be language agnostic although English is used as a meta-language.)
-    A versificationSystemCode field which helps locate the XML file with details of that versification system.
+    A unique reference abbreviation
+    The type:   original    e.g., Hebrew/Greek scriptures
+                translation e.g., 1611grep  King James Version (KJV)
+                revision    e.g., 1769 King James Version
+                edition     e.g., NIV Women's Study Bible (An edition uses a translation)
+    The definitive names with the language specified as an ISO 639-3 code in an attribute.
+    A versificationSystem name field which directs to that versification system.
+    A punctuationSystem name field which directs to the punctuation system.
+        None and Unknown are also valid entries for the system name fields.
 
 The data is preceded by a header of the same format as an OSIS header.
 
@@ -30,125 +37,93 @@ See the supplied ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleOrganizationalSystem (nameEnglish,name+,versificationSystemCode)>
+        <!ELEMENT BibleOrganizationalSystem (nameEnglish,name+,versificationSystem,punctuationSystem)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT name (#PCDATA)>
                 <!ATTLIST name language CDATA #REQUIRED>
-            <!ELEMENT versificationSystemCode (#PCDATA)>
+            <!ELEMENT versificationSystem (#PCDATA)>
+            <!ELEMENT punctuationSystem (#PCDATA)>
 ]>
 
 <BibleOrganizationalSystems>
 
   <header>
     <work>
-      <version>0.11</version>
-      <date>2010-11-04</date>
+      <version>0.12</version>
+      <date>2010-12-25</date>
       <title>Bible organizational systems list</title>
-      <contributor role="cre">Robert Hunt</contributor>
+      <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
   </header>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>Original organizational system</nameEnglish>
-    <name language="eng">Original organizational system</name>
-    <versificationSystemCode>Original</versificationSystemCode>
+<!-- Original Bible texts -->
+  <BibleOrganizationalSystem type="original">
+    <referenceAbbreviation>HEB</referenceAbbreviation>
+    <languageCode>hbo</languageCode>
+    <name>Hebrew Scriptures</name>
+    <versificationSystem>Hebrew</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Hebrew</bookOrderSystem>
+    <bookNameSystem>None</bookNameSystem>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>Greek Septuagint organizational system</nameEnglish>
-    <name language="eng">Greek Septuagint organizational system</name>
-    <versificationSystemCode>Septuagint</versificationSystemCode>
+  <BibleOrganizationalSystem type="original">
+    <referenceAbbreviation>NTG</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Greek Scriptures</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Unknown</bookOrderSystem>
+    <bookNameSystem>None</bookNameSystem>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>Greek Septuagint BE organizational system</nameEnglish>
-    <name language="eng">Greek Septuagint BE organizational system</name>
-    <versificationSystemCode>SeptuagintBE</versificationSystemCode>
+<!-- Translations from originals -->
+  <BibleOrganizationalSystem type="translation">
+    <referenceAbbreviation>LXX</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Septuagint</name>
+    <name>LXX</name>
+    <publicationDate>300 BC</publicationDate>
+    <versificationSystem>Septuagint</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Septuagint</bookOrderSystem>
+    <bookNameSystem>None</bookNameSystem>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>Latin Vulgate organizational system</nameEnglish>
-    <name language="eng">Latin Vulgate organizational system</name>
-    <versificationSystemCode>Vulgate</versificationSystemCode>
+  <BibleOrganizationalSystem type="translation">
+    <referenceAbbreviation>KJV-1611</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <publicationDate>1611</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanProtestantBible</bookOrderSystem>
+    <bookNameSystem>eng_traditional</bookNameSystem>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>Latin Vulgate2 organizational system</nameEnglish>
-    <name language="eng">Latin Vulgate2 organizational system</name>
-    <versificationSystemCode>Vulgate2</versificationSystemCode>
+  <BibleOrganizationalSystem type="revision">
+    <referenceAbbreviation>KJV-1769</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <publicationDate>1769</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanProtestantBible</bookOrderSystem>
+    <bookNameSystem>eng_traditional</bookNameSystem>
+    <derivedFrom>KJV-1611</derivedFrom>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem>
-    <nameEnglish>KJV organizational system</nameEnglish>
-    <name language="eng">KJV organizational system</name>
-    <versificationSystemCode>KJV</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>NRSV organizational system</nameEnglish>
-    <name language="eng">NRSV organizational system</name>
-    <versificationSystemCode>NRSV</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Catholic organizational system</nameEnglish>
-    <name language="eng">Catholic organizational system</name>
-    <versificationSystemCode>Catholic</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Catholic2 organizational system</nameEnglish>
-    <name language="eng">Catholic2 organizational system</name>
-    <versificationSystemCode>Catholic2</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Spanish organizational system</nameEnglish>
-    <name language="eng">Spanish organizational system</name>
-    <versificationSystemCode>Spanish</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Dutch traditional organizational system</nameEnglish>
-    <name language="eng">Dutch traditional organizational system</name>
-    <versificationSystemCode>DutchTraditional</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Russian canonical organizational system</nameEnglish>
-    <name language="eng">Russian canonical organizational system</name>
-    <versificationSystemCode>RussianCanonical</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Russian orthodox organizational system</nameEnglish>
-    <name language="eng">Russian orthodox organizational system</name>
-    <versificationSystemCode>RussianOrthodox</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Russian Protestant organizational system</nameEnglish>
-    <name language="eng">Russian Protestant organizational system</name>
-    <versificationSystemCode>RussianCanonical</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Luther Bible organizational system</nameEnglish>
-    <name language="eng">Luther Bible organizational system</name>
-    <versificationSystemCode>Luther</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Synodal Bible organizational system</nameEnglish>
-    <name language="eng">Synodal Bible organizational system</name>
-    <versificationSystemCode>Synodal</versificationSystemCode>
-  </BibleOrganizationalSystem>
-
-  <BibleOrganizationalSystem>
-    <nameEnglish>Staten Bible organizational system</nameEnglish>
-    <name language="eng">Staten Bible organizational system</name>
-    <versificationSystemCode>DutchTraditional</versificationSystemCode>
+<!-- Bible editions that use one or more of the above translations and/or originals -->
+  <BibleOrganizationalSystem type="edition">
+    <referenceAbbreviation>KJV-1769</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <publicationDate>1769</publicationDate>
+    <usesText>KJV-1769</usesText>
   </BibleOrganizationalSystem>
 
 </BibleOrganizationalSystems>

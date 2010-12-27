@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-19 (also update versionString below)
+#   Last modified: 2010-12-27 (also update versionString below)
 #
 # Copyright (C) 2010 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.02"
+versionString = "0.10"
 
 
 import os, logging
@@ -67,54 +67,35 @@ class _BiblePunctuationSystemsConvertor:
 
 
         # These are fields that we will fill later
-        self.XMLSystems = {}
-        self.DataDict = {} # Used for import
+        self._XMLSystems = {}
+        self._DataDict = {} # Used for import
     # end of __init__
-
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible punctuation system.
-        
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = "_BiblePunctuationSystemsConvertor object"
-        result += ('\n' if result else '') + "  Num punctuation systems loaded = %i" % ( len(self.XMLSystems) )
-        if 0: # Make it verbose
-            for x in self.XMLSystems:
-                result += ('\n' if result else '') + "  %s" % ( x )
-                title = self.XMLSystems[x]["title"]
-                if title: result += ('\n' if result else '') + "    %s" % ( title )
-                version = self.XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
-                date = self.XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
-        return result
-    # end of __str__
 
     def loadSystems( self, XMLFolder=None ):
         """
         Load and pre-process the specified punctuation systems.
         """
-        if not self.XMLSystems: # Only ever do this once
+        if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/PunctuationSystems"
             self.XMLFolder = XMLFolder
+            if Globals.verbosityLevel > 2: print( "Loading punctuations systems from %s..." % ( self.XMLFolder ) )
+            filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
-                if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
-                    punctuationSystemCode = filepart[15:]
-                    #print( "Loading %s punctuation system from %s..." % ( punctuationSystemCode, filename ) )
-                    self.XMLSystems[punctuationSystemCode] = {}
-                    self.XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
-                    assert( self.XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+
+                if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
+                    punctuationSystemCode = filepart[len(filenamePrefix):]
+                    if Globals.verbosityLevel > 3: print( "Loading %s punctuation system from %s..." % ( punctuationSystemCode, filename ) )
+                    self._XMLSystems[punctuationSystemCode] = {}
+                    self._XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
+                    assert( self._XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.XMLSystems[punctuationSystemCode]["tree"].tag  == self.treeTag:
-                        header = self.XMLSystems[punctuationSystemCode]["tree"][0]
+                    if self._XMLSystems[punctuationSystemCode]["tree"].tag  == self.treeTag:
+                        header = self._XMLSystems[punctuationSystemCode]["tree"][0]
                         if header.tag == self.headerTag:
-                            self.XMLSystems[punctuationSystemCode]["header"] = header
-                            self.XMLSystems[punctuationSystemCode]["tree"].remove( header )
+                            self._XMLSystems[punctuationSystemCode]["header"] = header
+                            self._XMLSystems[punctuationSystemCode]["tree"].remove( header )
                             if len(header)>1:
                                 logging.info( "Unexpected elements in header" )
                             elif len(header)==0:
@@ -122,22 +103,22 @@ class _BiblePunctuationSystemsConvertor:
                             else:
                                 work = header[0]
                                 if work.tag == "work":
-                                    self.XMLSystems[punctuationSystemCode]["version"] = work.find("version").text
-                                    self.XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
-                                    self.XMLSystems[punctuationSystemCode]["title"] = work.find("title").text
+                                    self._XMLSystems[punctuationSystemCode]["version"] = work.find("version").text
+                                    self._XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
+                                    self._XMLSystems[punctuationSystemCode]["title"] = work.find("title").text
                                 else:
                                     logging.warning( "Missing work element in header" )
                         else:
                             logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
                     else:
-                        logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.XMLSystems[punctuationSystemCode]["tree"].tag ) )
+                        logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self.XMLSystems[punctuationSystemCode]["tree"]:
+                    for subelement in self._XMLSystems[punctuationSystemCode]["tree"]:
                         bookCount += 1
                     logging.info( "    Loaded %i books" % ( bookCount ) )
 
                     if Globals.strictCheckingFlag:
-                        self._validateSystem( self.XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
+                        self._validateSystem( self._XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
         return self
     # end of loadSystems
 
@@ -211,50 +192,55 @@ class _BiblePunctuationSystemsConvertor:
                 logging.warning( "Unexpected element: %s in record %i" % ( element.tag, k ) )
     # end of _validateSystem
 
-    def checkDuplicates( self ):
+    def __str__( self ):
         """
-        Checks for duplicate (redundant) punctuation systems.
-
-        Returns True if a duplicate is found.
+        This method returns the string representation of a Bible punctuation system.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
         """
-        systemLists, foundDuplicate = {}, False
-        for punctuationSystemCode in self.XMLSystems.keys():
-            # Get the referenceAbbreviations all into a list
-            bookDataList = []
-            for bookElement in self.XMLSystems[punctuationSystemCode]["tree"]:
-                bookRA = bookElement.text
-            # Compare with existing lists
-            for checkSystemCode,checkDataList in systemLists.items():
-                if bookDataList == checkDataList:
-                    logging.error( "%s and %s punctuation systems are identical" % ( punctuationSystemCode, checkSystemCode ) )
-                    foundDuplicate = True
-            # Add this new list
-            systemLists[punctuationSystemCode] = bookDataList
-        return foundDuplicate
-    # end of checkDuplicates
+        result = "_BiblePunctuationSystemsConvertor object"
+        result += ('\n' if result else '') + "  Num punctuation systems loaded = %i" % ( len(self._XMLSystems) )
+        if Globals.verbosityLevel > 2: # Make it verbose
+            for x in self._XMLSystems:
+                result += ('\n' if result else '') + "  %s" % ( x )
+                title = self._XMLSystems[x]["title"]
+                if title: result += ('\n' if result else '') + "    %s" % ( title )
+                version = self._XMLSystems[x]["version"]
+                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
+                date = self._XMLSystems[x]["date"]
+                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
+                result += ('\n' if result else '') + "    Num books = %i" % ( len(self._XMLSystems[x]["tree"]) )
+        return result
+    # end of __str__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
-        assert( self.XMLSystems )
-        if self.DataDict: # We've already done an import/restructuring -- no need to repeat it
-            return self.DataDict
+        assert( self._XMLSystems )
+        if self._DataDict: # We've already done an import/restructuring -- no need to repeat it
+            return self._DataDict
 
         # We'll create a dictionary of dictionaries
-        for punctuationSystemCode in self.XMLSystems.keys():
+        for punctuationSystemCode in self._XMLSystems.keys():
             # Make the data dictionary for this punctuation system
             punctuationDict = {}
-            for element in self.XMLSystems[punctuationSystemCode]["tree"]:
+            for element in self._XMLSystems[punctuationSystemCode]["tree"]:
                 tag = element.tag
                 text = element.text
                 if tag in punctuationDict: logging.error( "Multiple %s entries in %s punctuation system" % ( tag, punctuationSystemCode ) )
                 punctuationDict[tag] = text
 
+            if Globals.strictCheckingFlag: # check for duplicates
+                for checkSystemCode,checkSystemDataDict in self._DataDict.items():
+                    if checkSystemDataDict == punctuationDict:
+                        logging.error( "%s and %s punctuation systems are identical" % ( punctuationSystemCode, checkSystemCode ) )
+
             # Now put it into my dictionaries for easy access
-            # This part should be customized or added to for however you need to process the data
-            self.DataDict[punctuationSystemCode] = punctuationDict
-        return self.DataDict
+            self._DataDict[punctuationSystemCode] = punctuationDict
+
+        return self._DataDict
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -271,9 +257,9 @@ class _BiblePunctuationSystemsConvertor:
 
         from datetime import datetime
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -285,12 +271,12 @@ class _BiblePunctuationSystemsConvertor:
             #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
             #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
             #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), self.treeTag ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
+            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self._XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
-            for systemName, systemDict in self.DataDict.items():
+            for systemName, systemDict in self._DataDict.items():
                 exportPythonDict( myFile, systemDict, systemName, "referenceAbbreviation", "id" )
-            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.DataDict) ) )
+            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self._DataDict) ) )
             myFile.write( "# end of %s" % os.path.basename(filepath) )
     # end of exportDataToPython
 
@@ -303,9 +289,9 @@ class _BiblePunctuationSystemsConvertor:
         from datetime import datetime
         import json
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -316,7 +302,7 @@ class _BiblePunctuationSystemsConvertor:
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
-            json.dump( self.DataDict, myFile, indent=2 )
+            json.dump( self._DataDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -368,9 +354,9 @@ class _BiblePunctuationSystemsConvertor:
 
         from datetime import datetime
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
-        assert( self.DataDict )
+        assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
@@ -383,7 +369,7 @@ class _BiblePunctuationSystemsConvertor:
             myCFile.write( "// %s\n//\n" % ( cFilepath ) )
             lines = "// This UTF-8 file was automatically generated by BiblePunctuationSystems.py on %s\n//\n" % datetime.now()
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), self.treeTag ) )
+            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self._XMLSystems), self.treeTag ) )
             myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
             myCFile.write( '#include "%s"\n\n' % os.path.basename(hFilepath) )
 
@@ -400,15 +386,15 @@ class _BiblePunctuationSystemsConvertor:
             myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
             myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
 
-            for systemName, systemDict in self.DataDict.items(): # Now write out the actual data into the .c file
+            for systemName, systemDict in self._DataDict.items(): # Now write out the actual data into the .c file
                 myCFile.write( "\n// %s\n" % ( systemName ) )
                 exportPythonDict( myCFile, systemDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry punctuationSystemTable[%i] = {\n" % len(self.DataDict) )
-            for systemName in self.DataDict: # Now write out the actual pointer data into the .c file
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry punctuationSystemTable[%i] = {\n" % len(self._DataDict) )
+            for systemName in self._DataDict: # Now write out the actual pointer data into the .c file
                 myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
-            myCFile.write( "}; // %i entries\n\n" % len(self.DataDict) )
+            myCFile.write( "}; // %i entries\n\n" % len(self._DataDict) )
             myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
     # end of exportDataToC
 
@@ -476,9 +462,19 @@ class BiblePunctuationSystems:
         """
         Constructor: 
         """
-        self.bpsc = _BiblePunctuationSystemsConvertor()
-        self.Dict = None # We'll import into this in loadData
+        self._bpsc = _BiblePunctuationSystemsConvertor()
+        self._Dict = None # We'll import into this in loadData
     # end of __init__
+
+    def loadData( self, XMLFolder=None ):
+        """ Loads the XML data file and imports it to dictionary format (if not done already). """
+        if not self._Dict: # Don't do this unnecessarily
+            if XMLFolder is not None: logging.warning( "Bible punctuation systems are already loaded -- your given folder of '%s' was ignored" % XMLFolder )
+            self._bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+            self._Dict = self._bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self._bpsc # Now the convertor class (that handles the XML) is no longer needed
+        return self
+    # end of loadData
 
     def __str__( self ):
         """
@@ -488,23 +484,75 @@ class BiblePunctuationSystems:
         @rtype: string
         """
         result = "BiblePunctuationSystems object"
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.Dict) )
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self._Dict) )
         return result
     # end of __str__
 
-    def loadData( self, XMLFolder=None ):
-        """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.Dict: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible punctuation systems are already loaded -- your given folder of '%s' was ignored" % XMLFolder )
-            self.bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-            self.Dict = self.bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.bpsc # Now the convertor class (that handles the XML) is no longer needed
-        return self
-    # end of loadData
+    def getAvailablePunctuationSystemNames( self ):
+        """ Returns a list of available system name strings. """
+        return [x for x in self._Dict]
+    # end of getAvailablePunctuationSystemNames
 
-    # TODO: Add some useful routines in here
+    def isValidPunctuationSystemName( self, systemName ):
+        """ Returns True or False. """
+        return systemName in self._Dict
+    # end of isValidPunctuationSystemName
 
+    def getPunctuationSystem( self, systemName ):
+        """ Returns the corresponding dictionary."""
+        if systemName in self._Dict:
+            return self._Dict[systemName]
+        # else
+        logging.error( "No '%s' system in Bible Book Orders" % systemName )
+        if Globals.verbosityLevel>2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
+    # end of getPunctuationSystem
 # end of BiblePunctuationSystems class
+
+
+class BiblePunctuationSystem:
+    """
+    Class for handling a particular Bible punctuation system.
+
+    This class doesn't deal at all with XML, only with Python dictionaries, etc.
+    """
+
+    def __init__( self, systemName ):
+        """
+        Constructor: 
+        """
+        self._systemName = systemName
+        self._bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        self._Dict = self._bpss.getPunctuationSystem( self._systemName )
+    # end of __init__
+
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible punctuation system.
+        
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = "BiblePunctuationSystem object"
+        result += ('\n' if result else '') + "  %s Bible punctuation system" % ( self._systemName )
+        result += ('\n' if result else '') + "  Num values = %i" % ( len(self._Dict) )
+        return result
+    # end of __str__
+
+    def getPunctuationSystemName( self ):
+        """ Return the book order system name. """
+        return self._systemName
+    # end of getPunctuationSystemName
+
+    def getAvailablePunctuationValueNames( self ):
+        """ Returns a list of available value name strings. """
+        return [x for x in self._Dict]
+    # end of getAvailableValueNames
+
+    def getPunctuationValue( self, name ):
+        """ Returns the value for the name. """
+        return self._Dict[name]
+    # end of getValue
+# end of BiblePunctuationSystem class
 
 
 def main():
@@ -521,7 +569,6 @@ def main():
 
     if Globals.commandLineOptions.export:
         bpsc = _BiblePunctuationSystemsConvertor().loadSystems() # Load the XML
-        bpsc.checkDuplicates()
         bpsc.exportDataToPython() # Produce the .py tables
         bpsc.exportDataToJSON() # Produce a json output file
         bpsc.exportDataToC() # Produce the .h and .c tables
@@ -529,12 +576,19 @@ def main():
     else: # Must be demo mode
         # Demo the convertor object
         bpsc = _BiblePunctuationSystemsConvertor().loadSystems() # Load the XML
-        bpsc.checkDuplicates()
         print( bpsc ) # Just print a summary
 
         # Demo the BiblePunctuationSystems object
-        bps = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bpss ) # Just print a summary
+        print( "Available system names are: %s" % bpss.getAvailablePunctuationSystemNames() )
+
+        # Demo the BiblePunctuationSystem object
+        bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
         print( bps ) # Just print a summary
+        print( "Variables are: %s" % bps.getAvailablePunctuationValueNames() )
+        name = 'chapterVerseSeparator'
+        print( "%s for %s is '%s'" % ( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
 # end of main
 
 if __name__ == '__main__':

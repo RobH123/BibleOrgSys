@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 progName = "XML Writer"
-versionString = "0.21"
+versionString = "0.22"
 
 
 import os, logging
@@ -226,9 +226,14 @@ class XMLWriter:
         return result
     # end if getAttributes
 
+    def writeLineComment( self, text, noTextCheck=False ):
+        """ Writes an XML comment field. """
+        return self._autoWrite( '<!-- %s -->' % (text if noTextCheck else self.checkText(text)) )
+    # end of writeLineComment
+
     def writeLineText( self, text, noTextCheck=False ):
         """ Writes raw text onto a line. """
-        self._autoWrite( text if noTextCheck else self.checkText(text) )
+        return self._autoWrite( text if noTextCheck else self.checkText(text) )
     # end of writeLineText
 
     def writeLineOpen( self, openTag, attribInfo=None ):
