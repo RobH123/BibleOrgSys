@@ -3,9 +3,9 @@
 # USFMBible.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2010-12-22 by RJH (also update versionString below)
+#   Last modified: 2011-01-06 by RJH (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible markers.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.03"
+versionString = "0.10"
 
 
 import os, logging, datetime
@@ -36,6 +36,8 @@ from collections import OrderedDict
 from singleton import singleton
 import Globals, ControlFiles
 from BibleBooksCodes import BibleBooksCodes
+from BibleOrganizationalSystems import BibleOrganizationalSystem
+from BibleReferences import BibleReferenceList
 from XMLWriter import XMLWriter
 
 
@@ -802,17 +804,25 @@ class USFMBible:
         ControlFiles.readControlFile( controlFileFolder, controlFilename, OSISControls )
         #print( OSISControls )
 
-        bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
-        #for BBB in BBC_BBBDict.keys(): # Pre-process the language booknames
-        for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
-            if BBB in OSISControls and OSISControls[BBB]:
-                bits = OSISControls[BBB].split(',')
-                if len(bits)!=2: logging.error( "Unrecognized language book abbreviation and name for %s: '%'" % ( BBB, OSISControls[BBB] ) )
-                bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
-                bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
-                bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
-                if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
-                if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
+        # Set-up our Bible reference system
+        wantErrorMessages = False
+        BOS = BibleOrganizationalSystem( OSISControls["PublicationCode"] )
+        BRL = BibleReferenceList( self.BibleBooksCodes, BOS )
+        for ref in ("Huw. 3:16", "Imp. 2:1-3" ):
+            print( "  From '%s' BRL got OSIS '%s'" % (ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
+
+        if 0: # old code
+            bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
+            #for BBB in BBC_BBBDict.keys(): # Pre-process the language booknames
+            for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
+                if BBB in OSISControls and OSISControls[BBB]:
+                    bits = OSISControls[BBB].split(',')
+                    if len(bits)!=2: logging.error( "Unrecognized language book abbreviation and name for %s: '%'" % ( BBB, OSISControls[BBB] ) )
+                    bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                    bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
+                    bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
+                    if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
+                    if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
 
         outputFolder = "OutputFiles"
         if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -824,12 +834,19 @@ class USFMBible:
             SwLocFile.write( '[Meta]\nName=%s\n' % OSISControls["xmlLanguage"] )
             SwLocFile.write( 'Description=%s\n' % OSISControls["LanguageName"] )
             SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
-            for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations():
-                if BBB in bookAbbrevNameDict:
-                    SwLocFile.write( '%s=%s\n' % (self.BibleBooksCodes.getEnglishName_NR(BBB), bookAbbrevNameDict[BBB][1] ) ) # Write the first English book name and the language book name
-            SwLocFile.write( '\n[Book Abbrevs]\n' )
-            for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations():
-                if BBB in bookAbbrevNameDict:
+            if 0: # old code
+                for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations():
+                    if BBB in bookAbbrevNameDict:
+                        SwLocFile.write( '%s=%s\n' % (self.BibleBooksCodes.getEnglishName_NR(BBB), bookAbbrevNameDict[BBB][1] ) ) # Write the first English book name and the language book name
+                SwLocFile.write( '\n[Book Abbrevs]\n' )
+                for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations():
+                    if BBB in bookAbbrevNameDict:
+                        SwLocFile.write( '%s=%s\n' % (self.BibleBooksCodes.getEnglishName_NR(BBB).upper(), self.BibleBooksCodes.getSwordAbbreviation(BBB) ) ) # Write the UPPER CASE language book name and the Sword abbreviation
+            else: # new code
+                for BBB in BOS.getBookList():
+                    SwLocFile.write( '%s=%s\n' % (self.BibleBooksCodes.getEnglishName_NR(BBB), BOS.getShortBookName(BBB) ) ) # Write the first English book name and the language book name
+                SwLocFile.write( '\n[Book Abbrevs]\n' )
+                for BBB in BOS.getBookList():
                     SwLocFile.write( '%s=%s\n' % (self.BibleBooksCodes.getEnglishName_NR(BBB).upper(), self.BibleBooksCodes.getSwordAbbreviation(BBB) ) ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         def writeHeader( writerObject ):
@@ -951,132 +968,142 @@ class USFMBible:
                             osisRef = convertReferenceToOSISRef( token[3:], bRef, cRef )
                             OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,token[3:])
                         elif token.startswith('xt '): # xref text follows
-###### This code needs to be re-written using the BibleReferences module .......................... XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                            xrefText = token[3:]
-                            endsWithPeriod = False;
-                            if xrefText[-1]=='.': endsWithPeriod = True; xrefText = xrefText[:-1]
-                            #print( "xrefText", "'"+xrefText+"'" )
-                            # Here we ethnocentrically assume that multiple tokens will be separated by semicolons, e.g., 7:2; 8:5
-                            subTokens = xrefText.split(';')
-                            #print( "subTokens", subTokens )
-                            osisBook = xRefChapter = ''
-                            for k,referenceString in enumerate(subTokens):
-                                for bit in referenceString.split():
-                                    #print( "bit", bit )
-                                    if bit in bookAbbrevDict: # Assume it's a bookname abbreviation
-                                        BBB = bookAbbrevDict[bit]
-                                        osisBook = self.BibleBooksCodes.getOSISAbbreviation( BBB )
-                                        #print( BBB, "osisBook", osisBook )
-                                    else: # Assume it's the actual reference
-                                        if not osisBook: raise Exception( "Book code seems to be wrong or missing for xRef", bit, "from", USFMxref, "at", toOSISGlobals["vRef"] )
-                                        punctCount = 0
-                                        for char in ',.:-–': # included hyphen and en-dash in here (but not em-dash —)
-                                            #print( '', char, bit.count(char), punctCount )
-                                            punctCount += bit.count( char )
-                                        #print( "punctCount is %i for '%s' in '%s'" % (punctCount,bit,referenceString) )
-                                        if punctCount==0: # That's nice and easy
-                                            if bit.isdigit() and BBB in self.OneChapterBBBBookCodes: # Then presumably a verse number
-                                                xrefChapter = '1'
-                                                osisRef = osisBook + '.' + xrefChapter + '.' + bit
-                                                OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
-                                            else:
-                                                logRoutine = logging.info if bit=='(LXX)' else logging.error # Sorry, this is a crude hack to avoid unnecessary error messages
-                                                logRoutine( "Ignoring '%s' in xRef %s '%s' from '%s' (zero relevant punctuation)" % (bit,cRef, referenceString, text) )
-                                        elif punctCount==1: # That's also nice and easy
-                                            CV = bit.replace(',','.').replace(':','.') # Make sure it's a dot
-                                            CVtokens = CV.split('.')
-                                            CVtoken1 = CVtokens[0]
-                                            if len(CVtokens)==1:
-                                                if '-' in CVtoken1 or '–' in CVtoken1 and BBB not in self.OneChapterBBBBookCodes: # Could be something like spanning multiple chapters. e.g., Num 22-24
-                                                    CBits = CVtoken1.replace('–','-').split('-')
-                                                    assert( len(CBits) == 2 )
-                                                    osisRef = osisBook + '.' + CBits[0] # Just ignore the second part of the range here
-                                                elif BBB in self.OneChapterBBBBookCodes:
-                                                    if not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                            if 1: # new code
+                                xrefText = token[3:]
+                                finalPunct = ''
+                                #print( "processXRef1", xrefText )
+                                if xrefText[-1] in (',;.'): finalPunct = xrefText[-1]; xrefText = xrefText[:-1]
+                                adjString = xrefText[:-6] if xrefText.endswith( ' (LXX)' ) else xrefText # Sorry, this is a crude hack to avoid unnecessary error messages
+                                osisRef = BRL.parseToOSIS( adjString, wantErrorMessages )
+                                #print( osisRef )
+                                OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,xrefText+finalPunct)
+                                #print( osisRef, OSISxref )
+                            else: # old code
+                                xrefText = token[3:]
+                                endsWithPeriod = False;
+                                if xrefText[-1]=='.': endsWithPeriod = True; xrefText = xrefText[:-1]
+                                #print( "xrefText", "'"+xrefText+"'" )
+                                # Here we ethnocentrically assume that multiple tokens will be separated by semicolons, e.g., 7:2; 8:5
+                                subTokens = xrefText.split(';')
+                                #print( "subTokens", subTokens )
+                                osisBook = xRefChapter = ''
+                                for k,referenceString in enumerate(subTokens):
+                                    for bit in referenceString.split():
+                                        #print( "bit", bit )
+                                        if bit in bookAbbrevDict: # Assume it's a bookname abbreviation
+                                            BBB = bookAbbrevDict[bit]
+                                            osisBook = self.BibleBooksCodes.getOSISAbbreviation( BBB )
+                                            #print( BBB, "osisBook", osisBook )
+                                        else: # Assume it's the actual reference
+                                            if not osisBook: raise Exception( "Book code seems to be wrong or missing for xRef", bit, "from", USFMxref, "at", toOSISGlobals["vRef"] )
+                                            punctCount = 0
+                                            for char in ',.:-–': # included hyphen and en-dash in here (but not em-dash —)
+                                                #print( '', char, bit.count(char), punctCount )
+                                                punctCount += bit.count( char )
+                                            #print( "punctCount is %i for '%s' in '%s'" % (punctCount,bit,referenceString) )
+                                            if punctCount==0: # That's nice and easy
+                                                if bit.isdigit() and BBB in self.OneChapterBBBBookCodes: # Then presumably a verse number
                                                     xrefChapter = '1'
-                                                    osisRef = osisBook + '.' + xrefChapter + '.' + CVtoken1
-                                                else: raise Exception( "Confused about cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
-                                            elif len(CVtokens) == 2:
-                                                for CVtoken in CVtokens: # Just double check that we're on the right track
-                                                    if not CVtoken.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
-                                                xrefChapter = CVtoken1
-                                                osisRef = osisBook + '.' + xrefChapter + '.' + CVtokens[1]
-                                            else: raise Exception( "Seems like the wrong number of CV bits in cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
-                                            OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
-                                        elif punctCount==2:
-                                            if '-' in bit or '–' in bit: # Could have something like 7:1-4 with hyphen or en-dash
-                                                CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
+                                                    osisRef = osisBook + '.' + xrefChapter + '.' + bit
+                                                    OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                                else:
+                                                    logRoutine = logging.info if bit=='(LXX)' else logging.error # Sorry, this is a crude hack to avoid unnecessary error messages
+                                                    logRoutine( "Ignoring '%s' in xRef %s '%s' from '%s' (zero relevant punctuation)" % (bit,cRef, referenceString, text) )
+                                            elif punctCount==1: # That's also nice and easy
+                                                CV = bit.replace(',','.').replace(':','.') # Make sure it's a dot
                                                 CVtokens = CV.split('.')
                                                 CVtoken1 = CVtokens[0]
-                                                assert( len(CVtokens) == 2 )
-                                                # Just double check that we're on the right track
-                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
-                                                verseRangeBits = CVtokens[1].split('-')
-                                                assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
-                                                xRefChapter = CVtoken1
-                                                xrefCref  = osisBook + '.' + xRefChapter
-                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
-                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
-                                                # Let's guess how to do this since we don't know for sure yet
+                                                if len(CVtokens)==1:
+                                                    if '-' in CVtoken1 or '–' in CVtoken1 and BBB not in self.OneChapterBBBBookCodes: # Could be something like spanning multiple chapters. e.g., Num 22-24
+                                                        CBits = CVtoken1.replace('–','-').split('-')
+                                                        assert( len(CBits) == 2 )
+                                                        osisRef = osisBook + '.' + CBits[0] # Just ignore the second part of the range here
+                                                    elif BBB in self.OneChapterBBBBookCodes:
+                                                        if not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                        xrefChapter = '1'
+                                                        osisRef = osisBook + '.' + xrefChapter + '.' + CVtoken1
+                                                    else: raise Exception( "Confused about cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
+                                                elif len(CVtokens) == 2:
+                                                    for CVtoken in CVtokens: # Just double check that we're on the right track
+                                                        if not CVtoken.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    xrefChapter = CVtoken1
+                                                    osisRef = osisBook + '.' + xrefChapter + '.' + CVtokens[1]
+                                                else: raise Exception( "Seems like the wrong number of CV bits in cross-reference format %s %s '%s' from '%s'" % (cRef, CVtokens, referenceString, text) )
                                                 OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
-                                            elif ',' in bit: # Could have something like 7:1,4
-                                                CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
-                                                CVtokens = CV.split('.')
-                                                CVtoken1 = CVtokens[0]
-                                                assert( len(CVtokens) == 2 )
-                                                # Just double check that we're on the right track
-                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
-                                                verseRangeBits = CVtokens[1].split(',')
-                                                assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
-                                                xRefChapter = CVtoken1
-                                                xrefCref  = osisBook + '.' + xRefChapter
-                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
-                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
-                                                # Let's guess how to do this since we don't know for sure yet
-                                                OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                            elif punctCount==2:
+                                                if '-' in bit or '–' in bit: # Could have something like 7:1-4 with hyphen or en-dash
+                                                    CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
+                                                    CVtokens = CV.split('.')
+                                                    CVtoken1 = CVtokens[0]
+                                                    assert( len(CVtokens) == 2 )
+                                                    # Just double check that we're on the right track
+                                                    if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    verseRangeBits = CVtokens[1].split('-')
+                                                    assert( len(verseRangeBits) == 2 )
+                                                    if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
+                                                    xRefChapter = CVtoken1
+                                                    xrefCref  = osisBook + '.' + xRefChapter
+                                                    osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                    #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                    # Let's guess how to do this since we don't know for sure yet
+                                                    OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                                elif ',' in bit: # Could have something like 7:1,4
+                                                    CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
+                                                    CVtokens = CV.split('.')
+                                                    CVtoken1 = CVtokens[0]
+                                                    assert( len(CVtokens) == 2 )
+                                                    # Just double check that we're on the right track
+                                                    if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    verseRangeBits = CVtokens[1].split(',')
+                                                    assert( len(verseRangeBits) == 2 )
+                                                    if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (CVtokens[1],cRef) )
+                                                    xRefChapter = CVtoken1
+                                                    xrefCref  = osisBook + '.' + xRefChapter
+                                                    osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                    #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                    # Let's guess how to do this since we don't know for sure yet
+                                                    OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                                else:
+                                                    raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
+                                            elif punctCount==3:
+                                                logging.critical( "Need to write code to handle this xref case: %s '%s' from '%s'" % (cRef, referenceString, text) ); continue
+                                                if '-' in bit or '–' in bit: # Could have something like 7:1-8:4 with hyphen or en-dash
+                                                    CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
+                                                    CVtokens = CV.split('.')
+                                                    CVtoken1 = CVtokens[0]
+                                                    assert( len(CVtokens) == 2 )
+                                                    # Just double check that we're on the right track
+                                                    if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    verseRangeBits = CVtokens[1].split('-')
+                                                    assert( len(verseRangeBits) == 2 )
+                                                    if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
+                                                    xRefChapter = CVtoken1
+                                                    xrefCref  = osisBook + '.' + xRefChapter
+                                                    osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                    #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                    # Let's guess how to do this since we don't know for sure yet
+                                                    OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                                elif ',' in bit: # Could have something like 7:1,4,9
+                                                    CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
+                                                    CVtokens = CV.split('.')
+                                                    CVtoken1 = CVtokens[0]
+                                                    assert( len(CVtokens) == 2 )
+                                                    # Just double check that we're on the right track
+                                                    if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
+                                                    verseRangeBits = CVtokens[1].split(',')
+                                                    assert( len(verseRangeBits) == 2 )
+                                                    if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
+                                                    xRefChapter = CVtoken1
+                                                    xrefCref  = osisBook + '.' + xRefChapter
+                                                    osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
+                                                    #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
+                                                    # Let's guess how to do this since we don't know for sure yet
+                                                    OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
+                                                else:
+                                                    raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
                                             else:
-                                                raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
-                                        elif punctCount==3:
-                                            logging.critical( "Need to write code to handle this xref case: %s '%s' from '%s'" % (cRef, referenceString, text) ); continue
-                                            if '-' in bit or '–' in bit: # Could have something like 7:1-8:4 with hyphen or en-dash
-                                                CV = bit.replace(',','.').replace(':','.').replace('–','-') # Make sure CV separator (if any) is a dot and the range separator is a hyphen
-                                                CVtokens = CV.split('.')
-                                                CVtoken1 = CVtokens[0]
-                                                assert( len(CVtokens) == 2 )
-                                                # Just double check that we're on the right track
-                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
-                                                verseRangeBits = CVtokens[1].split('-')
-                                                assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
-                                                xRefChapter = CVtoken1
-                                                xrefCref  = osisBook + '.' + xRefChapter
-                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
-                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
-                                                # Let's guess how to do this since we don't know for sure yet
-                                                OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
-                                            elif ',' in bit: # Could have something like 7:1,4,9
-                                                CV = bit.replace(':','.') # Make sure CV separator (if any) is a dot
-                                                CVtokens = CV.split('.')
-                                                CVtoken1 = CVtokens[0]
-                                                assert( len(CVtokens) == 2 )
-                                                # Just double check that we're on the right track
-                                                if '-' in CVtoken1 or not CVtoken1.isdigit(): logging.warning( "Unable to recognize cross-reference format %s '%s' from '%s'" % (cRef, referenceString, text) ); break
-                                                verseRangeBits = CVtokens[1].split(',')
-                                                assert( len(verseRangeBits) == 2 )
-                                                if len(verseRangeBits)!=2 or not verseRangeBits[0].isdigit() or not verseRangeBits[1].isdigit(): logging.critical( "Don't handle verse number of form '%s' yet for %s" % (verseNumberString,cRef) )
-                                                xRefChapter = CVtoken1
-                                                xrefCref  = osisBook + '.' + xRefChapter
-                                                osisRef = osisBook + '.' + xRefChapter + '.' + verseRangeBits[0]
-                                                #print( "have", referenceString, osisBook, xRefChapter, xrefCref, osisRef, CVtokens, verseRangeBits )
-                                                # Let's guess how to do this since we don't know for sure yet
-                                                OSISxref += '<reference type="source" osisRef="%s">%s</reference>' % (osisRef,referenceString+('.' if k==len(subTokens)-1 and endsWithPeriod else ''))
-                                            else:
-                                                raise Exception( "not written yet for 2 punctuation characters in verse number inside cross-reference" )
-                                        else:
-                                            print( "processXRef", punctCount )
-                                            logging.error( "No code yet for xRef with more than 3 punctuation characters %s from %s at %s" % (bit, USFMxref, toOSISGlobals["vRef"]) )
+                                                print( "processXRef", punctCount )
+                                                logging.error( "No code yet for xRef with more than 3 punctuation characters %s from %s at %s" % (bit, USFMxref, toOSISGlobals["vRef"]) )
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
                             if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): %s '%s' from '%s'" % (cRef, token, text) )
@@ -2072,10 +2099,10 @@ def main():
 
     if Globals.commandLineOptions.export:
         if Globals.verbosityLevel > 0: print( "NOTE: This is %s V%s -- i.e., still just alpha quality software!" % ( progName, versionString ) )
-        uB.toZefania_XML( '', os.path.join( 'ControlFiles', "MBT_to_Zefania_controls.txt" ) )
+        #uB.toZefania_XML( '', os.path.join( 'ControlFiles', "MBT_to_Zefania_controls.txt" ) )
         uB.toOSIS_XML( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) )
-        uB.toMediaWiki( '', os.path.join( 'ControlFiles', "MBT_to_MediaWiki_controls.txt" ) )
-        uB.toSwordModule( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) ) # We use the same OSIS controls (except for the output filename)
+        #uB.toMediaWiki( '', os.path.join( 'ControlFiles', "MBT_to_MediaWiki_controls.txt" ) )
+        #uB.toSwordModule( '', os.path.join( 'ControlFiles', "MBT_to_OSIS_controls.txt" ) ) # We use the same OSIS controls (except for the output filename)
         #uB.toBible( os.path.join( 'ScrapedFiles', "TestBible.module" ) )
 
 if __name__ == '__main__':

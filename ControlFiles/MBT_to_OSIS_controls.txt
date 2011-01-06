@@ -10,6 +10,10 @@
 # Note that all fieldnames and settings are CASE SENSITIVE
 #
 
+# The following values determine the Bible organisational system (especially needed for Bible references)
+LanguageCode = mbt
+PublicationCode = MBT
+
 # The following values are copied into the output file
 xmlLanguage = en
 LanguageName = Matigsalug
@@ -98,8 +102,8 @@ PHP = "Pil", "Matig-Pilipu"
 COL = "Kul", "Matig-Kulusas"
 TH1 = "1Tis", "1 Matig-Tisalunika"
 TH2 = "2Tis", "2 Matig-Tisalunika"
-TI1 = "1Tim", "Timutiyu"
-TI2 = "2Tim", "Timutiyu"
+TI1 = "1Tim", "1 Timutiyu"
+TI2 = "2Tim", "2 Timutiyu"
 TIT = "Tit", "Titu"
 PHM = "Pilim", "Pilimun"
 HEB = "Hib", "Hibruwanen"

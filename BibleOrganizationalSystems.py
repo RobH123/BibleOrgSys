@@ -4,9 +4,9 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2010-12-27 (also update versionString below)
+#   Last modified: 2011-01-05 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleBooksCodes import BibleBooksCodes
 from BibleBookOrders import BibleBookOrderSystems, BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystems, BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystems, BibleVersificationSystem
-from BibleBooksNames import BibleBooksNamesSystems
+from BibleBooksNames import BibleBooksNamesSystems, BibleBooksNamesSystem
 
 
 allowedTypes = ( "edition", "revision", "translation", "original", ) # NOTE: The order is important here
@@ -71,14 +71,14 @@ class _BibleOrganizationalSystemsConvertor:
         self._optionalAttributes = ()
         self._uniqueAttributes = ()
         self._compulsoryElements = ( "referenceAbbreviation", "languageCode", )
-        self._optionalElements = ( "name", "publicationDate", "versificationSystem", "punctuationSystem", "bookOrderSystem", "bookNameSystem", "derivedFrom", "usesText", )
+        self._optionalElements = ( "name", "publicationDate", "versificationSystem", "punctuationSystem", "bookOrderSystem", "booksNamesSystem", "derivedFrom", "usesText", )
         self._uniqueElements = ()
         self._allowedMultiple = ( "name", )
 
         # These are fields that we will fill later
         self.title, self.version, self.date = None, None, None
         self.header, self._XMLtree = None, None
-        self._dataDicts = None
+        self.__dataDicts = None
 
         # Get the data tables that we need for proper checking
         self._ISOLanguages = ISO_639_3_Languages().loadData()
@@ -234,8 +234,8 @@ class _BibleOrganizationalSystemsConvertor:
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
         assert( self._XMLtree )
-        if self._dataDicts: # We've already done an import/restructuring -- no need to repeat it
-            return self._dataDicts
+        if self.__dataDicts: # We've already done an import/restructuring -- no need to repeat it
+            return self.__dataDicts
 
         # We'll create a number of dictionaries with different elements as the key
         dataDict, indexDict, combinedIndexDict = {}, {}, {}
@@ -254,7 +254,7 @@ class _BibleOrganizationalSystemsConvertor:
             bits["languageCode"] = languageCode
 
             # Now work on the optional elements
-            for name in ( "name", "publicationDate", "versificationSystem", "punctuationSystem", "bookOrderSystem", "bookNameSystem", "derivedFrom", "usesText", ):
+            for name in ( "name", "publicationDate", "versificationSystem", "punctuationSystem", "bookOrderSystem", "booksNamesSystem", "derivedFrom", "usesText", ):
                 for nameData in element.findall(name):
                     if name in self._allowedMultiple: # Put multiple entries into a list
                         if name not in bits: bits[name] = [nameData.text]
@@ -263,14 +263,16 @@ class _BibleOrganizationalSystemsConvertor:
                         if name in bits: logging.error( "Multiple %s elements found in %s %s" % (name, referenceAbbreviation, myType) )
                         bits[name] = nameData.text
 
-            extendedRA = referenceAbbreviation + '_' + myType
+            extension = '_' + myType
+            extendedRA = referenceAbbreviation if referenceAbbreviation.endswith(extension) else (referenceAbbreviation + extension)
             dataDict[extendedRA] = bits
             if referenceAbbreviation in indexDict: indexDict[referenceAbbreviation].append( extendedRA )
             else: indexDict[referenceAbbreviation] = [extendedRA]
             if referenceAbbreviation in combinedIndexDict: combinedIndexDict[referenceAbbreviation].append( extendedRA )
             else: combinedIndexDict[referenceAbbreviation] = [extendedRA]
-            assert( extendedRA not in combinedIndexDict )
-            combinedIndexDict[extendedRA] = [extendedRA]
+            if extendedRA != referenceAbbreviation:
+                assert( extendedRA not in combinedIndexDict )
+                combinedIndexDict[extendedRA] = [extendedRA]
 
         if Globals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():
@@ -296,16 +298,16 @@ class _BibleOrganizationalSystemsConvertor:
                     if data['derivedFrom'] not in indexDict: logging.error( "%s revision specifies unknown '%s' text in 'derivedFrom' field" % (referenceAbbreviation,data['derivedFrom']) )
                     elif len(indexDict[data['derivedFrom']]) > 1: logging.warning( "%s edition specifies ambiguous '%s' texts in 'derivedFrom' field" % (referenceAbbreviation,indexDict[data['derivedFrom']]) )
                 if 'versificationSystem' in data:
-                    if not self._BibleVersificationSystems.isValidSystemName( data['versificationSystem'] ):
-                        extra = ("\n  Available systems are %s" % self._BibleVersificationSystems.getAvailableSystemNames()) if Globals.verbosityLevel > 2 else ''
+                    if not self._BibleVersificationSystems.isValidVersificationSystemName( data['versificationSystem'] ):
+                        extra = ("\n  Available systems are %s" % self._BibleVersificationSystems.getAvailableVersificationSystemNames()) if Globals.verbosityLevel > 2 else ''
                         logging.error( "Unknown '%s' versification system name in %s%s" % (data['versificationSystem'],extendedReferenceAbbreviation,extra) )
                 if 'punctuationSystem' in data:
-                    if not self._BiblePunctuationSystems.isValidSystemName( data['punctuationSystem'] ):
-                        extra = ("\n  Available systems are %s" % self._BiblePunctuationSystems.getAvailableSystemNames()) if Globals.verbosityLevel > 2 else ''
+                    if not self._BiblePunctuationSystems.isValidPunctuationSystemName( data['punctuationSystem'] ):
+                        extra = ("\n  Available systems are %s" % self._BiblePunctuationSystems.getAvailablePunctuationSystemNames()) if Globals.verbosityLevel > 2 else ''
                         logging.error( "Unknown '%s' punctuation system name in %s%s" % (data['punctuationSystem'],extendedReferenceAbbreviation,extra) )
 
-        self._dataDicts = dataDict, indexDict, combinedIndexDict
-        return self._dataDicts
+        self.__dataDicts = dataDict, indexDict, combinedIndexDict
+        return self.__dataDicts
     # end of importDataToPython
 
     def exportDataToPython( self, filepath=None ):
@@ -324,7 +326,7 @@ class _BibleOrganizationalSystemsConvertor:
 
         assert( self._XMLtree )
         self.importDataToPython()
-        assert( self._dataDicts )
+        assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -354,7 +356,7 @@ class _BibleOrganizationalSystemsConvertor:
 
         assert( self._XMLtree )
         self.importDataToPython()
-        assert( self._dataDicts )
+        assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.json" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -365,7 +367,7 @@ class _BibleOrganizationalSystemsConvertor:
             #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
             #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self._XMLtree), self._treeTag ) )
-            json.dump( self._dataDicts, myFile, indent=2 )
+            json.dump( self.__dataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
     # end of exportDataToJSON
 
@@ -402,7 +404,7 @@ class _BibleOrganizationalSystemsConvertor:
 
         assert( self._XMLtree )
         self.importDataToPython()
-        assert( self._dataDicts )
+        assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.h" )
         if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
@@ -440,17 +442,19 @@ class BibleOrganizationalSystems:
         """
         Constructor: 
         """
-        self._bosc = _BibleOrganizationalSystemsConvertor()
-        self._dataDict = self._indexDict = self._combinedIndexDict = None # We'll import into this in loadData
+        self.__bosc = _BibleOrganizationalSystemsConvertor()
+        self.__dataDict = self.__indexDict = self.__combinedIndexDict = None # We'll import into this in loadData
     # end of __init__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self._dataDict or not self._indexDict: # Don't do this unnecessarily
+        if not self.__dataDict or not self.__indexDict: # Don't do this unnecessarily
             if XMLFilepath is not None: logging.warning( "Bible books codes are already loaded -- your given filepath of '%s' was ignored" % XMLFilepath )
-            self._bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-            self._dataDict, self._indexDict, self._combinedIndexDict = self._bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self._bosc # Now the convertor class (that handles the XML) is no longer needed
+            self.__bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
+            result = self.__bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            if result is not None:
+                self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
+            del self.__bosc # Now the convertor class (that handles the XML) is no longer needed
         return self
     # end of loadData
 
@@ -462,52 +466,73 @@ class BibleOrganizationalSystems:
         @rtype: string
         """
         result = "BibleOrganizationalSystems object"
-        result += ('\n' if result else '') + "  Num entries = %i" % ( len(self._dataDict) )
+        result += ('\n' if result else '') + "  Num entries = %i" % ( len(self.__dataDict) )
         if Globals.verbosityLevel > 1: # Do a bit of extra analysis
             counters = {}
             for possibleType in allowedTypes: counters[possibleType] = 0
-            for systemName, data in self._dataDict.items():
+            for systemName, data in self.__dataDict.items():
                 counters[data["type"]] += 1
             for possibleType in allowedTypes:
                 if counters[possibleType]: result += "    %i %s(s)" % ( counters[possibleType], possibleType )
         return result
     # end of __str__
 
-    def getAvailableSystemNames( self, extended=False ):
+    def getAvailableOrganizationalSystemNames( self, extended=False ):
         """ Returns a list of available system name strings. """
         if extended:
             result = []
-            for x in self._indexDict:
-                result.append( "%s (%s)" % (x, self._dataDict[self.indexDict[x]]['type'] ) )
+            for x in self.__indexDict:
+                result.append( "%s (%s)" % (x, self.__dataDict[self.indexDict[x]]['type'] ) )
             return result
         # else:
-        return [x for x in self._indexDict]
-    # end of getAvailableSystemNames
+        return [x for x in self.__indexDict]
+    # end of getAvailableOrganizationalSystemNames
 
-    def getSystem( self, systemName ):
+    def getOrganizationalSystem( self, systemName ):
         """ Returns the system dictionary.
             Accepts combined names (like KJV-1611_edition) or basic names (like KJV-1611). """
-        if systemName in self._dataDict:
-            return self._dataDict[systemName]
+        assert( systemName )
+        if systemName in self.__dataDict: # we found the combined name
+            return self.__dataDict[systemName]
         # else
-        if systemName in self._indexDict:
-            index = self._indexDict[systemName]
+        if systemName in self.__indexDict:
+            index = self.__indexDict[systemName]
             if len(index) == 1: # Must only be one (unique) entry
-                return self._dataDict[ index[0] ]
+                return self.__dataDict[ index[0] ]
             # else it's an ambiguous name that has multiple matches
-            for possibleType in allowedTypes:
+            for possibleType in allowedTypes: # Steps through in priority order
                 x = systemName + '_' + possibleType
-                if x in self.dataDict: return self._dataDict[x]  
+                if x in self.__dataDict: return self.__dataDict[x]  
         # else
         logging.error( "No '%s' system in Bible Organisational Systems" % systemName )
         if Globals.verbosityLevel>2: logging.error( "Available systems are %s" % self.getAvailableSystemNames( extended=True ) )
-    # end of getSystem
+    # end of getOrganizationalSystem
 
-    # TODO: Add some useful routines here
+    def getOrganizationalSystemValue( self, systemName, valueName ):
+        """ Gets a value for the system. """
+        assert( systemName )
+        assert( valueName )
+        thisSystem = self.getOrganizationalSystem( systemName )
+        if thisSystem is not None:
+            assert( thisSystem )
+            if valueName in thisSystem: return thisSystem[valueName]
+            # else maybe we can find the value in a derived text
+            if 'usesText' in thisSystem:
+                trySystemName = thisSystem['usesText']
+                #print( "w1", "%s is trying usesText of %s" % (systemName,trySystemName) )
+                #print( "\nKeys:", self.__dataDict.keys() )
+                #print( "\nindexDict", self.__indexDict )
+                #print( "\ncombinedIndexDict", self.__combinedIndexDict )
+                #halt
+                result = self.getOrganizationalSystemValue( trySystemName, valueName )
+                if result is not None: return result
+            # else we couldn't find it anywhere
+            logging.error( "%s Bible Organizational System has no %s specified" % (self.getOrganizationalSystemName(),valueName) )
+    # end of getOrganizationalSystemValue
 # end of BibleOrganizationalSystems class
 
 
-class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem, BiblePunctuationSystem, BibleNameSystem ):
+class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem, BiblePunctuationSystem, BibleBooksNamesSystem ):
     """
     Class for handling a BibleOrganizationalSystem.
 
@@ -520,8 +545,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         Constructor: 
         """
-        self._boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        result = self._boss.getSystem( systemName )
+        self.__boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        result = self.__boss.getOrganizationalSystem( systemName )
         if result is None:
             self.__dataDict = self.__systemName = None
             return
@@ -529,12 +554,17 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         # else:
         self.__dataDict = result
         self.__systemName = systemName
-        print( self.__dataDict )
+        #print( self.__dataDict )
 
         # Now initialize the inherited classes
-        if 'bookOrderSystem' in self.__dataDict: BibleBookOrderSystem.__init__( self, self.__dataDict['bookOrderSystem'] )
-        if 'versificationSystem' in self.__dataDict: BibleVersificationSystem.__init__( self, self.__dataDict['versificationSystem'] )
-        if 'punctuationSystem' in self.__dataDict: BiblePunctuationSystem.__init__( self, self.__dataDict['punctuationSystem'] )
+        value1 = self.getOrganizationalSystemValue( 'bookOrderSystem' )
+        if value1: BibleBookOrderSystem.__init__( self, value1 )
+        value2 = self.getOrganizationalSystemValue( 'versificationSystem' )
+        if value2: BibleVersificationSystem.__init__( self, value2 )
+        value3 = self.getOrganizationalSystemValue( 'punctuationSystem' )
+        if value3: BiblePunctuationSystem.__init__( self, value3 )
+        value4 = self.getOrganizationalSystemValue( 'booksNamesSystem' )
+        if value4: BibleBooksNamesSystem.__init__( self, value4, BibleBookOrderSystem.getBookList(self) ) # Does one extra step To create the input abbreviations
     # end of __init__
 
     def __str__( self ):
@@ -550,18 +580,56 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             result += ('\n' if result else '') + "  Type = %s" % ( self.__dataDict["type"] )
             result += ('\n' if result else '') + "  Name(s) = %s" % ( self.__dataDict["name"] )
             result += ('\n' if result else '') + "  Num entry lines = %i" % ( len(self.__dataDict) )
+            if Globals.verbosityLevel > 3: result += ('\n' if result else '') + "  Entries are: %s" % ( self.__dataDict )
         return result
     # end of __str__
 
     def getOrganizationalSystemName( self ):
         """ Return the system name. """
+        assert( self.__systemName )
         return self.__systemName
-    # end of getSystemName
+    # end of getOrganizationalSystemName
 
-    def getType( self ):
+    def getOrganizationalSystemType( self ):
         """ Return the system type. """
+        assert( self.__dataDict )
         return self.__dataDict["type"]
-    # end of getSystemName
+    # end of getOrganizationalSystemType
+
+    def getMoreBasicTypes( self ):
+        """ Returns a list of more basic (original) types. """
+        ix = allowedTypes.index( self.__dataDict["type"] )
+        return allowedTypes[ix+1:]
+    # end of getMoreBasicTypes
+
+    def getOrganizationalSystemValue( self, valueName ):
+        """ Gets a value for the system. """
+        assert( self.__dataDict )
+        if valueName in self.__dataDict: return self.__dataDict[valueName]
+        # else maybe we can find the value in a derived text
+        #print( "q0", self.getOrganizationalSystemName() )
+        for tryType in self.getMoreBasicTypes():
+            if 'usesText' in self.__dataDict:
+                trySystemName = self.__dataDict['usesText']
+                #print( "q1", "%s is trying usesText of %s" % (self.__systemName,trySystemName) )
+                result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
+                if result is not None: return result
+            if 'derivedFrom' in self.__dataDict:
+                trySystemName = self.__dataDict['derivedFrom']
+                #print( "q2", "%s is trying derivedFrom of %s" % (self.__systemName,trySystemName) )
+                result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
+                if result is not None: return result
+        # else we couldn't find it anywhere
+        logging.error( "%s Bible Organizational System has no %s specified" % (self.getOrganizationalSystemName(),valueName) )
+    # end of getOrganizationalSystemValue
+
+    def isValidBCVRef( self, referenceTuple, referenceString, errorMessages=False ):
+        """ Returns True/False indicating if the given reference is valid in this system. """
+        BBB, C, V, S = referenceTuple
+        if BibleBookOrderSystem.containsBook( self, BBB ):
+            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, errorMessages )
+        elif errorMessages: logging.error( "%s %s:%s is invalid book for reference '%s' in %s versification system for %s" % (BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+        return False
 # end of BibleOrganizationalSystem class
 
 
@@ -591,12 +659,17 @@ def main():
         # Demo the BibleOrganizationalSystems object
         boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( boss ) # Just print a summary
-        print( "Available system names are: %s" % boss.getAvailableSystemNames() )
+        print( "Available system names are: %s" % boss.getAvailableOrganizationalSystemNames() )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
-        bos = BibleOrganizationalSystem( "KJV-1611" )
+        bos = BibleOrganizationalSystem( "KJV-1611_edition" )
         print( bos ) # Just print a summary
         print( "Book list is %s" % bos.getBookList() )
+        print( "This type is %s. More basic types are: %s" % (bos.getOrganizationalSystemType(),bos.getMoreBasicTypes()) )
+        for test in ('GEN','Gen','MAT','Mat','Mt','JUD','Jud','JDE'):
+            print( "Contains '%s': %s" % (test, bos.containsBook(test) ) )
+        for test in ('GEN','Gen','MAT','Mat','Mt','JUD','Jud','Jde'):
+            print( "'%s' gives %s" % (test,bos.getBBB(test) ) )
 # end of main
 
 if __name__ == '__main__':

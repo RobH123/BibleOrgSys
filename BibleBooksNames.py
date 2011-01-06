@@ -4,9 +4,9 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-27 (also update versionString below)
+#   Last modified: 2011-01-06 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.23"
+versionString = "0.24"
 
 
 import os, logging
@@ -241,9 +241,36 @@ class _BibleBooksNamesSystemsConvertor:
         return result
     # end of __str__
 
+    def expandInputs ( self, bookList ):
+        """
+        This is a helper function to expand the inputAbbreviation fields to include all unambiguous shorter abbreviations.
+
+        It is best to do this for a specific publication since there will be less ambiguities if there are less actual books included.
+        This routine is only really included here as a demo -- it's much better to call expandBibleNamesInputs
+            when the actual list of books for your publication is already known.
+
+        Saves divisions name and book name ordered dictionaries, all UPPER CASE, sorted with longest first.
+        """
+        assert( bookList )
+        assert( self.XMLSystems )
+        self.importDataToPython()
+        assert( self.__BookNamesSystemsDict )
+        if self.__expandedInputSystems: return # No need to do this again
+
+        if Globals.verbosityLevel > 1: print( "Expanding input abbreviations..." )
+        for systemName in self.__BookNamesSystemsDict:
+            if Globals.verbosityLevel > 2: print( "  Expanding %s..." % ( systemName ) )
+            divisionsNamesList, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
+            self.__expandedInputSystems[systemName] = expandBibleNamesInputs( systemName, divisionsNamesList, booknameLeadersDict, bookNamesDict, bookList )
+    # end of expandInputs
+
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
+
+        If necessary (but not actually recommended), expandInputs should be called before this to fill self.__expandedInputSystems.
+
+        Returns two dictionaries which should each contain entries for each named system.
         """
         assert( self.XMLSystems )
         if self.__BookNamesSystemsDict: # We've already done an import/restructuring -- no need to repeat it
@@ -292,8 +319,7 @@ class _BibleBooksNamesSystemsConvertor:
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ] # Add the default name to the allowed input fields
-                    if not defaultName.startswith( defaultAbbreviation ):
-                        inputFields.append( defaultAbbreviation )
+                    if not defaultAbbreviation == defaultName: inputFields.append( defaultAbbreviation ) # Automatically add the default abbreviation if it's different
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
                             logging.info( "Superfluous '%s' entry in inputAbbreviation field for %s book in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -313,144 +339,6 @@ class _BibleBooksNamesSystemsConvertor:
             self.__BookNamesSystemsDict[booksNamesSystemCode] = myDivisionsNamesList, myBooknameLeadersDict, myBookNamesDict
         return self.__BookNamesSystemsDict, self.__expandedInputSystems
     # end of importDataToPython
-
-    def expandInputs ( self ):
-        """
-        Expand the inputAbbreviation fields to include all unambiguous shorter abbreviations.
-
-        Would it be better to do this for a specific publication since there will be less ambiguities if there are less actual books included???
-        """
-
-        def expandAbbrevs( UCString, value, originalDict, tempDict, theAmbigSet ):
-            """
-            Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
-                trying to find unambiguous shortcuts which the user could use.
-            """
-            # Drop off final letters and remove internal spaces
-            tempString = UCString[:-1] # Drop off the last letter
-            while( tempString ):
-                if tempString[-1] != ' ':
-                    if tempString in originalDict:
-                        if originalDict[tempString] == value:
-                            #print( "'%s' is superfluous: won't add to tempDict" % tempString )
-                            ambigSet.add( tempString )
-                        else: # it's a different value
-                            #print( "'%s' is ambiguous: won't add to tempDict" % tempString )
-                            ambigSet.add( tempString )
-                    elif tempString in tempDict and tempDict[tempString]!=value:
-                        #print( "'%s' is ambiguous: will remove from tempDict" % tempString )
-                        ambigSet.add( tempString )
-                    else:
-                        tempDict[tempString] = value
-                    tempTempString = tempString
-                    while ' ' in tempTempString:
-                        tempTempString = tempTempString.replace( " ", "", 1 ) # Remove the first space
-                        if tempTempString in originalDict:
-                            if originalDict[tempTempString] == value:
-                                #print( "'%s' is superfluous: won't add to tempDict" % tempTempString )
-                                ambigSet.add( tempTempString )
-                            else: # it's a different value
-                                #print( "'%s' is ambiguous: won't add to tempDict" % tempTempString )
-                                ambigSet.add( tempTempString )
-                        elif tempTempString in tempDict and tempDict[tempTempString]!=value:
-                            #print( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempString )
-                            ambigSet.add( tempTempString )
-                        else:
-                            tempDict[tempTempString] = value
-                tempString = tempString[:-1] # Drop off another letter
-        # end of expandAbbrevs
-
-        assert( self.XMLSystems )
-        self.importDataToPython()
-        assert( self.__BookNamesSystemsDict )
-        if self.__expandedInputSystems: return # No need to do this again
-
-        if Globals.verbosityLevel > 1: print( "Expanding input abbreviations..." )
-        for systemName in self.__BookNamesSystemsDict:
-            if Globals.verbosityLevel > 2: print( "  Expanding %s..." % ( systemName ) )
-            divisionsNamesList, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
-
-            # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
-            UCBNLeadersDict = {}
-            for leader in booknameLeadersDict:
-                UCLeader = leader.upper()
-                assert( UCLeader not in UCBNLeadersDict )
-                UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
-            #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
-
-            # Secondly make a set of the given allowed names
-            divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
-            for k,entryDict in enumerate(divisionsNamesList):
-                for field in entryDict["inputFields"]:
-                    UCField = field.upper()
-                    if UCField in divNameInputDict or UCField in bkNameInputDict:
-                        logging.warning( "Have duplicate entries of '%s' in divisionsNames for %s" % ( UCField, systemName ) )
-                        ambigSet.add( UCField )
-                    divNameInputDict[UCField] = k # Store the index into divisionsNamesList
-            for refAbbrev in bookNamesDict.keys():
-                for field in bookNamesDict[refAbbrev]["inputFields"]:
-                    UCField = field.upper()
-                    if UCField in divNameInputDict or UCField in bkNameInputDict:
-                        logging.warning( "Have duplicate entries of '%s' in divisions and book names for %s" % ( UCField, systemName ) )
-                        ambigSet.add( UCField )
-                    bkNameInputDict[UCField] = refAbbrev # Store the index to the book
-            #print( 'amb', len(ambigSet), ambigSet )
-
-            # Now expand the divisions names
-            #
-            # We do this by replacing "2 " with alternatives like "II " and "Saint" with "Snt" and "St" (as entered in the XML file)
-            #   At the same time, we progressively drop letters off the end until the (UPPER CASE) name becomes ambiguous
-            #       We also remove internal spaces
-            #
-            # We add all unambiguous names to tempDict
-            # We list ambiguous names in ambigSet so that they can be removed from tempDict after all entries have been processed
-            #   (This is because we might not discover the ambiguity until later in processing the list)
-            #
-            # NOTE: In this code, division names and book names share a common ambiguous list
-            #           If they are only ever entered into separate fields, the ambiguous list could be split into two
-            #               i.e., they wouldn't be ambiguous in context
-            #
-            #print( "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
-            tempDNDict = {}
-            for UCField in divNameInputDict.keys():
-                expandAbbrevs( UCField, divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet  )
-                for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
-                    if UCField.startswith( leader ):
-                        for replacementLeader in UCBNLeadersDict[leader]:
-                            expandAbbrevs( UCField.replace(leader,replacementLeader), divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet )
-            #print ( '\ntempDN', len(tempDNDict), tempDNDict )
-            #print( '\namb2', len(ambigSet), ambigSet )
-
-            #print( "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
-            tempBNDict = {}
-            for UCField in bkNameInputDict.keys():
-                expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
-                for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
-                    if UCField.startswith( leader ):
-                        for replacementLeader in UCBNLeadersDict[leader]:
-                            expandAbbrevs( UCField.replace(leader,replacementLeader), bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet )
-            #print ( '\ntempBN', len(tempBNDict) )
-            #print( '\namb3', len(ambigSet), ambigSet )
-
-            # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
-            for field in tempDNDict:
-                if field not in ambigSet:
-                    assert( field not in divNameInputDict )
-                    divNameInputDict[field] = tempDNDict[field]
-            #print( "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
-            for field in tempBNDict:
-                if field not in ambigSet:
-                    assert( field not in bkNameInputDict )
-                    bkNameInputDict[field] = tempBNDict[field]
-            #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
-
-            # Now sort both dictionaries to be longest string first
-            sortedDNDict = OrderedDict( sorted(divNameInputDict.items(), key=lambda s: -len(s[0])) )
-            sortedBNDict = OrderedDict( sorted( bkNameInputDict.items(), key=lambda s: -len(s[0])) )
-
-            # Finally, save the expanded input fields
-            self.__expandedInputSystems[systemName] = sortedDNDict, sortedBNDict
-    # end of expandInputs
 
     def exportDataToPython( self, filepath=None ):
         """
@@ -612,6 +500,145 @@ class _BibleBooksNamesSystemsConvertor:
 # end of _BibleBooksNamesSystemsConvertor class
 
 
+def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict, bookNamesDict, bookList ):
+    """
+    This is a helper function to expand the inputAbbreviation fields to include all unambiguous shorter abbreviations.
+
+    It is best to do this for a specific publication since there will be less ambiguities if there are less actual books included.
+
+    Returns divisions name and book name ordered dictionaries, all UPPER CASE, sorted with longest first.
+    """
+
+    def expandAbbrevs( UCString, value, originalDict, tempDict, theAmbigSet ):
+        """
+        Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
+            trying to find unambiguous shortcuts which the user could use.
+        """
+        # Drop off final letters and remove internal spaces
+        tempString = UCString[:-1] # Drop off the last letter
+        while( tempString ):
+            if tempString[-1] != ' ':
+                if tempString in originalDict:
+                    if originalDict[tempString] == value:
+                        if Globals.verbosityLevel > 3: logging.debug( "'%s' is superfluous: won't add to tempDict" % tempString )
+                        ambigSet.add( tempString )
+                    else: # it's a different value
+                        if Globals.verbosityLevel > 3: logging.debug( "'%s' is ambiguous: won't add to tempDict" % tempString )
+                        ambigSet.add( tempString )
+                elif tempString in tempDict and tempDict[tempString]!=value:
+                    if Globals.verbosityLevel > 3: logging.info( "'%s' is ambiguous: will remove from tempDict" % tempString )
+                    ambigSet.add( tempString )
+                else:
+                    tempDict[tempString] = value
+                tempTempString = tempString
+                while ' ' in tempTempString:
+                    tempTempString = tempTempString.replace( " ", "", 1 ) # Remove the first space
+                    if tempTempString in originalDict:
+                        if originalDict[tempTempString] == value:
+                            if Globals.verbosityLevel > 3: logging.debug( "'%s' (spaces removed) is superfluous: won't add to tempDict" % tempTempString )
+                            ambigSet.add( tempTempString )
+                        else: # it's a different value
+                            if Globals.verbosityLevel > 3: logging.debug( "'%s' (spaces removed) is ambiguous: won't add to tempDict" % tempTempString )
+                            ambigSet.add( tempTempString )
+                    elif tempTempString in tempDict and tempDict[tempTempString]!=value:
+                        if Globals.verbosityLevel > 3: logging.info( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempString )
+                        ambigSet.add( tempTempString )
+                    else:
+                        tempDict[tempTempString] = value
+            tempString = tempString[:-1] # Drop off another letter
+    # end of expandAbbrevs
+
+    assert( systemName )
+    assert( divisionsNamesList ); assert( booknameLeadersDict ); assert( bookNamesDict )
+    assert( bookList )
+
+    if Globals.verbosityLevel > 2: print( "  Expanding %s input abbreviations (for %i books)..." % ( systemName, len(bookList) ) )
+
+    # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
+    UCBNLeadersDict = {}
+    for leader in booknameLeadersDict:
+        UCLeader = leader.upper()
+        assert( UCLeader not in UCBNLeadersDict )
+        UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
+    #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
+
+    # Secondly make a set of the given allowed names
+    divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
+    for k,entryDict in enumerate(divisionsNamesList):
+        for field in entryDict["inputFields"]:
+            UCField = field.upper()
+            if UCField in divNameInputDict or UCField in bkNameInputDict:
+                logging.warning( "Have duplicate entries of '%s' in divisionsNames for %s" % ( UCField, systemName ) )
+                ambigSet.add( UCField )
+            divNameInputDict[UCField] = k # Store the index into divisionsNamesList
+    for refAbbrev in bookNamesDict.keys():
+        if refAbbrev in bookList:
+            for field in bookNamesDict[refAbbrev]["inputFields"]: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
+                UCField = field.upper()
+                if UCField in divNameInputDict or UCField in bkNameInputDict:
+                    logging.warning( "Have duplicate entries of '%s' in divisions and book names for %s" % ( UCField, systemName ) )
+                    ambigSet.add( UCField )
+                bkNameInputDict[UCField] = refAbbrev # Store the index to the book
+    #print( 'amb', len(ambigSet), ambigSet )
+
+    # Now expand the divisions names
+    #
+    # We do this by replacing "2 " with alternatives like "II " and "Saint" with "Snt" and "St" (as entered in the XML file)
+    #   At the same time, we progressively drop letters off the end until the (UPPER CASE) name becomes ambiguous
+    #       We also remove internal spaces
+    #
+    # We add all unambiguous names to tempDict
+    # We list ambiguous names in ambigSet so that they can be removed from tempDict after all entries have been processed
+    #   (This is because we might not discover the ambiguity until later in processing the list)
+    #
+    # NOTE: In this code, division names and book names share a common ambiguous list
+    #           If they are only ever entered into separate fields, the ambiguous list could be split into two
+    #               i.e., they wouldn't be ambiguous in context
+    #
+    #print( "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
+    tempDNDict = {}
+    for UCField in divNameInputDict.keys():
+        expandAbbrevs( UCField, divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet  )
+        for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
+            if UCField.startswith( leader ):
+                for replacementLeader in UCBNLeadersDict[leader]:
+                    expandAbbrevs( UCField.replace(leader,replacementLeader), divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet )
+    #print ( '\ntempDN', len(tempDNDict), tempDNDict )
+    #print( '\namb2', len(ambigSet), ambigSet )
+
+    #print( "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
+    tempBNDict = {}
+    for UCField in bkNameInputDict.keys():
+        expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
+        for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
+            if UCField.startswith( leader ):
+                for replacementLeader in UCBNLeadersDict[leader]:
+                    expandAbbrevs( UCField.replace(leader,replacementLeader), bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet )
+    #print ( '\ntempBN', len(tempBNDict) )
+    #print( '\namb3', len(ambigSet), ambigSet )
+
+    # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
+    for field in tempDNDict:
+        if field not in ambigSet:
+            assert( field not in divNameInputDict )
+            divNameInputDict[field] = tempDNDict[field]
+    #print( "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
+    for field in tempBNDict:
+        if field not in ambigSet:
+            assert( field not in bkNameInputDict )
+            bkNameInputDict[field] = tempBNDict[field]
+    #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
+
+    # Now sort both dictionaries to be longest string first
+    sortedDNDict = OrderedDict( sorted(divNameInputDict.items(), key=lambda s: -len(s[0])) )
+    sortedBNDict = OrderedDict( sorted( bkNameInputDict.items(), key=lambda s: -len(s[0])) )
+
+    # Finally, return the expanded input fields
+    return sortedDNDict, sortedBNDict
+# end of expandBibleNamesInputs
+
+
+
 @singleton # Can only ever have one instance
 class BibleBooksNamesSystems:
     """
@@ -634,7 +661,7 @@ class BibleBooksNamesSystems:
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts: # Don't do this unnecessarily
             self.__bbnsc.loadSystems( XMLFilepath ) # Load the XML (if not done already)
-            self.__bbnsc.expandInputs() # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+            #self.__bbnsc.expandInputs() # Expand the inputAbbreviations to find all shorter unambiguous possibilities
             self.__DataDicts, self.__ExpandedDicts = self.__bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
             del self.__bbnsc # Now the convertor class (that handles the XML) is no longer needed
         return self
@@ -658,14 +685,24 @@ class BibleBooksNamesSystems:
         return [x for x in self.__DataLists]
     # end of getAvailableBooksNamesSystemNames
 
-    def getBooksNamesSystem( self, systemName ):
+    def getBooksNamesSystem( self, systemName, bookList=None ):
         """ Returns two dictionaries and a list object."""
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
-            if self.__ExpandedDicts: assert( len(self.__ExpandedDicts[systemName]) == 2 )
-            return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataDicts[systemName][2], self.__ExpandedDicts[systemName][0] if self.__ExpandedDicts else {}, self.__ExpandedDicts[systemName][1] if self.__ExpandedDicts else {}
-        # else
-        logging.error( "No '%s' system in Bible Book Orders" % systemName )
+            divisionsNamesList, booknameLeadersDict, bookNamesDict = self.__DataDicts[systemName] # unpack it so it's clearer what we're doing here
+            if bookList is None:
+                if self.__ExpandedDicts:
+                    assert( len(self.__ExpandedDicts[systemName]) == 2 )
+                    return divisionsNamesList, booknameLeadersDict, bookNamesDict, self.__ExpandedDicts[systemName][0], self.__ExpandedDicts[systemName][1]
+                # else we haven't done any previous input abbreviation expansion
+                return divisionsNamesList, booknameLeadersDict, bookNamesDict, {}, {}
+            # else we were given a booklist so we need to expand the input abbreviations here now
+            if self.__ExpandedDicts: logging.warning( "This %s book names system was already expanded, but never mind :)" % systemName )
+            sortedDNDict, sortedBNDict = expandBibleNamesInputs( systemName, divisionsNamesList, booknameLeadersDict, bookNamesDict, bookList )
+            #print( sortedBNDict )
+            return divisionsNamesList, booknameLeadersDict, bookNamesDict, sortedDNDict, sortedBNDict
+        # else we couldn't find the requested system name
+        logging.error( "No '%s' system in Bible Books Names Systems" % systemName )
         if Globals.verbosityLevel > 2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
     # end of getBooksNamesSystem
 
@@ -681,14 +718,17 @@ class BibleBooksNamesSystem:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self, systemName ):
+    def __init__( self, systemName, bookList=None ):
         """
-        Constructor: 
+        Grabs a particular BibleBooksNames system from the singleton object which contains all of the known books names systems.
+            The optional book list is used for determining non-ambiguous bookname abbreviations.
         """
         self.__systemName = systemName
         self.__languageCode = systemName.split('_',1)[0]
         self.__bnss = BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        self.__divisionsNamesList, self.__booknameLeadersDict, self.__bookNamesDict, self.__sortedDivisionNamesDict, self.__sortedBookNamesDict = self.__bnss.getBooksNamesSystem( self.__systemName )
+        result = self.__bnss.getBooksNamesSystem( self.__systemName, bookList )
+        if result is not None:
+            self.__divisionsNamesList, self.__booknameLeadersDict, self.__bookNamesDict, self.__sortedDivisionNamesDict, self.__sortedBookNamesDict = result
     # end of __init__
 
     def __str__( self ):
@@ -715,7 +755,27 @@ class BibleBooksNamesSystem:
         return self.__systemName
     # end of getBooksNamesSystemName
 
-    # TODO: Add useful routines in here
+    def getBBB( self, bookNameOrAbbreviation ):
+        """ Get the referenceAbbreviation from the given book name or abbreviation.
+                (Automatically converts to upper case before comparing strings.) """
+        assert( bookNameOrAbbreviation )
+        upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
+        if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
+            return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
+        #print( "getBBB", bookNameOrAbbreviation, upperCaseBookNameOrAbbreviation )
+        #myList = []
+        #for key in self.__sortedBookNamesDict.keys():
+        #    if key.startswith( upperCaseBookNameOrAbbreviation[0] ): myList.append( key )
+        #print( "List is", myList )
+    # end of getBBB
+
+    def getShortBookName( self, BBB ):
+        """ Get the short book name from the given referenceAbbreviation. """
+        assert( len(BBB) == 3 )
+        return self.__bookNamesDict[BBB]['defaultName']
+    # end of getShortBookName
+
+    def getit( self ): return self.__sortedBookNamesDict
 # end of BibleBookNamesSystem class
 
 
@@ -726,16 +786,17 @@ def main():
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v%s" % ( versionString ) )
-    parser.add_option("-x", "--expand", action="store_true", dest="expand", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
+    parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
 
+    sampleBookList = ['JDG','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     if Globals.commandLineOptions.export:
         bbnsc = _BibleBooksNamesSystemsConvertor().loadSystems() # Load the XML
-        if Globals.commandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
-            bbnsc.expandInputs()
+        if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+            bbnsc.expandInputs( sampleBookList )
         bbnsc.exportDataToPython() # Produce the .py tables
         bbnsc.exportDataToJSON() # Produce a json output file
         bbnsc.exportDataToC() # Produce the .h and .c tables
@@ -744,8 +805,8 @@ def main():
         # Demo the convertor object
         bbnsc = _BibleBooksNamesSystemsConvertor().loadSystems() # Load the XML
         print( bbnsc ) # Just print a summary
-        if Globals.commandLineOptions.expand: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
-            bbnsc.expandInputs()
+        if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+            bbnsc.expandInputs( sampleBookList )
             print( bbnsc ) # Just print a summary
 
         # Demo the BibleBooksNamesSystems object
@@ -753,8 +814,16 @@ def main():
         print( bbnss ) # Just print a summary
 
         # Demo the BibleBooksNamesSystem object
-        bbns = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
-        print( bbns ) # Just print a summary
+        bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
+        print( bbns1 ) # Just print a summary
+
+        # Demo the BibleBooksNamesSystem object with a book list
+        bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
+        print( bbns2 ) # Just print a summary
+        #names = []
+        #for name in bbns2.getit():
+        #    if name[0]=='J': names.append( name )
+        #print( names )
 # end of main
 
 if __name__ == '__main__':

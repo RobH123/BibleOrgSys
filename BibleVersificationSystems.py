@@ -4,9 +4,9 @@
 # BibleVersificationSystems.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-27 (also update versionString below)
+#   Last modified: 2011-01-05 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.33"
+versionString = "0.35"
 
 
 import os, logging
@@ -684,24 +684,24 @@ class BibleVersificationSystems:
         return result
     # end of __str__
 
-    def getAvailableSystemNames( self ):
+    def getAvailableVersificationSystemNames( self ):
         """ Returns a list of available system name strings. """
         return [x for x in self._DataDict]
-    # end of getAvailableSystemNames
+    # end of getAvailableVersificationSystemNames
 
-    def isValidSystemName( self, systemName ):
+    def isValidVersificationSystemName( self, systemName ):
         """ Returns True or False. """
         return systemName in self._DataDict
-    # end of isValidSystemName
+    # end of isValidVersificationSystemName
 
-    def getSystem( self, systemName ):
+    def getVersificationSystem( self, systemName ):
         """ Returns the dictionary for the requested system. """
         if systemName in self._DataDict:
             return self._DataDict[systemName]
         # else
-        logging.error( "No '%s' system in Bible Book Orders" % systemName )
+        logging.error( "No '%s' system in Bible Versification Systems" % systemName )
         if Globals.verbosityLevel > 2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
-    # end of getSystem
+    # end of getVersificationSystem
 # end of BibleVersificationSystems class
 
 
@@ -718,7 +718,9 @@ class BibleVersificationSystem:
         """
         self._systemName = systemName
         self._bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        self._ChapterDataDict, self._OmittedVersesDict = self._bvss.getSystem( self._systemName )
+        result = self._bvss.getVersificationSystem( self._systemName )
+        if result is not None:
+            self.__chapterDataDict, self.__omittedVersesDict = result
     # end of __init__
 
     def __str__( self ):
@@ -737,29 +739,37 @@ class BibleVersificationSystem:
     def getVersificationSystemName( self ):
         """ Return the book order system name. """
         return self._systemName
-    # end of getSystemName
+    # end of getVersificationSystemName
 
     def numAvailableBooks( self ):
         """ Returns the number of available books in the versification system.
             NOTE: This value is not useful for finding the number of books in a particular Bible. """
-        return len( self._ChapterDataDict )
+        return len( self.__chapterDataDict )
     # end of numAvailableBooks
 
     def getNumChapters( self, BBB ):
         """ Returns the number of chapters (int) in the given book. """
-        return int( self._ChapterDataDict[BBB]['numChapters'] )
+        return int( self.__chapterDataDict[BBB]['numChapters'] )
     # end of getNumChapters
 
     def getNumVerses( self, BBB, C ):
         """ Returns the number of verses (int) in the given book and chapter. """
-        return int( self._ChapterDataDict[BBB][C] )
+        if isinstance(C, int): # Just double-check the parameter
+            logging.debug( "BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with %s %i" % (BBB,C) )
+            C = str( C )
+        return int( self.__chapterDataDict[BBB][C] )
     # end of getNumVerses
+
+    def isSingleChapterBook( self, BBB ):
+        """ Returns True/False to indicate if this book only contains a single chapter. """
+        return self.__chapterDataDict[BBB]['numChapters'] == '1'
+    # end of isSingleChapterBook
 
     def getNumVersesList( self, BBB ):
         """ Returns a list containing an integer for each chapter indicating the number of verses. """
         myList = []
-        for x in self._ChapterDataDict[BBB].keys():
-            if x!='numChapters': myList.append( int( self._ChapterDataDict[BBB][x] ) )
+        for x in self.__chapterDataDict[BBB].keys():
+            if x!='numChapters': myList.append( int( self.__chapterDataDict[BBB][x] ) )
         return myList
     # end of getNumVersesList
 
@@ -768,15 +778,100 @@ class BibleVersificationSystem:
 
         If fullRefs are requested, the list consists of (BBB,C,V) tuples instead. """
         if fullRefs:
-            return [(BBB,C,V) for (C,V) in self._OmittedVersesDict[BBB]]
+            return [(BBB,C,V) for (C,V) in self.__omittedVersesDict[BBB]]
         # else
-        return self._OmittedVersesDict[BBB]
+        return self.__omittedVersesDict[BBB]
     # end of getOmittedVerseList
 
-    def isOmittedVerse( self, BBB, C, V ):
-        """ Returns True/False indicating if the given reference in omitted in this system. """
-        return (C,V) in self._OmittedVersesDict[BBB]
+    def isOmittedVerse( self, referenceTuple ):
+        """ Returns True/False indicating if the given reference is omitted in this system. """
+        BBB, C, V, S = referenceTuple
+        if isinstance(C, int): # Just double-check the parameter
+            logging.debug( "BibleVersificationSystem.isOmittedVerse was passed an integer chapter instead of a string with %s %i" % (BBB,C) )
+            C = str( C )
+        if isinstance(V, int): # Just double-check the parameter
+            logging.debug( "BibleVersificationSystem.isOmittedVerse was passed an integer verse instead of a string with %s %s:%i" % (BBB,C,V) )
+            V = str( V )
+        return (C,V) in self.__omittedVersesDict[BBB]
     # end of isOmittedVerse
+
+    def isValidBCVRef( self, referenceTuple, referenceString=None, errorMessages=False ):
+        """ Returns True/False indicating if the given reference is valid in this system. """
+        BBB, C, V, S = referenceTuple
+        myReferenceString = (" (from '%s')" % referenceString) if referenceString is not None else ''
+
+        if BBB in self.__chapterDataDict:
+            if C in self.__chapterDataDict[BBB]:
+                if not V: return True # NOTE: This allows blank verse numbers (as a reference can refer to an entire chapter)
+                if int(V) <= int(self.__chapterDataDict[BBB][C]):
+                    if not self.isOmittedVerse( referenceTuple ):
+                        return True
+                    elif errorMessages: logging.error( "%s %s:%s is omitted in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                elif errorMessages: logging.error( "%s %s:%s is invalid verse in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+            elif errorMessages: logging.error( "%s %s:%s is invalid chapter in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+        elif errorMessages: logging.error( "%s %s:%s is invalid book in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+        return False
+    # end of isValidBCVRef
+
+    def expandCVRange( self, startRef, endRef, referenceString=None, errorMessages=False ):
+        """ Returns a list containing all valid references (inclusive) between the given values. """
+        assert( startRef and len(startRef)==4 )
+        assert( endRef and len(endRef)==4 )
+        assert( startRef[0] == endRef[0] ) # Assume that the book codes are identical
+
+        haveErrors, haveWarnings = False, False
+        myReferenceString = (" (from '%s')" % referenceString) if referenceString is not None else ''
+        if not self.isValidBCVRef( startRef, referenceString, errorMessages ):
+            haveErrors = True
+        if not self.isValidBCVRef( endRef, referenceString, errorMessages ):
+            haveErrors = True
+        if haveErrors: return None
+
+        (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = startRef, endRef
+        C1int, C2int = int(C1), int(C2)
+        #if C1int > self.getNumChapters( BBB1 ):
+        #    if errorMessages: logging.error( "Invalid %s chapter number at start of range in %s%s" % ( C1, BBB1, myReferenceString ) )
+        #    haveErrors = True
+        #if C2int > self.getNumChapters( BBB2 ):
+        #    if errorMessages: logging.error( "Invalid %s chapter number at end of range in %s%s" % ( C2, BBB2, myReferenceString ) )
+        #    haveErrors = True
+        if C1int > C2int:
+            if errorMessages: logging.error( "Chapter range out of order (%s before %s) in %s%s" % ( C1, C2, BBB1, myReferenceString ) )
+            haveErrors = True
+        if haveErrors: return None
+
+        if V1: V1int = int(V1)
+        else: V1int = 1 # Start with verse one if no verse specified (e.g., for a chapter range)
+        if V2: V2int = int(V2)
+        else: V2int = self.getNumVerses( BBB2, C2 ) # End with the last verse if no verse specified (e.g., for a chapter range)
+        if C1int==C2int and V1int>=V2int:
+            if errorMessages: logging.error( "Verse range out of order (%s before %s) in %s %s%s" % ( V1, V2, BBB1, C1, myReferenceString ) )
+            haveErrors = True
+        if haveErrors: return None
+
+        resultList = []
+        for Cint in range( C1int, C2int+1 ):
+            if Cint==C1int and Cint==C2int: # We're on the only chapter
+                startVint = V1int
+                endVint = V2int
+            elif Cint==C1int: # We're on the first chapter
+                startVint = V1int
+                endVint = self.getNumVerses( BBB1, str(Cint) )
+            elif Cint==C2int: # We're on the final chapter
+                startVint = 1
+                endVint = V2int
+            else: # Must be an inbetween chapter
+                startVint = 1
+                endVint = self.getNumVerses( BBB1, str(Cint) )
+            for Vint in range( startVint, endVint+1 ):
+                if Cint==C1int and Vint==V1int: S = S1
+                elif Cint==C2int and Vint==V2int: S = S2
+                else: S = ''
+                resultList.append( (BBB1, str(Cint), str(Vint), S,) )
+
+        #print( startRef, endRef, resultList, haveErrors, haveWarnings )
+        return resultList #, haveErrors, haveWarnings
+    # end of expandCVRange
 # end of BibleVersificationSystem class
 
 
@@ -806,7 +901,7 @@ def main():
         # Demo the BibleVersificationSystems object
         bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( bvss ) # Just print a summary
-        print( "Available system names are: %s" % bvss.getAvailableSystemNames() )
+        print( "Available system names are: %s" % bvss.getAvailableVersificationSystemNames() )
 
         # Demo a BibleVersificationSystem object -- this is the one most likely to be wanted by a user
         bvs = BibleVersificationSystem( "NLT96" )
@@ -819,9 +914,11 @@ def main():
             print( "%s %s has %i verses" % (BBB,C,bvs.getNumVerses(BBB,C)) )
             BBB = 'DAN'
             print( "Verse list for the %i chapters in %s is: %s" % (bvs.getNumChapters(BBB),BBB,bvs.getNumVersesList(BBB)) )
-            BBB = 'MRK'; C='7'; V='16'
-            print( "%s %s %s is omitted: %s" % (BBB,C,V,bvs.isOmittedVerse(BBB,C,V)) )
+            BBB = 'MRK'; C='7'; V='16'; S=''; refTuple = (BBB,C,V,S,)
+            print( "%s %s %s %s is omitted: %s" % (BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
             print( "Omitted verses in %s are: %s" % (BBB,bvs.getOmittedVerseList(BBB)) )
+            for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
+                print( "Expanding %s gives %s" % ( myRange, bvs.expandCVRange( myRange[0],myRange[1],errorMessages=True) ) )
 # end of main
 
 if __name__ == '__main__':

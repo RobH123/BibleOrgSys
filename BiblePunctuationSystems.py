@@ -4,9 +4,9 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-27 (also update versionString below)
+#   Last modified: 2011-01-01 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.10"
+versionString = "0.15"
 
 
 import os, logging
@@ -462,17 +462,17 @@ class BiblePunctuationSystems:
         """
         Constructor: 
         """
-        self._bpsc = _BiblePunctuationSystemsConvertor()
-        self._Dict = None # We'll import into this in loadData
+        self.__bpsc = _BiblePunctuationSystemsConvertor()
+        self.__Dict = None # We'll import into this in loadData
     # end of __init__
 
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self._Dict: # Don't do this unnecessarily
+        if self.__Dict is None or not self.__Dict: # Don't do this unnecessarily
             if XMLFolder is not None: logging.warning( "Bible punctuation systems are already loaded -- your given folder of '%s' was ignored" % XMLFolder )
-            self._bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-            self._Dict = self._bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self._bpsc # Now the convertor class (that handles the XML) is no longer needed
+            self.__bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+            self.__Dict = self.__bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            del self.__bpsc # Now the convertor class (that handles the XML) is no longer needed
         return self
     # end of loadData
 
@@ -483,28 +483,34 @@ class BiblePunctuationSystems:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        assert( self.__Dict )
         result = "BiblePunctuationSystems object"
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self._Dict) )
+        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.__Dict) )
         return result
     # end of __str__
 
     def getAvailablePunctuationSystemNames( self ):
         """ Returns a list of available system name strings. """
-        return [x for x in self._Dict]
+        assert( self.__Dict )
+        return [x for x in self.__Dict]
     # end of getAvailablePunctuationSystemNames
 
     def isValidPunctuationSystemName( self, systemName ):
         """ Returns True or False. """
-        return systemName in self._Dict
+        assert( self.__Dict )
+        assert( systemName )
+        return systemName in self.__Dict
     # end of isValidPunctuationSystemName
 
     def getPunctuationSystem( self, systemName ):
         """ Returns the corresponding dictionary."""
-        if systemName in self._Dict:
-            return self._Dict[systemName]
+        assert( self.__Dict )
+        assert( systemName )
+        if systemName in self.__Dict:
+            return self.__Dict[systemName]
         # else
-        logging.error( "No '%s' system in Bible Book Orders" % systemName )
-        if Globals.verbosityLevel>2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
+        logging.error( "No '%s' system in Bible Punctuation Systems" % systemName )
+        if Globals.verbosityLevel>2: logging.error( "  Available systems are %s" % self.getAvailableSystemNames() )
     # end of getPunctuationSystem
 # end of BiblePunctuationSystems class
 
@@ -520,9 +526,11 @@ class BiblePunctuationSystem:
         """
         Constructor: 
         """
-        self._systemName = systemName
-        self._bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        self._Dict = self._bpss.getPunctuationSystem( self._systemName )
+        assert( systemName )
+        self.__systemName = systemName
+        self.__bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        self.__punctuationDict = self.__bpss.getPunctuationSystem( self.__systemName )
+        #print( "xxx", self.__punctuationDict )
     # end of __init__
 
     def __str__( self ):
@@ -533,24 +541,33 @@ class BiblePunctuationSystem:
         @rtype: string
         """
         result = "BiblePunctuationSystem object"
-        result += ('\n' if result else '') + "  %s Bible punctuation system" % ( self._systemName )
-        result += ('\n' if result else '') + "  Num values = %i" % ( len(self._Dict) )
+        result += ('\n' if result else '') + "  %s Bible punctuation system" % ( self.__systemName )
+        result += ('\n' if result else '') + "  Num values = %i" % ( len(self.__punctuationDict) )
         return result
     # end of __str__
 
     def getPunctuationSystemName( self ):
         """ Return the book order system name. """
-        return self._systemName
+        return self.__systemName
     # end of getPunctuationSystemName
+
+    def getPunctuationDict( self ):
+        """ Returns the entire punctuation dictionary. """
+        return self.__punctuationDict
+    # end of getPunctuationDict
 
     def getAvailablePunctuationValueNames( self ):
         """ Returns a list of available value name strings. """
-        return [x for x in self._Dict]
+        return [x for x in self.__punctuationDict]
     # end of getAvailableValueNames
 
     def getPunctuationValue( self, name ):
         """ Returns the value for the name. """
-        return self._Dict[name]
+        assert( name )
+        #print( "yyy", self.__punctuationDict )
+        if name in self.__punctuationDict: return self.__punctuationDict[name]
+        logging.error( "No '%s' value in %s punctuation system" % (name,self.__systemName) )
+        if Globals.verbosityLevel > 3: logging.error( "  Available values are: %s" % (self.getAvailablePunctuationValueNames()) )
     # end of getValue
 # end of BiblePunctuationSystem class
 

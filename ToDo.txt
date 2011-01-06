@@ -1,12 +1,26 @@
 # ToDo.txt
 #
-# Last modified: 2010-12-06
+# Last modified: 2010-12-27
 #
 # Top jobs will be done sooner
 #
 
+Bring over BibleReferences.py from BibleNameChecker
+    Then tidy-up USFMBible.py to use it
+
+Handle specification of Bible versions (i.e., fix BibleOrganizationalSystems.py) with
+    Header
+        web link
+        download file format type
+    What about long book names?
+
+Think more about how best to do versification systems
+    include combined verses (e.g., 2-3)?
+
 Handle Versification mappings
     Define an internal/canonical versification system
+
+Study OXES
 
 Do scraping of versifications
     Scrape OSIS files
@@ -15,21 +29,8 @@ Do scraping of versifications
     Scrape Zephania
     Scrape Biola modules
 
-Handle specification Bible versions (i.e., fix BibleOrganizationalSystems.py) with
-    Header
-        language
-        publication date
-        web link
-        download file format type
-    Book order (at the same time it specifies which books are included)
-    Versification scheme
-    Book names (and allowed book name abbreviations)
-        What about long book names?
-
 Define an internal/canonical Bible object
     Use stand-off formatting
-
-Bring over BibleReferences.py from BibleNameChecker
 
 List of typical paragraph breaks
 
