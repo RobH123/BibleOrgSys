@@ -4,9 +4,9 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2010-12-27 (also update versionString below)
+#   Last modified: 2011-01-11 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import os, logging
@@ -227,6 +227,11 @@ class _BibleBookOrdersConvertor:
                 result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
         return result
     # end of __str__
+
+    def __len__( self ):
+        """ Returns the number of systems loaded. """
+        return len( self.XMLSystems )
+    # end of __len__
 
     def importDataToPython( self ):
         """
@@ -524,6 +529,12 @@ class BibleBookOrderSystems:
         return result
     # end of __str__
 
+    def __len__( self ):
+        """ Returns the number of systems loaded. """
+        assert( len(self.__DataDicts) == len(self.__DataLists) )
+        return len( self.__DataDicts )
+    # end of __len__
+
     def getAvailableBookOrderSystemNames( self ):
         """ Returns a list of available system name strings. """
         return [x for x in self.__DataLists]
@@ -586,20 +597,30 @@ class BibleBookOrderSystem:
         return result
     # end of __str__
 
-    def getBookOrderSystemName( self ):
-        """ Return the book order system name. """
-        return self.__systemName
-    # end of getBookOrderSystemName
+    def __len__( self ):
+        """ Returns the number of books in this system. """
+        return len( self.__BookOrderList )
+    # end of __len__
 
     def numBooks( self ):
         """ Returns the number of books in this system. """
         return len( self.__BookOrderList )
     # end of numBooks
 
+    def __contains__( self, BBB ):
+        """ Returns True/False if the book is in this system. """
+        return BBB in self.__BookOrderList
+    # end of __contains__
+
     def containsBook( self, BBB ):
         """ Return True if the book is in this system. """
         return BBB in self.__BookOrderList
     # end of containsBook
+
+    def getBookOrderSystemName( self ):
+        """ Return the book order system name. """
+        return self.__systemName
+    # end of getBookOrderSystemName
 
     def getBookPosition( self, BBB ):
         """ Returns the book position number (1..n). """
@@ -615,6 +636,20 @@ class BibleBookOrderSystem:
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__BookOrderList
     # end of getBookList
+
+    def getNextBook( self, BBB ):
+        """ Returns the book (if any) after the given one. """
+        assert( BBB and len(BBB)==3 )
+        nextPosition = self.__BookOrderBookDict[BBB] + 1
+        if nextPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[nextPosition]
+    # end of getNextBook
+
+    def correctlyOrdered( self, BBB1, BBB2 ):
+        """ Returns True/False if the two books are in the correct order. """
+        assert( BBB1 and len(BBB1)==3 )
+        assert( BBB2 and len(BBB2)==3 )
+        return self.__BookOrderBookDict[BBB1] < self.__BookOrderBookDict[BBB2]
+    # end of correctlyOrdered
 # end of BibleBookOrderSystem class
 
 
@@ -644,6 +679,7 @@ def main():
         # Demo the BibleBookOrders object
         bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( bbos ) # Just print a summary
+        print( "Number of loaded systems: %i" % len(bbos) )
         print( "Available system names are: %s" % bbos.getAvailableBookOrderSystemNames() )
         systemName = "VulgateBible"
         print( "Number of books in %s is %i" % (systemName, bbos.numBooks(systemName) ) )
@@ -656,11 +692,18 @@ def main():
         bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )
         if bbo is not None:
             print( bbo ) # Just print a summary
-            print( "Num books is %i" % bbo.numBooks() )
+            print( "Num books is %i or %i" % (len(bbo), bbo.numBooks()) )
             print( "The 3rd book is %s" % bbo.getBookAtPosition(3) )
             print( "Contains Psalms: %s" % bbo.containsBook("PSA") )
             print( "Luke is book #%i" % bbo.getBookPosition("LUK") )
             print( "Book list is: %s" % bbo.getBookList() )
+            BBB = "TI1"
+            while True:
+                BBB2 = bbo.getNextBook( BBB )
+                if BBB2 is None: break
+                print( " Next book after %s is %s" % (BBB,BBB2) )
+                BBB = BBB2
+            
 # end of main
 
 if __name__ == '__main__':

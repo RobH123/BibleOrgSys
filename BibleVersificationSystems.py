@@ -4,7 +4,7 @@
 # BibleVersificationSystems.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-10 (also update versionString below)
+#   Last modified: 2011-01-11 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.36"
+versionString = "0.37"
 
 
 import os, logging
@@ -813,7 +813,7 @@ class BibleVersificationSystem:
         return False
     # end of isValidBCVRef
 
-    def expandCVRange( self, startRef, endRef, referenceString=None, wantErrorMessages=False ):
+    def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None, wantErrorMessages=False ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
@@ -827,18 +827,26 @@ class BibleVersificationSystem:
         if haveErrors: return None
 
         (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = startRef, endRef
+
+        # Check book details
+        if BBB1!=BBB2:
+            if bookOrderSystem is None:
+                if wantErrorMessages: logging.error( "Book order system not specified (range covers %s to %s)%s" % ( BBB1, BBB2, myReferenceString ) )
+                haveErrors = True
+                return None
+            if not bookOrderSystem.correctlyOrdered( BBB1, BBB2 ):
+                if wantErrorMessages: logging.error( "Book range out of order (%s before %s)%s" % ( BBB1, BBB2, myReferenceString ) )
+                haveErrors = True
+            if haveErrors: return None
+
+        # Check chapter details
         C1int, C2int = int(C1), int(C2)
-        #if C1int > self.getNumChapters( BBB1 ):
-        #    if wantErrorMessages: logging.error( "Invalid %s chapter number at start of range in %s%s" % ( C1, BBB1, myReferenceString ) )
-        #    haveErrors = True
-        #if C2int > self.getNumChapters( BBB2 ):
-        #    if wantErrorMessages: logging.error( "Invalid %s chapter number at end of range in %s%s" % ( C2, BBB2, myReferenceString ) )
-        #    haveErrors = True
         if BBB1==BBB2 and C1int > C2int:
             if wantErrorMessages: logging.error( "Chapter range out of order (%s before %s) in %s%s" % ( C1, C2, BBB1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
+        # Check verse details
         if V1: V1int = int(V1)
         else: V1int = 1 # Start with verse one if no verse specified (e.g., for a chapter range)
         if V2: V2int = int(V2)
@@ -849,24 +857,53 @@ class BibleVersificationSystem:
         if haveErrors: return None
 
         resultList = []
-        for Cint in range( C1int, C2int+1 ):
-            if Cint==C1int and Cint==C2int: # We're on the only chapter
-                startVint = V1int
-                endVint = V2int
-            elif Cint==C1int: # We're on the first chapter
-                startVint = V1int
-                endVint = self.getNumVerses( BBB1, str(Cint) )
-            elif Cint==C2int: # We're on the final chapter
-                startVint = 1
-                endVint = V2int
-            else: # Must be an inbetween chapter
-                startVint = 1
-                endVint = self.getNumVerses( BBB1, str(Cint) )
-            for Vint in range( startVint, endVint+1 ):
-                if Cint==C1int and Vint==V1int: S = S1
-                elif Cint==C2int and Vint==V2int: S = S2
-                else: S = ''
-                resultList.append( (BBB1, str(Cint), str(Vint), S,) )
+        if BBB1 == BBB2: # It's a chapter or verse range within the same book
+            for Cint in range( C1int, C2int+1 ):
+                if Cint==C1int and Cint==C2int: # We're on the only chapter
+                    startVint = V1int
+                    endVint = V2int
+                elif Cint==C1int: # We're on the first chapter
+                    startVint = V1int
+                    endVint = self.getNumVerses( BBB1, str(Cint) )
+                elif Cint==C2int: # We're on the final chapter
+                    startVint = 1
+                    endVint = V2int
+                else: # Must be an inbetween chapter
+                    startVint = 1
+                    endVint = self.getNumVerses( BBB1, str(Cint) )
+                for Vint in range( startVint, endVint+1 ):
+                    if Cint==C1int and Vint==V1int: S = S1
+                    elif Cint==C2int and Vint==V2int: S = S2
+                    else: S = ''
+                    resultList.append( (BBB1, str(Cint), str(Vint), S,) )
+        else: # it's a range that spans multiple books
+            BBB, Cfirst, Vfirst = BBB1, C1int, V1int
+            while BBB != BBB2: # Go to the end of this book
+                Clast = self.getNumChapters( BBB )
+                for Cint in range( Cfirst, Clast+1 ):
+                    Vlast = self.getNumVerses( BBB, str(Cint) )
+                    if Cint==Cfirst: # We're on the first chapter
+                        startVint = V1int
+                        endVint = Vlast
+                    else: # It's not the first chapter
+                        startVint = 1
+                        endVint = Vlast
+                    for Vint in range( startVint, endVint+1 ):
+                        if Cint==C1int and Vint==V1int: S = S1
+                        else: S = ''
+                        resultList.append( (BBB, str(Cint), str(Vint), S,) )
+                BBB, Cfirst, Vfirst = bookOrderSystem.getNextBook( BBB ), 1, 1
+            for Cint in range( 1, C2int+1 ): # Now finish the last book
+                if Cint==C2int: # We're on the final chapter
+                    startVint = 1
+                    endVint = V2int
+                else: # Must be an inbetween chapter
+                    startVint = 1
+                    endVint = self.getNumVerses( BBB1, str(Cint) )
+                for Vint in range( startVint, endVint+1 ):
+                    if Cint==C2int and Vint==V2int: S = S2
+                    else: S = ''
+                    resultList.append( (BBB2, str(Cint), str(Vint), S,) )
 
         #print( startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings

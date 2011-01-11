@@ -61,7 +61,7 @@ OXES is different again.
 """
 
 progName = "Bible References handler"
-versionString = "0.17"
+versionString = "0.18"
 
 
 import os, logging
@@ -577,7 +577,7 @@ class BibleReferenceList:
             if not self.__BibleOrganizationalSystem.isValidBCVRef( finishTuple, referenceString, wantErrorMessages=False ): # No error messages here because it will be caught at expandCVRange below
                 haveErrors = True # Just set this flag
             rangeTuple = (startTuple, finishTuple,)
-            verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, wantErrorMessages )
+            verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
             if verseList is not None: totalVerseList.extend( verseList )
             if rangeTuple in refList:
                 if wantErrorMessages: logging.warning( "Reference range %s is repeated in Bible reference '%s'" % ( rangeTuple, referenceString ) )
@@ -973,6 +973,23 @@ class BibleReferenceList:
         return status==9 and not haveErrors, haveWarnings, self.referenceList
     # end of parseReferenceString
 
+    def getReferenceList( self, expanded=False, wantErrorMessages=False ):
+        """ Returns the internal list of Bible references.
+
+            If expanded, fills out any ranges according to the specified versification system. """
+        if expanded:
+            expandedList = []
+            for refTuple in self.referenceList:
+                if len(refTuple) == 2: # it's a range
+                    startRefTuple, endRefTuple = refTuple
+                    expandedRange = self.__BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
+                    if expandedRange is not None: expandedList.extend( expandedRange )
+                else: expandedList.append( refTuple )
+            return expandedList
+        else:
+            return self.referenceList
+    # end of getReferenceList
+
     def getOSISRefList( self ):
         """ Converts our internal reference list to OSIS format.
                 OSIS defines reference ranges
@@ -1022,7 +1039,7 @@ class BibleReferenceList:
         for refTuple in self.referenceList:
             if len(refTuple) == 2: # it's a range
                 startRefTuple, endRefTuple = refTuple
-                expandedList = self.__BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple )
+                expandedList = self.__BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
                 if refTuple in expandedList: return True
             elif refTuple == refTuple: return True
         return False
@@ -1065,7 +1082,7 @@ class BibleReferenceList:
                         endTuple = (BBB, C, myV, S)
                         if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( endTuple, "%s %s:%s%s"%(BBB,C,myV,S), wantErrorMessages ):
                             haveErrors = True
-                        verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, wantErrorMessages=wantErrorMessages )
+                        verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
                         if verseList is not None: myList.extend( verseList )
                         status, myV = 0, ''
             if wantErrorMessages and (status>0 or myV): logging.error( "Invalid '%s' verse list/range given with %s %s:%s%s" % ( V, BBB, C, V, S ) )
@@ -1076,7 +1093,7 @@ class BibleReferenceList:
             for refTuple in self.referenceList:
                 if len(refTuple) == 2: # it's a range
                     startRefTuple, endRefTuple = refTuple
-                    expandedList = self.__BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple )
+                    expandedList = self.__BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
                     if myRefTuple in expandedList: return True
                     elif S is None:
                         for refTuple in expandedList:
@@ -1170,9 +1187,11 @@ def demo():
                 if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
                 print( "  From '%s' BRL got OSIS '%s'" % (ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
         # Special test case
-        for ref in ("1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22",  ):
+        for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22",  ):
             if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
             print( "  From '%s' BRL got OSIS '%s'" % (ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
+            print( BRL.getReferenceList() )
+            print( BRL.getReferenceList( expanded=True ) )
 
 if __name__ == '__main__':
     demo()

@@ -1,12 +1,9 @@
 # ToDo.txt
 #
-# Last modified: 2010-12-27
+# Last modified: 2011-01-11
 #
 # Top jobs will be done sooner
 #
-
-Bring over BibleReferences.py from BibleNameChecker
-    Then tidy-up USFMBible.py to use it
 
 Handle specification of Bible versions (i.e., fix BibleOrganizationalSystems.py) with
     Header
