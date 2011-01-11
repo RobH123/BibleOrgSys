@@ -321,21 +321,25 @@ See the supplied ReadMe.txt for more details.
     <defaultName>1 Samuel</defaultName>
     <defaultAbbreviation>1 Sam</defaultAbbreviation>
     <inputAbbreviation>1 Sml</inputAbbreviation>
+    <inputAbbreviation>1 Sl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SA2">
     <defaultName>2 Samuel</defaultName>
     <defaultAbbreviation>2 Sam</defaultAbbreviation>
     <inputAbbreviation>2 Sml</inputAbbreviation>
+    <inputAbbreviation>2 Sl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI1">
     <defaultName>1 Kings</defaultName>
     <defaultAbbreviation>1 Kgs</defaultAbbreviation>
     <inputAbbreviation>1 Kngs</inputAbbreviation>
+    <inputAbbreviation>1 Ks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI2">
     <defaultName>2 Kings</defaultName>
     <defaultAbbreviation>2 Kgs</defaultAbbreviation>
     <inputAbbreviation>2 Kngs</inputAbbreviation>
+    <inputAbbreviation>2 Ks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CH1">
     <defaultName>1 Chronicles</defaultName>

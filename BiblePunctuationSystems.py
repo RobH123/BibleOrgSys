@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-01 (also update versionString below)
+#   Last modified: 2011-01-11 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.15"
+versionString = "0.17"
 
 
 import os, logging
@@ -55,7 +55,7 @@ class _BiblePunctuationSystemsConvertor:
         self.treeTag = "BiblePunctuationSystem"
         self.headerTag = "header"
         self.mainElementTags = ( "booknameCase", "booknameLength", "punctuationAfterBookAbbreviation", "bookChapterSeparator", "spaceAllowedAfterBCS",
-                    "chapterBridgeCharacter", "chapterVerseSeparator", "verseSeparator", "verseBridgeCharacter", "chapterSeparator", "bookSeparator" )
+                    "chapterVerseSeparator", "verseSeparator", "bookBridgeCharacter", "chapterBridgeCharacter", "verseBridgeCharacter", "chapterSeparator", "bookSeparator" )
 
         # These fields are used for automatically checking/validating the XML
         self.compulsoryAttributes = ()
@@ -229,6 +229,7 @@ class _BiblePunctuationSystemsConvertor:
             for element in self._XMLSystems[punctuationSystemCode]["tree"]:
                 tag = element.tag
                 text = element.text
+                if text is None: text = '' # If a tag was given, but contained an empty string, indicate that 
                 if tag in punctuationDict: logging.error( "Multiple %s entries in %s punctuation system" % ( tag, punctuationSystemCode ) )
                 punctuationDict[tag] = text
 

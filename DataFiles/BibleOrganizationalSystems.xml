@@ -57,6 +57,7 @@ See the supplied ReadMe.txt for more details.
     </work>
   </header>
 
+
 <!-- Original Bible texts -->
   <BibleOrganizationalSystem type="original">
     <referenceAbbreviation>HEB</referenceAbbreviation>
@@ -78,16 +79,6 @@ See the supplied ReadMe.txt for more details.
     <booksNamesSystem>None</booksNamesSystem>
   </BibleOrganizationalSystem>
 
-  <BibleOrganizationalSystem type="original">
-    <referenceAbbreviation>MBT</referenceAbbreviation>
-    <languageCode>mbt</languageCode>
-    <name>Matigsalug</name>
-    <publicationDate>2010</publicationDate>
-    <versificationSystem>RSV52</versificationSystem>
-    <punctuationSystem>English</punctuationSystem>
-    <bookOrderSystem>EuropeanProtestantBible</bookOrderSystem>
-    <booksNamesSystem>mbt</booksNamesSystem>
-  </BibleOrganizationalSystem>
 
 <!-- Translations from originals -->
   <BibleOrganizationalSystem type="translation">
@@ -125,6 +116,19 @@ See the supplied ReadMe.txt for more details.
     <booksNamesSystem>eng_traditional</booksNamesSystem>
   </BibleOrganizationalSystem>
 
+  <BibleOrganizationalSystem type="translation">
+    <referenceAbbreviation>MBT</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug</name>
+    <publicationDate>2010</publicationDate>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>Matigsalug</punctuationSystem>
+    <bookOrderSystem>EuropeanProtestantBible</bookOrderSystem>
+    <booksNamesSystem>mbt</booksNamesSystem>
+  </BibleOrganizationalSystem>
+
+
+<!-- Revisions of earlier translations -->
   <BibleOrganizationalSystem type="revision">
     <referenceAbbreviation>KJV-1769</referenceAbbreviation>
     <languageCode>eng</languageCode>
@@ -149,6 +153,7 @@ See the supplied ReadMe.txt for more details.
     <booksNamesSystem>eng_traditional</booksNamesSystem>
     <derivedFrom>ASV</derivedFrom>
   </BibleOrganizationalSystem>
+
 
 <!-- Bible editions that use one or more of the above translations and/or originals -->
   <BibleOrganizationalSystem type="edition">

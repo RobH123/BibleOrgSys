@@ -4,7 +4,7 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2011-01-05 (also update versionString below)
+#   Last modified: 2011-01-10 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 """
 
 progName = "Bible Organization Systems handler"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import logging, os.path
@@ -623,12 +623,12 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         logging.error( "%s Bible Organizational System has no %s specified" % (self.getOrganizationalSystemName(),valueName) )
     # end of getOrganizationalSystemValue
 
-    def isValidBCVRef( self, referenceTuple, referenceString, errorMessages=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages=False ):
         """ Returns True/False indicating if the given reference is valid in this system. """
         BBB, C, V, S = referenceTuple
         if BibleBookOrderSystem.containsBook( self, BBB ):
-            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, errorMessages )
-        elif errorMessages: logging.error( "%s %s:%s is invalid book for reference '%s' in %s versification system for %s" % (BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages )
+        elif wantErrorMessages: logging.error( "%s %s:%s is invalid book for reference '%s' in %s versification system for %s" % (BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
 # end of BibleOrganizationalSystem class
 

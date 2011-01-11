@@ -4,7 +4,7 @@
 # BibleVersificationSystems.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-05 (also update versionString below)
+#   Last modified: 2011-01-10 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.35"
+versionString = "0.36"
 
 
 import os, logging
@@ -795,7 +795,7 @@ class BibleVersificationSystem:
         return (C,V) in self.__omittedVersesDict[BBB]
     # end of isOmittedVerse
 
-    def isValidBCVRef( self, referenceTuple, referenceString=None, errorMessages=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString=None, wantErrorMessages=False ):
         """ Returns True/False indicating if the given reference is valid in this system. """
         BBB, C, V, S = referenceTuple
         myReferenceString = (" (from '%s')" % referenceString) if referenceString is not None else ''
@@ -806,37 +806,36 @@ class BibleVersificationSystem:
                 if int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True
-                    elif errorMessages: logging.error( "%s %s:%s is omitted in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-                elif errorMessages: logging.error( "%s %s:%s is invalid verse in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-            elif errorMessages: logging.error( "%s %s:%s is invalid chapter in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-        elif errorMessages: logging.error( "%s %s:%s is invalid book in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                    elif wantErrorMessages: logging.error( "%s %s:%s is omitted in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                elif wantErrorMessages: logging.error( "%s %s:%s is invalid verse in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+            elif wantErrorMessages: logging.error( "%s %s:%s is invalid chapter in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+        elif wantErrorMessages: logging.error( "%s %s:%s is invalid book in %s versification system%s" % (BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
         return False
     # end of isValidBCVRef
 
-    def expandCVRange( self, startRef, endRef, referenceString=None, errorMessages=False ):
+    def expandCVRange( self, startRef, endRef, referenceString=None, wantErrorMessages=False ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
-        assert( startRef[0] == endRef[0] ) # Assume that the book codes are identical
 
         haveErrors, haveWarnings = False, False
         myReferenceString = (" (from '%s')" % referenceString) if referenceString is not None else ''
-        if not self.isValidBCVRef( startRef, referenceString, errorMessages ):
+        if not self.isValidBCVRef( startRef, referenceString, wantErrorMessages ):
             haveErrors = True
-        if not self.isValidBCVRef( endRef, referenceString, errorMessages ):
+        if not self.isValidBCVRef( endRef, referenceString, wantErrorMessages ):
             haveErrors = True
         if haveErrors: return None
 
         (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = startRef, endRef
         C1int, C2int = int(C1), int(C2)
         #if C1int > self.getNumChapters( BBB1 ):
-        #    if errorMessages: logging.error( "Invalid %s chapter number at start of range in %s%s" % ( C1, BBB1, myReferenceString ) )
+        #    if wantErrorMessages: logging.error( "Invalid %s chapter number at start of range in %s%s" % ( C1, BBB1, myReferenceString ) )
         #    haveErrors = True
         #if C2int > self.getNumChapters( BBB2 ):
-        #    if errorMessages: logging.error( "Invalid %s chapter number at end of range in %s%s" % ( C2, BBB2, myReferenceString ) )
+        #    if wantErrorMessages: logging.error( "Invalid %s chapter number at end of range in %s%s" % ( C2, BBB2, myReferenceString ) )
         #    haveErrors = True
-        if C1int > C2int:
-            if errorMessages: logging.error( "Chapter range out of order (%s before %s) in %s%s" % ( C1, C2, BBB1, myReferenceString ) )
+        if BBB1==BBB2 and C1int > C2int:
+            if wantErrorMessages: logging.error( "Chapter range out of order (%s before %s) in %s%s" % ( C1, C2, BBB1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -844,8 +843,8 @@ class BibleVersificationSystem:
         else: V1int = 1 # Start with verse one if no verse specified (e.g., for a chapter range)
         if V2: V2int = int(V2)
         else: V2int = self.getNumVerses( BBB2, C2 ) # End with the last verse if no verse specified (e.g., for a chapter range)
-        if C1int==C2int and V1int>=V2int:
-            if errorMessages: logging.error( "Verse range out of order (%s before %s) in %s %s%s" % ( V1, V2, BBB1, C1, myReferenceString ) )
+        if BBB1==BBB2 and C1int==C2int and V1int>=V2int:
+            if wantErrorMessages: logging.error( "Verse range out of order (%s before %s) in %s %s%s" % ( V1, V2, BBB1, C1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -918,7 +917,7 @@ def main():
             print( "%s %s %s %s is omitted: %s" % (BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
             print( "Omitted verses in %s are: %s" % (BBB,bvs.getOmittedVerseList(BBB)) )
             for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
-                print( "Expanding %s gives %s" % ( myRange, bvs.expandCVRange( myRange[0],myRange[1],errorMessages=True) ) )
+                print( "Expanding %s gives %s" % ( myRange, bvs.expandCVRange( myRange[0],myRange[1],wantErrorMessages=True) ) )
 # end of main
 
 if __name__ == '__main__':

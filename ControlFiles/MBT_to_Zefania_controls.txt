@@ -10,6 +10,10 @@
 # Note that all fieldnames and settings are CASE SENSITIVE
 #
 
+# The following values determine the Bible organisational system (especially needed for Bible references)
+LanguageCode = mbt
+PublicationCode = MBT
+
 # The following values are copied into the output file
 ZefaniaLanguage = en
 ZefaniaPublisher = Matigsalug Language Christian Association (MLCA), Inc.

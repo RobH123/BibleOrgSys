@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-06 (also update versionString below)
+#   Last modified: 2011-01-11 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.24"
+versionString = "0.25"
 
 
 import os, logging
@@ -257,6 +257,10 @@ class _BibleBooksNamesSystemsConvertor:
         assert( self.__BookNamesSystemsDict )
         if self.__expandedInputSystems: return # No need to do this again
 
+        if bookList is not None:
+            for BBB in bookList: # Just check this list is valid
+                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '%s' in booklist requested for expansion" % BBB )
+
         if Globals.verbosityLevel > 1: print( "Expanding input abbreviations..." )
         for systemName in self.__BookNamesSystemsDict:
             if Globals.verbosityLevel > 2: print( "  Expanding %s..." % ( systemName ) )
@@ -319,7 +323,7 @@ class _BibleBooksNamesSystemsConvertor:
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ] # Add the default name to the allowed input fields
-                    if not defaultAbbreviation == defaultName: inputFields.append( defaultAbbreviation ) # Automatically add the default abbreviation if it's different
+                    if defaultAbbreviation != defaultName: inputFields.append( defaultAbbreviation ) # Automatically add the default abbreviation if it's different
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
                             logging.info( "Superfluous '%s' entry in inputAbbreviation field for %s book in '%s' booksNames system" % ( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -514,20 +518,23 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
         Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
             trying to find unambiguous shortcuts which the user could use.
         """
+        assert( UCString)
+        assert( originalDict )
+
         # Drop off final letters and remove internal spaces
-        tempString = UCString[:-1] # Drop off the last letter
+        tempString = UCString
         while( tempString ):
-            if tempString[-1] != ' ':
+            if not tempString.isdigit() and tempString[-1]!=' ': # Don't allow single digits (even if unambiguous) and gnore any truncated strings that end in a space
                 if tempString in originalDict:
                     if originalDict[tempString] == value:
                         if Globals.verbosityLevel > 3: logging.debug( "'%s' is superfluous: won't add to tempDict" % tempString )
-                        ambigSet.add( tempString )
+                        theAmbigSet.add( tempString )
                     else: # it's a different value
                         if Globals.verbosityLevel > 3: logging.debug( "'%s' is ambiguous: won't add to tempDict" % tempString )
-                        ambigSet.add( tempString )
+                        theAmbigSet.add( tempString )
                 elif tempString in tempDict and tempDict[tempString]!=value:
                     if Globals.verbosityLevel > 3: logging.info( "'%s' is ambiguous: will remove from tempDict" % tempString )
-                    ambigSet.add( tempString )
+                    theAmbigSet.add( tempString )
                 else:
                     tempDict[tempString] = value
                 tempTempString = tempString
@@ -536,13 +543,13 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
                     if tempTempString in originalDict:
                         if originalDict[tempTempString] == value:
                             if Globals.verbosityLevel > 3: logging.debug( "'%s' (spaces removed) is superfluous: won't add to tempDict" % tempTempString )
-                            ambigSet.add( tempTempString )
+                            theAmbigSet.add( tempTempString )
                         else: # it's a different value
                             if Globals.verbosityLevel > 3: logging.debug( "'%s' (spaces removed) is ambiguous: won't add to tempDict" % tempTempString )
-                            ambigSet.add( tempTempString )
+                            theAmbigSet.add( tempTempString )
                     elif tempTempString in tempDict and tempDict[tempTempString]!=value:
                         if Globals.verbosityLevel > 3: logging.info( "'%s' (spaces removed) is ambiguous: will remove from tempDict" % tempTempString )
-                        ambigSet.add( tempTempString )
+                        theAmbigSet.add( tempTempString )
                     else:
                         tempDict[tempTempString] = value
             tempString = tempString[:-1] # Drop off another letter
@@ -556,10 +563,12 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
+    #print( "bnLD", len(booknameLeadersDict), booknameLeadersDict )
     for leader in booknameLeadersDict:
         UCLeader = leader.upper()
         assert( UCLeader not in UCBNLeadersDict )
         UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
+        #UCBNLeadersDict[UCLeader].append( UCLeader ) # We have to add ourselves to this list
     #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
 
     # Secondly make a set of the given allowed names
@@ -608,6 +617,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
 
     #print( "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
     tempBNDict = {}
+    #print( bkNameInputDict.keys(), UCBNLeadersDict )
     for UCField in bkNameInputDict.keys():
         expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
         for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
@@ -627,6 +637,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
         if field not in ambigSet:
             assert( field not in bkNameInputDict )
             bkNameInputDict[field] = tempBNDict[field]
+        #else: print( "Didn't add '%s'", field )
     #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
 
     # Now sort both dictionaries to be longest string first
@@ -654,6 +665,7 @@ class BibleBooksNamesSystems:
         Constructor: 
         """
         self.__bbnsc = _BibleBooksNamesSystemsConvertor()
+        self.__BibleBooksCodes = BibleBooksCodes().loadData()
         self.__DataDicts = self.__ExpandedDicts = None # We'll import into this in loadData
     # end of __init__
 
@@ -687,6 +699,10 @@ class BibleBooksNamesSystems:
 
     def getBooksNamesSystem( self, systemName, bookList=None ):
         """ Returns two dictionaries and a list object."""
+        if bookList is not None:
+            for BBB in bookList: # Just check this list is valid
+                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '%s' in booklist requested for %s books names system" % (BBB,systemName) )
+
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
             divisionsNamesList, booknameLeadersDict, bookNamesDict = self.__DataDicts[systemName] # unpack it so it's clearer what we're doing here
@@ -762,20 +778,26 @@ class BibleBooksNamesSystem:
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
             return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
-        #print( "getBBB", bookNameOrAbbreviation, upperCaseBookNameOrAbbreviation )
-        #myList = []
-        #for key in self.__sortedBookNamesDict.keys():
-        #    if key.startswith( upperCaseBookNameOrAbbreviation[0] ): myList.append( key )
-        #print( "List is", myList )
+        if 0:
+            # It failed so print what the closest alternatives were
+            print( "getBBB", bookNameOrAbbreviation, upperCaseBookNameOrAbbreviation )
+            myList, thisLen = [], len(upperCaseBookNameOrAbbreviation)
+            for key in self.__sortedBookNamesDict.keys():
+                if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
+            print( "List is", myList )
     # end of getBBB
+
+    def getBookAbbreviation( self, BBB ):
+        """ Get the default book abbreviation from the given referenceAbbreviation. """
+        assert( len(BBB) == 3 )
+        return self.__bookNamesDict[BBB]['defaultAbbreviation']
+    # end of getBookAbbreviation
 
     def getShortBookName( self, BBB ):
         """ Get the short book name from the given referenceAbbreviation. """
         assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of getShortBookName
-
-    def getit( self ): return self.__sortedBookNamesDict
 # end of BibleBookNamesSystem class
 
 
@@ -792,7 +814,7 @@ def main():
 
     if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
 
-    sampleBookList = ['JDG','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
+    sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     if Globals.commandLineOptions.export:
         bbnsc = _BibleBooksNamesSystemsConvertor().loadSystems() # Load the XML
         if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
@@ -820,10 +842,9 @@ def main():
         # Demo the BibleBooksNamesSystem object with a book list
         bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
         print( bbns2 ) # Just print a summary
-        #names = []
-        #for name in bbns2.getit():
-        #    if name[0]=='J': names.append( name )
-        #print( names )
+        for bookAbbrev in ('Gen', 'GEN', 'Gn', 'Exo', '1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M' ):
+            # NOTE: '1S' is ambiguous with '1st' :(
+            print( "Searching for '%s' got %s" % (bookAbbrev, bbns2.getBBB(bookAbbrev)) )
 # end of main
 
 if __name__ == '__main__':

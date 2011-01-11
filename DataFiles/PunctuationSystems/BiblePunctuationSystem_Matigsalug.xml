@@ -77,23 +77,23 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.01</version>
-      <date>2010-12-16</date>
-      <title>English Bible punctuation system</title>
+      <date>2011-01-11</date>
+      <title>Matigsalug Bible punctuation system</title>
       <contributor role="cre">Robert Hunt</contributor>
       <rights>Public Domain</rights>
     </work>
   </header>
 
   <booknameCase>ME</booknameCase>
-  <booknameLength>ME</booknameLength>
-  <punctuationAfterBookAbbreviation>.</punctuationAfterBookAbbreviation>
+  <booknameLength>Unused</booknameLength>
+  <punctuationAfterBookAbbreviation></punctuationAfterBookAbbreviation>
   <bookChapterSeparator> </bookChapterSeparator>
   <spaceAllowedAfterBCS>E</spaceAllowedAfterBCS>
   <chapterVerseSeparator>:</chapterVerseSeparator>
   <verseSeparator>,</verseSeparator>
 
-  <bookBridgeCharacter>-</bookBridgeCharacter>
-  <chapterBridgeCharacter>-</chapterBridgeCharacter>
+  <bookBridgeCharacter>–</bookBridgeCharacter>
+  <chapterBridgeCharacter>–</chapterBridgeCharacter>
   <verseBridgeCharacter>-</verseBridgeCharacter>
 
   <chapterSeparator>;</chapterSeparator>
