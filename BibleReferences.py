@@ -4,7 +4,7 @@
 # BibleReferences.py
 #
 # Module for handling Bible references including ranges
-#   Last modified: 2011-01-11 (also update versionString below)
+#   Last modified: 2011-01-13 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -61,7 +61,7 @@ OXES is different again.
 """
 
 progName = "Bible References handler"
-versionString = "0.18"
+versionString = "0.19"
 
 
 import os, logging
@@ -103,7 +103,7 @@ class BibleSingleReference:
         @rtype: string
         """
         result = "Bible Single Reference object"
-        if self.reference: result += ('\n' if result else '') + "  %s" % str(self.reference)
+        if self.reference: result += ('\n' if result else '') + "  {}".format( str(self.reference) )
         return result
     # end of __str__
 
@@ -115,12 +115,12 @@ class BibleSingleReference:
         haveWarnings, haveErrors = False, False
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
-            logging.warning( "Reference string '%s' contains surrounding space(s)" % referenceString )
+            logging.warning( "Reference string '{}' contains surrounding space(s)".format( referenceString ) )
             haveWarnings = True
         #statusList = {0:"gettingBookname", 1:"gettingBCSeparator", 2:"gettingChapter", 3:"gettingVerse", 4:"gotCV", 5:"done", 9:"finished"}
         status, bookNameOrAbbreviation, BBB, C, V, S, spaceCount = 0, '', None, '', '', '', 0
         for char in strippedReferenceString:
-            #print( "Status: %s -- got '%s'" % (statusList[status],char) )
+            #print( "Status: {} -- got '{}'".format(statusList[status],char) )
             if status == 0: # Getting bookname (with or without punctuation after book abbreviation)
                 if char.isalnum():
                     if char.isdigit() and bookNameOrAbbreviation: # Could this be the chapter number?
@@ -129,7 +129,7 @@ class BibleSingleReference:
                             bookNameOrAbbreviation += char
                             continue
                         # else if seems we have a valid bookname -- let's assume this might be the chapter number
-                        logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '%s'" % (referenceString) )
+                        logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '{}'".format(referenceString) )
                         status = 2 # Start getting the chapter number
                     else:
                         bookNameOrAbbreviation += char
@@ -138,7 +138,7 @@ class BibleSingleReference:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     status = 1 # Default to getting BCS
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
@@ -146,42 +146,42 @@ class BibleSingleReference:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 status = 2 # Just accept this as the BCS and go get the chapter number
                             else:
-                                logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     continue
                 elif char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
                         if shortBookName != bookNameOrAbbreviation: # they didn't enter the full bookname -- we really expect the punctuationAfterBookAbbreviation
                             if 'punctuationAfterBookAbbreviation' in self.punctuationDict and self.punctuationDict['punctuationAfterBookAbbreviation']:
-                                logging.warning( "Missing '%s' punctuationAfterBookAbbreviation when the book name abbreviation was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                logging.warning( "Missing '{}' punctuationAfterBookAbbreviation when the book name abbreviation was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 else:
-                    logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book name" % ( char, referenceString ) )
+                    logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book name".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 1: # Getting book chapter separator
                 if char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 elif char.isdigit(): # Must have missed the BCS
-                    logging.warning( "Missing '%s' book/chapter separator when the book name abbreviation was given in '%s'" % (self.punctuationDict['bookChapterSeparator'],referenceString) )
+                    logging.warning( "Missing '{}' book/chapter separator when the book name abbreviation was given in '{}'".format(self.punctuationDict['bookChapterSeparator'],referenceString) )
                     haveWarnings = True
                     status = 2 # Fall through below
                 else:
-                    logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book/chapter separator" % ( char, referenceString ) )
+                    logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book/chapter separator".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 2: # Getting chapter number (or could be the verse number of a one chapter book)
@@ -189,10 +189,10 @@ class BibleSingleReference:
                     spaceCount += 1
                 elif char.isdigit():
                     if self.punctuationDict['spaceAllowedAfterBCS']=='Y' and spaceCount<1:
-                        logging.warning( "Missing space after bookname in Bible reference '%s'" % referenceString )
+                        logging.warning( "Missing space after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     elif self.punctuationDict['spaceAllowedAfterBCS']=='N' or spaceCount>1:
-                        logging.warning( "Extra space(s) after bookname in Bible reference '%s'" % referenceString )
+                        logging.warning( "Extra space(s) after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     C += char
                 elif char in allowedVerseSuffixes: # Could be like verse 5b
@@ -200,26 +200,26 @@ class BibleSingleReference:
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
                 else:
-                    logging.error( "Unexpected '%s' character when getting chapter number in %s Bible reference '%s'" % ( char, BBB, referenceString ) )
+                    logging.error( "Unexpected '{}' character when getting chapter number in {} Bible reference '{}'".format( char, BBB, referenceString ) )
                     haveErrors = True
                 continue
             if status == 3: # Getting verse number
                 if char == ' ' and not V:
-                    logging.warning( "Extra space(s) after chapter in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                    logging.warning( "Extra space(s) after chapter in {} Bible reference '{}'".format( BBB, referenceString ) )
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
                 elif char in allowedVerseSuffixes: # Could be like verse 5b
                     S += char
                 else:
-                    logging.error( "Unexpected '%s' character when getting verse number in %s %s Bible reference '%s'" % ( char, BBB, C, referenceString ) )
+                    logging.error( "Unexpected '{}' character when getting verse number in {} {} Bible reference '{}'".format( char, BBB, C, referenceString ) )
                     haveErrors = True
                     if V: status = 4
                 continue
         if status==3: # Got a C but still getting the V hopefully
             if V: status = 4
         if len(S) > 1:
-            logging.error( "Unexpected long '%s' suffix in %s Bible reference '%s'" % ( S, BBB, referenceString ) )
+            logging.error( "Unexpected long '{}' suffix in {} Bible reference '{}'".format( S, BBB, referenceString ) )
             haveErrors = True
             S = S[0] # Just take the first one
         if BBB is not None:
@@ -231,7 +231,7 @@ class BibleSingleReference:
                 if self.__BibleOrganizationalSystem.isValidBCVRef( (BBB, C, V, S), referenceString, wantErrorMessages=True ):
                     status = 9
         self.reference = (BBB, C, V, S,)
-        #print( "Final status: %s -- got '%s'from '%s'\n" % (statusList[status],self.reference,referenceString) )
+        #print( "Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.reference,referenceString) )
         return status==9 and not haveErrors, haveWarnings, BBB, C, V, S
 # end of class BibleSingleReference
 
@@ -263,7 +263,7 @@ class BibleSingleReferences:
         @rtype: string
         """
         result = "Bible Single References Object"
-        if self.referenceList: result += ('\n' if result else '') + "  %s" % self.referenceList
+        if self.referenceList: result += ('\n' if result else '') + "  {}".format( self.referenceList )
         return result
     # end of __str__
 
@@ -276,29 +276,29 @@ class BibleSingleReferences:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings
             if len(S) > 1:
-                logging.error( "Unexpected long '%s' suffix in %s Bible reference '%s'" % ( S, BBB, referenceString ) )
+                logging.error( "Unexpected long '{}' suffix in {} Bible reference '{}'".format( S, BBB, referenceString ) )
                 haveErrors = True
                 S = S[0] # Just take the first one
             refTuple = ( BBB, C, V, S, )
             if refTuple in refList:
-                logging.warning( "Reference %s is repeated in Bible reference '%s'" % ( refTuple, referenceString ) )
+                logging.warning( "Reference {} is repeated in Bible reference '{}'".format( refTuple, referenceString ) )
                 haveWarnings = True
             if not self.__BibleOrganizationalSystem.isValidBCVRef( refTuple, referenceString, wantErrorMessages=True ):
                 haveErrors = True
             refList.append( refTuple )
         # end of saveReference
 
-        #print( "Processing '%s'" % referenceString )
+        #print( "Processing '{}'".format( referenceString ) )
         assert( referenceString )
         haveWarnings, haveErrors = False, False
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
-            logging.warning( "Reference string '%s' contains surrounding space(s)" % referenceString )
+            logging.warning( "Reference string '{}' contains surrounding space(s)".format( referenceString ) )
             haveWarnings = True
         #statusList = {0:"gettingBookname", 1:"gettingBCSeparator", 2:"gettingChapter", 3:"gettingVerse", 4:"gettingNextBorC", 5:"done", 9:"finished"}
         status, bookNameOrAbbreviation, BBB, C, V, S, spaceCount, refList = 0, '', None, '', '', '', 0, []
         for char in strippedReferenceString:
-            #print( "Status: %s -- got '%s'" % (statusList[status],char) )
+            #print( "Status: {} -- got '{}'".format(statusList[status],char) )
             if status == 0: # Getting bookname (with or without punctuation after book abbreviation)
                 if char.isalnum():
                     if char.isdigit() and bookNameOrAbbreviation: # Could this be the chapter number?
@@ -307,7 +307,7 @@ class BibleSingleReferences:
                             bookNameOrAbbreviation += char
                             continue
                         # else if seems we have a valid bookname -- let's assume this might be the chapter number
-                        logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '%s'" % (referenceString) )
+                        logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '{}'".format(referenceString) )
                         status = 2 # Start getting the chapter number
                     else:
                         bookNameOrAbbreviation += char
@@ -316,7 +316,7 @@ class BibleSingleReferences:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     status = 1 # Default to getting BCS
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
@@ -324,42 +324,42 @@ class BibleSingleReferences:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 status = 2 # Just accept this as the BCS and go get the chapter number
                             else:
-                                logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     continue
                 elif char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
                         if shortBookName != bookNameOrAbbreviation: # they didn't enter the full bookname -- we really expect the punctuationAfterBookAbbreviation
                             if 'punctuationAfterBookAbbreviation' in self.punctuationDict and self.punctuationDict['punctuationAfterBookAbbreviation']:
-                                logging.warning( "Missing '%s' punctuationAfterBookAbbreviation when the book name abbreviation was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                logging.warning( "Missing '{}' punctuationAfterBookAbbreviation when the book name abbreviation was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 else:
-                    logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book name" % ( char, referenceString ) )
+                    logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book name".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 1: # Getting book chapter separator
                 if char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 elif char.isdigit(): # Must have missed the BCS
-                    logging.warning( "Missing '%s' book/chapter separator when the book name abbreviation was given in '%s'" % (self.punctuationDict['bookChapterSeparator'],referenceString) )
+                    logging.warning( "Missing '{}' book/chapter separator when the book name abbreviation was given in '{}'".format(self.punctuationDict['bookChapterSeparator'],referenceString) )
                     haveWarnings = True
                     status = 2 # Fall through below
                 else:
-                    logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book/chapter separator" % ( char, referenceString ) )
+                    logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book/chapter separator".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 2: # Getting chapter number (or could be the verse number of a one chapter book)
@@ -367,10 +367,10 @@ class BibleSingleReferences:
                     spaceCount += 1
                 elif char.isdigit():
                     if self.punctuationDict['spaceAllowedAfterBCS']=='Y' and spaceCount<1:
-                        logging.warning( "Missing space after bookname in Bible reference '%s'" % referenceString )
+                        logging.warning( "Missing space after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     elif self.punctuationDict['spaceAllowedAfterBCS']=='N' or spaceCount>1:
-                        logging.warning( "Extra space(s) after bookname in Bible reference '%s'" % referenceString )
+                        logging.warning( "Extra space(s) after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     C += char
                 elif char in allowedVerseSuffixes: # Could be like verse 5b
@@ -378,12 +378,12 @@ class BibleSingleReferences:
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
                     status = 3 # Start getting the verse number
                 else:
-                    logging.error( "Unexpected '%s' character when getting chapter number in %s Bible reference '%s'" % ( char, BBB, referenceString ) )
+                    logging.error( "Unexpected '{}' character when getting chapter number in {} Bible reference '{}'".format( char, BBB, referenceString ) )
                     haveErrors = True
                 continue
             if status == 3: # Getting verse number
                 if char == ' ' and not V:
-                    logging.warning( "Extra space(s) after chapter in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                    logging.warning( "Extra space(s) after chapter in {} Bible reference '{}'".format( BBB, referenceString ) )
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
@@ -405,7 +405,7 @@ class BibleSingleReferences:
                         bookNameOrAbbreviation, BBB, C = '', None, ''
                         status = 0 # Get the next book name abbreviation
                 else:
-                    logging.error( "Unexpected '%s' character when getting verse number in %s %s Bible reference '%s'" % ( char, BBB, C, referenceString ) )
+                    logging.error( "Unexpected '{}' character when getting verse number in {} {} Bible reference '{}'".format( char, BBB, C, referenceString ) )
                     haveErrors = True
                     if V:
                         saveReference( BBB, C, V, S, refList )
@@ -414,7 +414,7 @@ class BibleSingleReferences:
             if status == 4: # Getting the next chapter number or book name (not sure which)
                 if char == ' ' and not temp:
                     if spaceCount:
-                        logging.warning( "Extra space(s) after chapter or book separator in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                        logging.warning( "Extra space(s) after chapter or book separator in {} Bible reference '{}'".format( BBB, referenceString ) )
                         haveWarnings = True
                     spaceCount += 1
                 elif char.isalnum():
@@ -424,7 +424,7 @@ class BibleSingleReferences:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     C, status = '', 1 # Default to getting BCS
                     if BBB is None:
-                        logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
@@ -432,10 +432,10 @@ class BibleSingleReferences:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 status = 2 # Just accept this as the BCS and go get the chapter number
                             else:
-                                logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                 else:
-                    #print( "Got '%s'" % temp )
+                    #print( "Got '{}'".format( temp ) )
                     if char in self.punctuationDict['chapterVerseSeparator'] and temp and temp.isdigit(): # Assume it's a follow on chapter number
                         C = temp
                         status = 3 # Now get the verse number
@@ -443,13 +443,13 @@ class BibleSingleReferences:
                         bookNameOrAbbreviation = temp
                         BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                         if BBB is None:
-                            logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                            logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                             haveErrors = True
                         C, V, S = '', '', ''
                         spaceCount = 1 if char==' ' else 0
                         status = 2 # Start getting the chapter number
                     else:
-                        logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book name" % ( char, referenceString ) )
+                        logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book name".format( char, referenceString ) )
                         haveErrors = True
                 continue
         if status==3: # Got a C but still getting the V hopefully
@@ -463,7 +463,7 @@ class BibleSingleReferences:
                 saveReference( BBB, C, V, S, refList )
                 status = 9
         self.referenceList = refList
-        #print( "Final status: %s -- got '%s'from '%s'\n" % (statusList[status],self.referenceList,referenceString) )
+        #print( "Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
         return status==9 and not haveErrors, haveWarnings, self.referenceList
 # end of class BibleSingleReferences
 
@@ -495,7 +495,7 @@ class BibleReferenceList:
         @rtype: string
         """
         result = "Bible Range References object"
-        if self.referenceList: result += ('\n' if result else '') + "  %s" % self.referenceList
+        if self.referenceList: result += ('\n' if result else '') + "  {}".format( self.referenceList )
         return result
     # end of __str__
 
@@ -508,7 +508,7 @@ class BibleReferenceList:
         if lenRef == 2: (BBB, C), V, S = refTuple, '', ''
         elif lenRef == 3: (BBB, C, V), S = refTuple, ''
         elif lenRef == 4: BBB, C, V, S = refTuple
-        else: logging.error( "Unrecognized %s parameter to makeReferenceString" % refTuple ); return None
+        else: logging.error( "Unrecognized {} parameter to makeReferenceString".format( refTuple ) ); return None
 
         BnC = self.punctuationDict['booknameCase'] if isinstance(self.punctuationDict['booknameCase'],str) else self.punctuationDict['booknameCase'][0]
         BCS = self.punctuationDict['bookChapterSeparator'] if isinstance(self.punctuationDict['bookChapterSeparator'],str) else self.punctuationDict['bookChapterSeparator'][0]
@@ -521,9 +521,9 @@ class BibleReferenceList:
             BBBstr = BBB if BnC=='U' else BBB.lower() if BnC=='L' else BBB.capitalize()
         if self.__BibleOrganizationalSystem.isSingleChapterBook( BBB ):
             assert( C == '1' )
-            resultString = "%s%s%s%s" % ( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', V )
+            resultString = "{}{}{}{}".format( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', V )
         else: # it's a book with multiple chapters
-            resultString = "%s%s%s%s%s%s" % ( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', C, CVS, V )
+            resultString = "{}{}{}{}{}{}".format( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', C, CVS, V )
         return resultString
     # end of makeReferenceString
 
@@ -541,12 +541,12 @@ class BibleReferenceList:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
-                if wantErrorMessages: logging.error( "Unexpected long '%s' suffix in %s Bible reference '%s'" % ( S, BBB, referenceString ) )
+                if wantErrorMessages: logging.error( "Unexpected long '{}' suffix in {} Bible reference '{}'".format( S, BBB, referenceString ) )
                 haveErrors = True
                 S = S[0] # Just take the first one
             refTuple = ( BBB, C, V, S, )
             if refTuple in refList:
-                if wantErrorMessages: logging.warning( "Reference %s is repeated in Bible reference '%s'" % ( refTuple, referenceString ) )
+                if wantErrorMessages: logging.warning( "Reference {} is repeated in Bible reference '{}'".format( refTuple, referenceString ) )
                 haveWarnings = True
             if not self.__BibleOrganizationalSystem.isValidBCVRef( refTuple, referenceString, wantErrorMessages ):
                 haveErrors = True
@@ -558,7 +558,7 @@ class BibleReferenceList:
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
-                if wantErrorMessages: logging.error( "Unexpected long '%s' suffix in %s Bible reference '%s'" % ( S, BBB, referenceString ) )
+                if wantErrorMessages: logging.error( "Unexpected long '{}' suffix in {} Bible reference '{}'".format( S, BBB, referenceString ) )
                 haveErrors = True
                 S = S[0] # Just take the first one
             startReferenceTuple = ( BBB, C, V, S, )
@@ -570,7 +570,7 @@ class BibleReferenceList:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
-                if wantErrorMessages: logging.error( "Unexpected long '%s' suffix in %s Bible reference '%s'" % ( S, BBB, referenceString ) )
+                if wantErrorMessages: logging.error( "Unexpected long '{}' suffix in {} Bible reference '{}'".format( S, BBB, referenceString ) )
                 haveErrors = True
                 S = S[0] # Just take the first one
             finishTuple = ( BBB, C, V, S, )
@@ -580,17 +580,17 @@ class BibleReferenceList:
             verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
             if verseList is not None: totalVerseList.extend( verseList )
             if rangeTuple in refList:
-                if wantErrorMessages: logging.warning( "Reference range %s is repeated in Bible reference '%s'" % ( rangeTuple, referenceString ) )
+                if wantErrorMessages: logging.warning( "Reference range {} is repeated in Bible reference '{}'".format( rangeTuple, referenceString ) )
                 haveWarnings = True
             refList.append( rangeTuple )
         # end of saveReferenceRange
 
-        #print( "Processing '%s'" % referenceString )
+        #print( "Processing '{}'".format( referenceString ) )
         assert( referenceString )
         haveWarnings, haveErrors, totalVerseList = False, False, []
         strippedReferenceString = referenceString.strip()
         if strippedReferenceString != referenceString:
-            if wantErrorMessages: logging.warning( "Reference string '%s' contains surrounding space(s)" % referenceString )
+            if wantErrorMessages: logging.warning( "Reference string '{}' contains surrounding space(s)".format( referenceString ) )
             haveWarnings = True
         adjustedReferenceString = strippedReferenceString
         for value in ignoredSuffixes:
@@ -599,7 +599,7 @@ class BibleReferenceList:
         status, bookNameOrAbbreviation, BBB, C, V, S, spaceCount, startReferenceTuple, self.referenceList = 0, '', None, '', '', '', 0, (), []
         for char in adjustedReferenceString:
             #if referenceString.startswith('Num 22'):
-            #    print( "Status: %i:%s -- got '%s'" % (status, statusList[status],char), haveErrors, haveWarnings, self.referenceList )
+            #    print( "Status: {}:{} -- got '{}'".format(status, statusList[status],char), haveErrors, haveWarnings, self.referenceList )
             if status == 0: # Getting bookname (with or without punctuation after book abbreviation)
                 if char.isalnum():
                     if char.isdigit() and bookNameOrAbbreviation: # Could this be the chapter number?
@@ -608,7 +608,7 @@ class BibleReferenceList:
                             bookNameOrAbbreviation += char
                             continue
                         # else if seems we have a valid bookname -- let's assume this might be the chapter number
-                        if wantErrorMessages: logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '%s'" % (referenceString) )
+                        if wantErrorMessages: logging.error( "It seems that the bookname might be joined onto the chapter number in Bible reference '{}'".format(referenceString) )
                         status = 2 # Start getting the chapter number immediately (no "continue" here)
                     else:
                         bookNameOrAbbreviation += char
@@ -622,7 +622,7 @@ class BibleReferenceList:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     status = 1 # Default to getting BCS
                     if BBB is None:
-                        if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
@@ -630,42 +630,42 @@ class BibleReferenceList:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 status = 2 # Just accept this as the BCS and go get the chapter number
                             else:
-                                if wantErrorMessages: logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                if wantErrorMessages: logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     continue
                 elif char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
                         if shortBookName != bookNameOrAbbreviation: # they didn't enter the full bookname -- we really expect the punctuationAfterBookAbbreviation
                             if 'punctuationAfterBookAbbreviation' in self.punctuationDict and self.punctuationDict['punctuationAfterBookAbbreviation']:
-                                if wantErrorMessages: logging.warning( "Missing '%s' punctuationAfterBookAbbreviation when the book name abbreviation was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                if wantErrorMessages: logging.warning( "Missing '{}' punctuationAfterBookAbbreviation when the book name abbreviation was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book name" % ( char, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book name".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 1: # Getting book chapter separator
                 if char in self.punctuationDict['bookChapterSeparator']:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     if BBB is None:
-                        if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s'" % ( bookNameOrAbbreviation, referenceString ) )
+                        if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}'".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue
                 elif char.isdigit(): # Must have missed the BCS
-                    if wantErrorMessages: logging.warning( "Missing '%s' book/chapter separator when the book name abbreviation was given in '%s'" % (self.punctuationDict['bookChapterSeparator'],referenceString) )
+                    if wantErrorMessages: logging.warning( "Missing '{}' book/chapter separator when the book name abbreviation was given in '{}'".format(self.punctuationDict['bookChapterSeparator'],referenceString) )
                     haveWarnings = True
                     status = 2 # Fall through below
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book/chapter separator" % ( char, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book/chapter separator".format( char, referenceString ) )
                     haveErrors = True
                     continue
             if status == 2: # Getting chapter number (or could be the verse number of a one chapter book)
@@ -673,10 +673,10 @@ class BibleReferenceList:
                     spaceCount += 1
                 elif char.isdigit():
                     if self.punctuationDict['spaceAllowedAfterBCS']=='Y' and spaceCount<1:
-                        if wantErrorMessages: logging.warning( "Missing space after bookname in Bible reference '%s'" % referenceString )
+                        if wantErrorMessages: logging.warning( "Missing space after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     elif self.punctuationDict['spaceAllowedAfterBCS']=='N' or spaceCount>1:
-                        if wantErrorMessages: logging.warning( "Extra space(s) after bookname in Bible reference '%s'" % referenceString )
+                        if wantErrorMessages: logging.warning( "Extra space(s) after bookname in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     C += char
                 elif char in allowedVerseSuffixes: # Could be like verse 5b
@@ -697,19 +697,19 @@ class BibleReferenceList:
                         saveStartReference( BBB, C, V, S )
                         status = 8 # Getting verse range
                     else:
-                        if wantErrorMessages: logging.error( "Unexpected '%s' character when processing single chapter book %s in Bible reference '%s'" % ( char, BBB, referenceString ) )
+                        if wantErrorMessages: logging.error( "Unexpected '{}' character when processing single chapter book {} in Bible reference '{}'".format( char, BBB, referenceString ) )
                         haveErrors = True
                     V, S = '', ''
                 elif C and char in self.punctuationDict['chapterBridgeCharacter']:
                     saveStartReference( BBB, C, V, S )
                     status, C, V, S = 7, '', '', '' # Getting chapter range
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character when getting chapter number in %s Bible reference '%s'" % ( char, BBB, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character when getting chapter number in {} Bible reference '{}'".format( char, BBB, referenceString ) )
                     haveErrors = True
                 continue
             if status == 3: # Getting verse number
                 if char == ' ' and not V:
-                    if wantErrorMessages: logging.warning( "Extra space(s) after chapter in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                    if wantErrorMessages: logging.warning( "Extra space(s) after chapter in {} Bible reference '{}'".format( BBB, referenceString ) )
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
@@ -748,7 +748,7 @@ class BibleReferenceList:
                     saveStartReference( BBB, C, V, S )
                     status, V, S = 8, '', ''
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character when getting verse number in %s %s Bible reference '%s'" % ( char, BBB, C, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character when getting verse number in {} {} Bible reference '{}'".format( char, BBB, C, referenceString ) )
                     haveErrors = True
                     if V:
                         saveReference( BBB, C, V, S, self.referenceList )
@@ -757,7 +757,7 @@ class BibleReferenceList:
             if status == 4: # Getting the next chapter number or book name (not sure which)
                 if char == ' ' and not temp:
                     if spaceCount:
-                        if wantErrorMessages: logging.warning( "Extra space(s) after chapter or book separator in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                        if wantErrorMessages: logging.warning( "Extra space(s) after chapter or book separator in {} Bible reference '{}'".format( BBB, referenceString ) )
                         haveWarnings = True
                     spaceCount += 1
                 elif char.isalnum():
@@ -767,7 +767,7 @@ class BibleReferenceList:
                     BBB = self.__BibleOrganizationalSystem.getBBB( bookNameOrAbbreviation )
                     status, C = 1, '' # Default to getting BCS
                     if BBB is None:
-                        if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s' (s4a)" % ( bookNameOrAbbreviation, referenceString ) )
+                        if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}' (s4a)".format( bookNameOrAbbreviation, referenceString ) )
                         haveErrors = True
                     else: # we found an unambiguous bookname
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
@@ -775,10 +775,10 @@ class BibleReferenceList:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 status = 2 # Just accept this as the BCS and go get the chapter number
                             else:
-                                if wantErrorMessages: logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                if wantErrorMessages: logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                 else:
-                    #print( "Char is '%s', Temp is '%s'" % (char,temp) )
+                    #print( "Char is '{}', Temp is '{}'".format(char,temp) )
                     if char in self.punctuationDict['chapterVerseSeparator'] and temp and temp.isdigit(): # Assume it's a follow on chapter number
                         C = temp
                         status = 3 # Now get the verse number
@@ -791,15 +791,15 @@ class BibleReferenceList:
                             status = 2 # Start getting the chapter number
                         else: # Not a valid bookname
                             if char != ' ':
-                                if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s' (s4b)" % ( bookNameOrAbbreviation, referenceString ) )
+                                if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}' (s4b)".format( bookNameOrAbbreviation, referenceString ) )
                                 haveErrors = True
                     else:
-                        if wantErrorMessages: logging.error( "Unexpected '%s' character in Bible reference '%s' when getting book name" % ( char, referenceString ) )
+                        if wantErrorMessages: logging.error( "Unexpected '{}' character in Bible reference '{}' when getting book name".format( char, referenceString ) )
                         haveErrors = True
                 continue
             if status == 5: # Get either book or chapter or verse range
                 if char == ' ' and not X:
-                    if wantErrorMessages: logging.warning( "Extra space(s) after range bridge in Bible reference '%s'" % referenceString )
+                    if wantErrorMessages: logging.warning( "Extra space(s) after range bridge in Bible reference '{}'".format( referenceString ) )
                     haveWarnings = True
                 elif char.isalnum():
                     X += char
@@ -812,14 +812,14 @@ class BibleReferenceList:
                             if char in self.punctuationDict['bookChapterSeparator']: # ok, they are the same character
                                 pass
                             else:
-                                if wantErrorMessages: logging.warning( "Didn't expect '%s' punctuationAfterBookAbbreviation when the full book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                                if wantErrorMessages: logging.warning( "Didn't expect '{}' punctuationAfterBookAbbreviation when the full book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                                 haveWarnings = True
                         C, V, S = '', '', ''
                         spaceCount = 1 if char==' ' else 0
                         status = 7 # Start getting the chapter range
                     else: # Not a valid bookname
                         if char != ' ':
-                            if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s' (s5a)" % ( X, referenceString ) )
+                            if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}' (s5a)".format( X, referenceString ) )
                             haveErrors = True
                 elif X and char in self.punctuationDict['bookChapterSeparator']: # but this is often a space which also occurs in things like 1 Thess
                     BBB = self.__BibleOrganizationalSystem.getBBB( X )
@@ -827,14 +827,14 @@ class BibleReferenceList:
                         bookNameOrAbbreviation = X
                         shortBookName = self.__BibleOrganizationalSystem.getShortBookName( BBB )
                         if shortBookName != bookNameOrAbbreviation and self.punctuationDict['punctuationAfterBookAbbreviation']: # they didn't enter the full bookname -- we expect some punctuation
-                            if wantErrorMessages: logging.warning( "Expected '%s' punctuationAfterBookAbbreviation when the abbreviated book name was given in '%s'" % (self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
+                            if wantErrorMessages: logging.warning( "Expected '{}' punctuationAfterBookAbbreviation when the abbreviated book name was given in '{}'".format(self.punctuationDict['punctuationAfterBookAbbreviation'],referenceString) )
                             haveWarnings = True
                         C, V, S = '', '', ''
                         spaceCount = 1 if char==' ' else 0
                         status = 7 # Start getting the chapter range
                     else: # Not a valid bookname
                         if char != ' ':
-                            if wantErrorMessages: logging.error( "Invalid '%s' bookname in Bible reference '%s' (s5b)" % ( X, referenceString ) )
+                            if wantErrorMessages: logging.error( "Invalid '{}' bookname in Bible reference '{}' (s5b)".format( X, referenceString ) )
                             haveErrors = True
                 elif X and char in self.punctuationDict['chapterVerseSeparator']: # This must have been a chapter range
                     C = X
@@ -857,18 +857,18 @@ class BibleReferenceList:
                         status = 0
                     else: assert( "Should never happen" == 123 )
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character when getting second chapter/verse number in Bible reference '%s'" % ( char, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character when getting second chapter/verse number in Bible reference '{}'".format( char, referenceString ) )
                     haveErrors = True
                 continue
             if status == 7: # Get chapter range
                 if char==' ' and not C:
                     if self.punctuationDict['spaceAllowedAfterBCS']=='N' or spaceCount>1:
-                        if wantErrorMessages: logging.warning( "Extra space(s) after bridge character in Bible reference '%s'" % referenceString )
+                        if wantErrorMessages: logging.warning( "Extra space(s) after bridge character in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     spaceCount += 1
                 elif char.isdigit():
                     if self.punctuationDict['spaceAllowedAfterBCS']=='Y' and spaceCount<1:
-                        if wantErrorMessages: logging.warning( "Missing space after bridge character in Bible reference '%s'" % referenceString )
+                        if wantErrorMessages: logging.warning( "Missing space after bridge character in Bible reference '{}'".format( referenceString ) )
                         haveWarnings = True
                     C += char
                 elif C and char in self.punctuationDict['chapterVerseSeparator']:
@@ -895,12 +895,12 @@ class BibleReferenceList:
                         bookNameOrAbbreviation, BBB = '', None
                         status = 0
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character in Bible reference '%s' when getting second chapter number" % ( char, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character in Bible reference '{}' when getting second chapter number".format( char, referenceString ) )
                     haveErrors = True
                 continue
             if status == 8: # Get verse range
                 if char == ' ' and not V:
-                    if wantErrorMessages: logging.warning( "Extra space(s) after chapter in range in %s Bible reference '%s'" % ( BBB, referenceString ) )
+                    if wantErrorMessages: logging.warning( "Extra space(s) after chapter in range in {} Bible reference '{}'".format( BBB, referenceString ) )
                     haveWarnings = True
                 elif char.isdigit():
                     V += char
@@ -921,7 +921,7 @@ class BibleReferenceList:
                         bookNameOrAbbreviation, BBB, C = '', None, ''
                         status = 0
                 else:
-                    if wantErrorMessages: logging.error( "Unexpected '%s' character when getting verse number for range in %s %s Bible reference '%s'" % ( char, BBB, C, referenceString ) )
+                    if wantErrorMessages: logging.error( "Unexpected '{}' character when getting verse number for range in {} {} Bible reference '{}'".format( char, BBB, C, referenceString ) )
                     haveErrors = True
                     if V:
                         saveReference( BBB, C, V, S, self.referenceList )
@@ -938,7 +938,7 @@ class BibleReferenceList:
         elif status==3: # Got a C but still getting the V hopefully
             if V: status = 4
         elif status==4: # Must have ended with a separator character
-            if wantErrorMessages: logging.warning( "Bible reference '%s' ended with a separator character" % referenceString )
+            if wantErrorMessages: logging.warning( "Bible reference '{}' ended with a separator character".format( referenceString ) )
             haveWarnings = True
             status = 9;
         elif status==5 and X: # Getting C or V range
@@ -958,17 +958,17 @@ class BibleReferenceList:
             saveReference( BBB, C, V, S, self.referenceList )
             status = 9
 
-        #print( "Final status: %s -- got '%s'from '%s'\n" % (statusList[status],self.referenceList,referenceString) )
+        #print( "Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
         #print( "here", len(totalVerseList), totalVerseList )
 
         singleVerseSet = set( totalVerseList )
         if len(singleVerseSet) < len(totalVerseList):
-            #print( "Final status: %s -- got '%s'from '%s'\n" % (statusList[status],self.referenceList,referenceString) )
-            print( "totalVerseList is %s, singleVerseSet is %s" % (totalVerseList, singleVerseSet) )
+            #print( "Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
+            print( "totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
             for entry in singleVerseSet:
                 if totalVerseList.count(entry) > 1:
                     print( entry )
-                    if wantErrorMessages: logging.warning( "Have duplicate or overlapping range at %s in Bible references '%s'" % ( self.makeReferenceString(entry), referenceString ) )
+                    if wantErrorMessages: logging.warning( "Have duplicate or overlapping range at {} in Bible references '{}'".format( self.makeReferenceString(entry), referenceString ) )
             haveWarnings = True
         return status==9 and not haveErrors, haveWarnings, self.referenceList
     # end of parseReferenceString
@@ -1006,16 +1006,16 @@ class BibleReferenceList:
                 (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = refOrRefRange
                 Bk1 = self.__BibleBooksCodes.getOSISAbbreviation( BBB1 )
                 Bk2 = self.__BibleBooksCodes.getOSISAbbreviation( BBB2 )
-                if V1 and V2: result += "%s.%s.%s-%s.%s.%s" % (Bk1,C1,V1,Bk2,C2,V2)
-                elif not V1 and not V2: result += "%s.%s-%s.%s" % (Bk1,C1,Bk2,C2)
-                elif V2: result += "%s.%s.1-%s.%s.%s" % (Bk1,C1,Bk2,C2,V2)
+                if V1 and V2: result += "{}.{}.{}-{}.{}.{}".format(Bk1,C1,V1,Bk2,C2,V2)
+                elif not V1 and not V2: result += "{}.{}-{}.{}".format(Bk1,C1,Bk2,C2)
+                elif V2: result += "{}.{}.1-{}.{}.{}".format(Bk1,C1,Bk2,C2,V2)
                 else: giveUphere
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange
                 Bk = self.__BibleBooksCodes.getOSISAbbreviation( BBB )
-                if V: result += "%s.%s.%s" % (Bk,C,V)
-                else: result += "%s.%s" % (Bk,C)
+                if V: result += "{}.{}.{}".format(Bk,C,V)
+                else: result += "{}.{}".format(Bk,C)
                 lastBk, lastC, lastV = Bk, C, V
         return result
     # end of getOSISRefList
@@ -1026,13 +1026,13 @@ class BibleReferenceList:
                     or None if a valid reference cannot be parsed. """
         successFlag, haveWarnings, refList = self.parseReferenceString( referenceString, wantErrorMessages )
         if successFlag: return self.getOSISRefList()
-        #if wantErrorMessages: logging.error( "You should already have an error above for '%s'" % referenceString ) # temp
+        #if wantErrorMessages: logging.error( "You should already have an error above for '{}'".format( referenceString ) ) # temp
     # end of parseToOSIS
 
     def containsReferenceTuple( self, refTuple, wantErrorMessages=False ):
         """ Returns True/False if the internal reference list contains the given reference tuple. """
         assert( refTuple and len(refTuple)==4 )
-        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( refTuple, "%s %s:%s%s"%(refTuple[0],refTuple[1],refTuple[2],refTuple[3]), wantErrorMessages ):
+        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}"%(refTuple[0],refTuple[1],refTuple[2],refTuple[3]), wantErrorMessages ):
             haveErrors = True
 
         # See if we can find this reference in our internal list
@@ -1054,7 +1054,7 @@ class BibleReferenceList:
         # First find out what we were given
         if V.isdigit(): # it's simple
             myTuple = (BBB, C, V, S)
-            if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( myTuple, "%s %s:%s%s"%(BBB,C,V,S), wantErrorMessages ):
+            if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,V,S), wantErrorMessages ):
                 haveErrors = True
             myList = [ myTuple, ]
         else: # Must have a list or range
@@ -1065,27 +1065,27 @@ class BibleReferenceList:
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got a verse number
                         myTuple = (BBB, C, myV, S)
-                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( myTuple, "%s %s:%s%s"%(BBB,C,myV,S), wantErrorMessages ):
+                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,myV,S), wantErrorMessages ):
                             haveErrors = True
                         myList.append( myTuple )
                         myV = ''
                     elif myV and char in self.punctuationDict['verseBridgeCharacter']: # Just got the start verse of a range
                         startTuple = (BBB, C, myV, S)
-                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( startTuple, "%s %s:%s%s"%(BBB,C,myV,S), wantErrorMessages ):
+                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}"%(BBB,C,myV,S), wantErrorMessages ):
                             haveErrors = True
                         status, myV = 1, ''
-                    elif wantErrorMessages: logging.error( "Invalid '%s' verse list/range given with %s %s:%s%s" % ( V, BBB, C, V, S ) )
+                    elif wantErrorMessages: logging.error( "Invalid '{}' verse list/range given with {} {}:{}{}".format( V, BBB, C, V, S ) )
                 elif status == 1: # Getting the end of a verse range
                     assert( startTuple )            
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         endTuple = (BBB, C, myV, S)
-                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( endTuple, "%s %s:%s%s"%(BBB,C,myV,S), wantErrorMessages ):
+                        if wantErrorMessages and not self.__BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}"%(BBB,C,myV,S), wantErrorMessages ):
                             haveErrors = True
                         verseList = self.__BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self.__BibleOrganizationalSystem, wantErrorMessages=wantErrorMessages )
                         if verseList is not None: myList.extend( verseList )
                         status, myV = 0, ''
-            if wantErrorMessages and (status>0 or myV): logging.error( "Invalid '%s' verse list/range given with %s %s:%s%s" % ( V, BBB, C, V, S ) )
+            if wantErrorMessages and (status>0 or myV): logging.error( "Invalid '{}' verse list/range given with {} {}:{}{}".format( V, BBB, C, V, S ) )
             #print( "myList", myList )
 
         # Now see if we can find any of these references in our internal list
@@ -1110,11 +1110,11 @@ def demo():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     BBC = BibleBooksCodes().loadData()
     BOS = BibleOrganizationalSystem( "RSV" )
@@ -1127,12 +1127,12 @@ def demo():
         print( BSR ) # Just print a summary
         print( "\nSingle Reference (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BSR got %s" % (ref, BSR.parseReferenceString(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BSR got {}".format(ref, BSR.parseReferenceString(ref,wantErrorMessages)) )
         print( "\nSingle Reference (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BSR got %s" % (ref, BSR.parseReferenceString(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BSR got {}".format(ref, BSR.parseReferenceString(ref,wantErrorMessages)) )
 
     if 0:
         print()
@@ -1140,15 +1140,15 @@ def demo():
         print( BSRs ) # Just print a summary
         print( "\nSingle References (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BSRs got %s" % (ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BSRs got {}".format(ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
         for ref in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BSRs got %s" % (ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BSRs got {}".format(ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
         print( "\nSingle References (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BSRs got %s" % (ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BSRs got {}".format(ref, BSRs.parseReferenceString(ref,wantErrorMessages)) )
 
     if 1:
         print()
@@ -1159,37 +1159,37 @@ def demo():
             print( "\n\nSingle References for Ranges (good)" )
             for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
             print( "\nSingle References for Ranges (bad)" )
             for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BSRs got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BSRs got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
             print( "\n\nSingle Ranges (good)" )
             for ref in ("Mat 7:3-7","Mat.7:3-11","Mat. 7:13-8:2","Mt. 7:3,5-9","Mt.7:3-4,6-9","Jde 7-8","Jde. 1-3","Jde 1:7-8","Jud. 1:1-3,5,7-9","EXO.4:14,27c-30;  5:1,4,20; 6:13,20,23,25-27a; 7:1,2,6b-10a,10,12,19,20; 8:1,2,4,8,12,13,21;"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
-                print( "OSIS result is '%s'" % BRL.getOSISRefList() )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                print( "OSIS result is '{}'".format( BRL.getOSISRefList() ) )
             print( "\nSingle Ranges (bad)" )
             for ref in ("EXO.4:14-12; NUM.3:12-1:5; JOS.4:5-5","Mt. 7:7;"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
             print( "\n\nNow some chapter Ranges (good)" )
             for ref in ("Dan. 5","Gen. 1-11","Act.4-7; Mat.5-7"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
-                #print( "OSIS result is '%s'" % BRL.getOSISRefList() )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                #print( "OSIS result is '{}'".format( BRL.getOSISRefList() ) )
             print( "\nNow some chapter Ranges (bad)" )
             for ref in ("Tit. 1:2; 1:2-7","Jer. 95","Exo. 23-99","1 Cor.9-7; 1Tim.5-7:2"):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got %s" % (ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got {}".format(ref, BRL.parseReferenceString(ref,wantErrorMessages)) )
             for ref in ("Jhn. 3:16", "Rev. 2:1-3" ):
-                if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-                print( "  From '%s' BRL got OSIS '%s'" % (ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
+                if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+                print( "  From '{}' BRL got OSIS '{}'".format(ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
         # Special test case
         for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22",  ):
-            if printProcessingMessages: print( "Processing '%s' reference string..." % ref )
-            print( "  From '%s' BRL got OSIS '%s'" % (ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
+            if printProcessingMessages: print( "Processing '{}' reference string...".format( ref ) )
+            print( "  From '{}' BRL got OSIS '{}'".format(ref, BRL.parseToOSIS(ref,wantErrorMessages)) )
             print( BRL.getReferenceList() )
             print( BRL.getReferenceList( expanded=True ) )
 

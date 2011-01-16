@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-11 (also update versionString below)
+#   Last modified: 2011-01-13 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.53"
+versionString = "0.54"
 
 
 import os, logging
@@ -81,13 +81,13 @@ class _BibleBookOrdersConvertor:
         if not self.XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
             self.XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( "Loading book order systems from %s..." % ( self.XMLFolder ) )
+            if Globals.verbosityLevel > 2: print( "Loading book order systems from{}...".format( self.XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( "  Loading %s book order system from %s..." % ( bookOrderSystemCode, filename ) )
+                    if Globals.verbosityLevel > 3: print( "  Loading{} book order system from{}...".format( bookOrderSystemCode, filename ) )
                     self.XMLSystems[bookOrderSystemCode] = {}
                     self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -111,13 +111,13 @@ class _BibleBookOrdersConvertor:
                                 else:
                                     logging.warning( "Missing work element in header" )
                         else:
-                            logging.warning( "Missing header element (looking for '%s' tag)" % ( headerTag ) )
+                            logging.warning( "Missing header element (looking for '{}' tag)".format( headerTag ) )
                     else:
-                        logging.error( "Expected to load '%s' but got '%s'" % ( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( "Expected to load '{}' but got '{}'".format( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.XMLSystems[bookOrderSystemCode]["tree"]:
                         bookCount += 1
-                    logging.info( "    Loaded %i books" % ( bookCount ) )
+                    logging.info( "    Loaded{} books".format( bookCount ) )
 
                 if Globals.strictCheckingFlag:
                     self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
@@ -139,71 +139,71 @@ class _BibleBookOrdersConvertor:
                 ID = element.get("id")
                 intID = int( ID )
                 if intID != expectedID:
-                    logging.error( "ID numbers out of sequence in record %i (got %i when expecting %i) for %s" % ( k, intID, expectedID, systemName ) )
+                    logging.error( "ID numbers out of sequence in record{} (got{} when expecting{}) for{}".format( k, intID, expectedID, systemName ) )
                 expectedID += 1
 
                 # Check that this is unique
                 if element.text:
                     if element.text in uniqueDict:
-                        logging.error( "Found '%s' data repeated in '%s' element in record with ID '%s' (record %i) for %s" % ( element.text, element.tag, ID, k, systemName ) )
+                        logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record{}) for{}".format( element.text, element.tag, ID, k, systemName ) )
                     uniqueDict[element.text] = None
 
                 # Check compulsory attributes on this main element
                 for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '%s' attribute is missing from %s element in record %i" % ( attributeName, element.tag, k ) )
+                        logging.error( "Compulsory '{}' attribute is missing from{} element in record{}".format( attributeName, element.tag, k ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, k ) )
+                        logging.warning( "Compulsory '{}' attribute is blank on{} element in record{}".format( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, k ) )
+                            logging.warning( "Optional '{}' attribute is blank on{} element in record{}".format( attributeName, element.tag, k ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
-                        logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i" % ( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( "Additional '{}' attribute ('{}') found on{} element in record{}".format( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '%s' data repeated in '%s' field on %s element in record %i" % ( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( "Found '{}' data repeated in '{}' field on{} element in record{}".format( attributeValue, attributeName, element.tag, k ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '%s' element is missing in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
+                        logging.error( "Compulsory '{}' element is missing in record with ID '{}' (record{})".format( elementName, ID, k ) )
                     if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
+                        logging.warning( "Compulsory '{}' element is blank in record with ID '{}' (record{})".format( elementName, ID, k ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '%s' element is blank in record with ID '%s' (record %i)" % ( elementName, ID, k ) )
+                            logging.warning( "Optional '{}' element is blank in record with ID '{}' (record{})".format( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
-                        logging.warning( "Additional '%s' element ('%s') found in record with ID '%s' (record %i)" % ( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( "Additional '{}' element ('{}') found in record with ID '{}' (record{})".format( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( "Found '%s' data repeated in '%s' element in record with ID '%s' (record %i)" % ( text, elementName, ID, k ) )
+                            logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record{})".format( text, elementName, ID, k ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element: %s in record %i" % ( element.tag, k ) )
+                logging.warning( "Unexpected element:{} in record{}".format( element.tag, k ) )
     # end of __validateSystem
 
     def __str__( self ):
@@ -214,17 +214,17 @@ class _BibleBookOrdersConvertor:
         @rtype: string
         """
         result = "_BibleBookOrdersConvertor object"
-        result += ('\n' if result else '') + "  Num book order systems loaded = %i" % ( len(self.XMLSystems) )
+        result += ('\n' if result else '') + "  Num book order systems loaded ={}".format( len(self.XMLSystems) )
         if 0: # Make it verbose
             for x in self.XMLSystems:
-                result += ('\n' if result else '') + "  %s" % ( x )
+                result += ('\n' if result else '') + " {}".format( x )
                 title = self.XMLSystems[x]["title"]
-                if title: result += ('\n' if result else '') + "    %s" % ( title )
+                if title: result += ('\n' if result else '') + "   {}".format( title )
                 version = self.XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: %s" % ( version )
+                if version: result += ('\n' if result else '') + "    Version:{}".format( version )
                 date = self.XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: %s" % ( date )
-                result += ('\n' if result else '') + "    Num books = %i" % ( len(self.XMLSystems[x]["tree"]) )
+                if date: result += ('\n' if result else '') + "    Last updated:{}".format( date )
+                result += ('\n' if result else '') + "    Num books ={}".format( len(self.XMLSystems[x]["tree"]) )
         return result
     # end of __str__
 
@@ -251,20 +251,20 @@ class _BibleBookOrdersConvertor:
                 ID = bookElement.get( "id" )
                 intID = int( ID )
                 if not self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    logging.error( "Unrecognized '%s' book abbreviation in '%s' book order system" % ( bookRA, bookOrderSystemCode ) )
+                    logging.error( "Unrecognized '{}' book abbreviation in '{}' book order system".format( bookRA, bookOrderSystemCode ) )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:
-                    logging.error( "Duplicate %s book reference abbreviations in '%s' book order system" % ( bookRA, bookOrderSystemCode ) )
+                    logging.error( "Duplicate{} book reference abbreviations in '{}' book order system".format( bookRA, bookOrderSystemCode ) )
                 bookDataDict[bookRA] = intID
                 if intID in idDataDict:
-                    logging.error( "Duplicate %i ID (book index) numbers in '%s' book order system" % ( intID, bookOrderSystemCode ) )
+                    logging.error( "Duplicate{} ID (book index) numbers in '{}' book order system".format( intID, bookOrderSystemCode ) )
                 idDataDict[intID] = bookRA
                 BBBList.append( bookRA )
 
             if Globals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataLists:
                     if self.__DataLists[checkSystemCode] == BBBList:
-                        logging.error( "%s and %s book order systems are identical (%i books)" % ( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
+                        logging.error( "{} and{} book order systems are identical ({} books)".format( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
 
             # Now put it into my dictionaries for easy access
             self.__DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
@@ -278,10 +278,10 @@ class _BibleBookOrdersConvertor:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( '  "%s": {\n    # Key is %s\n    # Fields are: %s\n' % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( '  "{}": {\n    # Key is{}\n    # Fields are:{}\n'.format( dictName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
-                theFile.write( '    %s: %s,\n' % ( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "  }, # end of %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
+                theFile.write( '   {}:{},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
+            theFile.write( "  }, # end of{} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -291,29 +291,29 @@ class _BibleBookOrdersConvertor:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
-            myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleBookOrders.py V%s %s\n#\n" % ( versionString, datetime.now() ) )
-            #if self.title: myFile.write( "# %s\n" % ( self.title ) )
-            #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
-            #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            #myFile.write( "#   %i %s entries loaded from the original XML file.\n" % ( len(self.namesTree), self.treeTag ) )
-            myFile.write( "#   %i %s loaded from the original XML files.\n#\n\n" % ( len(self.XMLSystems), self.treeTag ) )
+            myFile.write( "#{}\n#\n".format( filepath ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BibleBookOrders.py V{}{}\n#\n".format( versionString, datetime.now() ) )
+            #if self.title: myFile.write( "#{}\n".format( self.title ) )
+            #if self.version: myFile.write( "#  Version:{}\n".format( self.version ) )
+            #if self.date: myFile.write( "#  Date:{}\n#\n".format( self.date ) )
+            #myFile.write( "#  {}{} entries loaded from the original XML file.\n".format( len(self.namesTree), self.treeTag ) )
+            myFile.write( "#  {}{} loaded from the original XML files.\n#\n\n".format( len(self.XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName in self.__DataDicts:
                 bookDataDict, idDataDict = self.__DataDicts[systemName]
                 exportPythonDict( myFile, bookDataDict, systemName, "referenceAbbreviation", "id" )
-            myFile.write( "} # end of bookDataDict (%i systems)\n\n\n\n" % ( len(self.__DataDicts) ) )
+            myFile.write( "} # end of bookDataDict ({} systems)\n\n\n\n".format( len(self.__DataDicts) ) )
             myFile.write( "idDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName in self.__DataDicts:
                 bookDataDict, idDataDict = self.__DataDicts[systemName]
                 exportPythonDict( myFile, idDataDict, systemName, "id", "referenceAbbreviation" )
-            myFile.write( "} # end of idDataDict (%i systems)\n" % ( len(self.__DataDicts) ) )
-            myFile.write( "# end of %s" % os.path.basename(filepath) )
+            myFile.write( "} # end of idDataDict ({} systems)\n".format( len(self.__DataDicts) ) )
+            myFile.write( "# end of{}".format( os.path.basename(filepath) ) )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -330,16 +330,16 @@ class _BibleBookOrdersConvertor:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
-            #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
-            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
-            #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
-            #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
-            #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
-            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self.XMLtree), self.treeTag ) )
+            #myFile.write( "#{}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on{}\n#\n".format( datetime.now() ) )
+            #if self.titleString: myFile.write( "#{} data\n".format( self.titleString ) )
+            #if self.versionString: myFile.write( "#  Version:{}\n".format( self.versionString ) )
+            #if self.dateString: myFile.write( "#  Date:{}\n#\n".format( self.dateString ) )
+            #myFile.write( "#  {}{} loaded from the original XML file.\n#\n\n".format( len(self.XMLtree), self.treeTag ) )
             json.dump( self.__DataDicts, myFile, indent=2 )
-            #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
+            #myFile.write( "\n\n# end of{}".format( os.path.basename(filepath) ) )
     # end of exportDataToJSON
 
     def exportDataToC( self, filepath=None ):
@@ -348,11 +348,11 @@ class _BibleBookOrdersConvertor:
         """
         def writeStructure( hFile, structName, structure ):
             """ Writes a typedef to the .h file. """
-            hFile.write( "typedef struct %sEntryStruct {\n" % structName )
+            hFile.write( "typedef struct{}EntryStruct {\n".format( structName ) )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
-                if adjDeclaration: hFile.write( "    %s;\n" % adjDeclaration )
-            hFile.write( "} %sEntry;\n\n" % structName )
+                if adjDeclaration: hFile.write( "   {};\n".format( adjDeclaration ) )
+            hFile.write( "}{}Entry;\n\n".format( structName ) )
         # end of writeStructure
 
         def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
@@ -368,7 +368,7 @@ class _BibleBookOrdersConvertor:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
+                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
                 return result
             # end of convertEntry
 
@@ -377,15 +377,15 @@ class _BibleBookOrdersConvertor:
             #    break # We only check the first (random) entry we get
             fieldsCount = 2
 
-            cFile.write( "const static %s\n %s[%i] = {\n  // Fields (%i) are %s\n  // Sorted by %s\n" % ( structName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            cFile.write( "const static{}\n{}[{}] = {\n  // Fields ({}) are{}\n  // Sorted by{}\n".format( structName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( "  {\"{}\",{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 elif isinstance( dictKey, int ):
-                    cFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( "  {{},{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
-            cFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
+                    logging.error( "Can't handle this type of data yet:{}".format( dictKey ) )
+            cFile.write( "}; //{} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -397,43 +397,43 @@ class _BibleBookOrdersConvertor:
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
-            myHFile.write( "// %s\n//\n" % ( hFilepath ) )
-            myCFile.write( "// %s\n//\n" % ( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BibleBookOrders.py on %s\n//\n" % datetime.now()
+            myHFile.write( "//{}\n//\n".format( hFilepath ) )
+            myCFile.write( "//{}\n//\n".format( cFilepath ) )
+            lines = "// This UTF-8 file was automatically generated by BibleBookOrders.py on{}\n//\n".format( datetime.now() )
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self.XMLSystems), self.treeTag ) )
-            myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            myCFile.write( '#include "%s"\n\n' % os.path.basename(hFilepath) )
+            myCFile.write( "//  {}{} loaded from the original XML file.\n//\n\n".format( len(self.XMLSystems), self.treeTag ) )
+            myHFile.write( "\n#ifndef{}\n#define{}\n\n".format( ifdefName, ifdefName ) )
+            myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
 
             CHAR = "const unsigned char"
             BYTE = "const int"
             N1 = "bookOrderByRef"
             N2 = "bookOrderByIndex"
-            S1 = "%s referenceAbbreviation[3+1]; %s indexNumber;" % (CHAR,BYTE)
-            S2 = "%s indexNumber; %s referenceAbbreviation[3+1];" % (BYTE,CHAR)
+            S1 = "{} referenceAbbreviation[3+1];{} indexNumber;".format(CHAR,BYTE)
+            S2 = "{} indexNumber;{} referenceAbbreviation[3+1];".format(BYTE,CHAR)
             writeStructure( myHFile, N1, S1 )
             writeStructure( myHFile, N2, S2 )
-            writeStructure( myHFile, "table", "%s* systemName; %sEntry* byReference; %sEntry* byBook;" % (CHAR,N1,N2) ) # I'm not sure if I need one or two asterisks on those last two
+            writeStructure( myHFile, "table", "{}* systemName;{}Entry* byReference;{}Entry* byBook;".format(CHAR,N1,N2) ) # I'm not sure if I need one or two asterisks on those last two
                                                                                                         # They're supposed to be pointers to an array of structures
-            myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
-            myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
+            myHFile.write( "#endif //{}\n\n".format( ifdefName ) )
+            myHFile.write( "// end of{}".format( os.path.basename(hFilepath) ) )
 
             for systemName in self.__DataDicts: # Now write out the actual data into the .c file
                 bookDataDict, idDataDict = self.__DataDicts[systemName]
-                myCFile.write( "\n// %s\n" % ( systemName ) )
+                myCFile.write( "\n//{}\n".format( systemName ) )
                 exportPythonDict( myCFile, bookDataDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
                 exportPythonDict( myCFile, idDataDict, systemName+"IndexNumberDataDict", N2+"Entry", "indexNumber", S2 )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[%i] = {\n" % len(self.__DataDicts) )
+            myCFile.write( "\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[{}] = {\n".format( len(self.__DataDicts) ) )
             for systemName in self.__DataDicts: # Now write out the actual pointer data into the .c file
-                myCFile.write( '  { "%s", %s, %s },\n' % ( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
-            myCFile.write( "}; // %i entries\n\n" % len(self.__DataDicts) )
-            myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
+                myCFile.write( '  { "{}",{},{} },\n'.format( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
+            myCFile.write( "}; //{} entries\n\n".format( len(self.__DataDicts) ) )
+            myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 
     def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False, debugFlag=False ):
@@ -451,38 +451,38 @@ class _BibleBookOrdersConvertor:
         for bookOrderSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #print( "  Matches '%s' book order system" % ( bookOrderSystemCode ) )
+                #print( "  Matches '{}' book order system".format( bookOrderSystemCode ) )
                 systemMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             else:
                 if len(self.Lists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[bookOrderSystemCode],bookOrderSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match '%s' system (Both have %i books, but %s instead of %s)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
+                    thisError = "    Doesn't match '{}' system (Both have{} books, but{} instead of{})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
                 else:
-                    thisError = "    Doesn't match '%s' system (%i books instead of %i)" % ( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
+                    thisError = "    Doesn't match '{}' system ({} books instead of{})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( "  Matched %s book order (with these %i books)" % ( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                print( "  Matched{} book order (with these{} books)".format( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
             else:
-                print( "  Matched %i book order system(s): %s (with these %i books)" % ( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                print( "  Matched{} book order system(s):{} (with these{} books)".format( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
         else:
-            print( "  Mismatched %i book order systems (with these %i books)" % ( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            print( "  Mismatched{} book order systems (with these{} books)".format( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
             if debugFlag: print( allErrors )
             else: print( errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
-            print( "Writing %i books to %s..." % ( len(bookOrderSchemeToCheck), outputFilepath ) )
+            print( "Writing{} books to{}...".format( len(bookOrderSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
-                    myFile.write( '  <book id="%i">%s</book>\n' % ( n+1,BBB ) )
+                    myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
                 myFile.write( "</BibleBookOrderSystem>" )
     # end of checkBookOrderSystem
 # end of _BibleBookOrdersConvertor class
@@ -509,7 +509,7 @@ class BibleBookOrderSystems:
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '%s' was ignored" % XMLFolder )
+            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '{}' was ignored".format( XMLFolder ) )
             self.__bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__DataLists = self.__bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
             assert( len(self.__DataDicts) == len(self.__DataLists) )
@@ -525,7 +525,7 @@ class BibleBookOrderSystems:
         @rtype: string
         """
         result = "BibleBooksOrders object"
-        result += ('\n' if result else '') + "  Num systems = %i" % ( len(self.__DataDicts) )
+        result += ('\n' if result else '') + "  Num systems ={}".format( len(self.__DataDicts) )
         return result
     # end of __str__
 
@@ -545,8 +545,8 @@ class BibleBookOrderSystems:
         if systemName in self.__DataDicts:
             return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
         # else
-        logging.error( "No '%s' system in Bible Book Orders" % systemName )
-        if Globals.verbosityLevel > 2: logging.error( "Available systems are %s" % self.getAvailableSystemNames() )
+        logging.error( "No '{}' system in Bible Book Orders".format( systemName ) )
+        if Globals.verbosityLevel > 2: logging.error( "Available systems are{}".format( self.getAvailableSystemNames() ) )
     # end of getBookOrderSystem
 
     def numBooks( self, systemName ):
@@ -592,8 +592,8 @@ class BibleBookOrderSystem:
         @rtype: string
         """
         result = "BibleBooksOrder object"
-        result += ('\n' if result else '') + "  %s book order system" % ( self.__systemName )
-        result += ('\n' if result else '') + "  Num books = %i" % ( self.numBooks() )
+        result += ('\n' if result else '') + " {} book order system".format( self.__systemName )
+        result += ('\n' if result else '') + "  Num books ={}".format( self.numBooks() )
         return result
     # end of __str__
 
@@ -659,11 +659,11 @@ def main():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
         bbosc = _BibleBookOrdersConvertor().loadSystems() # Load the XML
@@ -679,29 +679,29 @@ def main():
         # Demo the BibleBookOrders object
         bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( bbos ) # Just print a summary
-        print( "Number of loaded systems: %i" % len(bbos) )
-        print( "Available system names are: %s" % bbos.getAvailableBookOrderSystemNames() )
+        print( "Number of loaded systems:{}".format( len(bbos) ) )
+        print( "Available system names are:{}".format( bbos.getAvailableBookOrderSystemNames() ) )
         systemName = "VulgateBible"
-        print( "Number of books in %s is %i" % (systemName, bbos.numBooks(systemName) ) )
+        print( "Number of books in{} is{}".format( systemName, bbos.numBooks(systemName) ) )
         systemName = "Septuagint"; BBB="ROM"
-        print( "%s is in %s: %s" % (BBB, systemName, bbos.containsBook(systemName,BBB) ) )
+        print( "{} is in{}:{}".format( BBB, systemName, bbos.containsBook(systemName,BBB) ) )
         systemName = "ModernJewish"
-        print( "Booklist for %s is %s" % (systemName, bbos.getBookList(systemName) ) )
+        print( "Booklist for{} is{}".format( systemName, bbos.getBookList(systemName) ) )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
         bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )
         if bbo is not None:
             print( bbo ) # Just print a summary
-            print( "Num books is %i or %i" % (len(bbo), bbo.numBooks()) )
-            print( "The 3rd book is %s" % bbo.getBookAtPosition(3) )
-            print( "Contains Psalms: %s" % bbo.containsBook("PSA") )
-            print( "Luke is book #%i" % bbo.getBookPosition("LUK") )
-            print( "Book list is: %s" % bbo.getBookList() )
+            print( "Num books is{} or{}".format(len(bbo), bbo.numBooks()) )
+            print( "The 3rd book is{}".format( bbo.getBookAtPosition(3) ) )
+            print( "Contains Psalms:{}".format( bbo.containsBook("PSA") ) )
+            print( "Luke is book #{}".format( bbo.getBookPosition("LUK") ) )
+            print( "Book list is:{}".format( bbo.getBookList() ) )
             BBB = "TI1"
             while True:
                 BBB2 = bbo.getNextBook( BBB )
                 if BBB2 is None: break
-                print( " Next book after %s is %s" % (BBB,BBB2) )
+                print( " Next book after{} is{}".format(BBB,BBB2) )
                 BBB = BBB2
             
 # end of main

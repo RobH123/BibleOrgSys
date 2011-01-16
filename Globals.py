@@ -4,9 +4,9 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2010-12-19 (also update versionString below)
+#   Last modified: 2011-01-13 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.04"
+versionString = "0.06"
 
 import logging, os.path
 
@@ -38,11 +38,11 @@ import logging, os.path
 #    old_log_level = logging.getLogger().getEffectiveLevel()
 #    logging.getLogger().setLevel( logging.DEBUG )
 #    logging.debug( "Entering function_with_a_bug" )
-#    logging.debug( "Params were %s", params )
+#    logging.debug( "Params were {}", params )
 #    for item in params:
-#        logging.debug( "Processing %s", item )
+#        logging.debug( "Processing {}", item )
 #        result = do_something_with( item )
-#        logging.debug( "Result was: %s", result )
+#        logging.debug( "Result was: {}", result )
 #    logging.getLogger().setLevel( old_log_level )
 ## end of function_with_a_bug
 
@@ -190,8 +190,8 @@ def addStandardOptionsAndProcess( parserObject ):
     if commandLineOptions.debug: setDebugFlag()
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
     if debugFlag:
-        print( "  commandLineOptions: %s" % commandLineOptions )
-        print( "  commandLineArguments: %s" % commandLineArguments )
+        print( "  commandLineOptions: {}".format( commandLineOptions ) )
+        print( "  commandLineArguments: {}".format( commandLineArguments ) )
     if commandLineOptions.fast: strictCheckingFlag = False
 # end of addStandardOptionsAndProcess
 
@@ -199,12 +199,12 @@ def addStandardOptionsAndProcess( parserObject ):
 def printAllGlobals( indent=None ):
     """ Print all global variables. """
     if indent is None: indent = 2
-    print( "%scommandLineOptions: %s" % ( ' '*indent, commandLineOptions) )
-    print( "%scommandLineArguments: %s" % ( ' '*indent, commandLineArguments) )
-    print( "%sdebugFlag: %s" % ( ' '*indent, debugFlag) )
-    print( "%sverbosityString: %s" % ( ' '*indent, verbosityString) )
-    print( "%sverbosityLevel: %i" % ( ' '*indent, verbosityLevel) )
-    print( "%sstrictCheckingFlag: %s" % ( ' '*indent, strictCheckingFlag) )
+    print( "{}commandLineOptions: {}".format( ( ' '*indent, commandLineOptions) ) )
+    print( "{}commandLineArguments: {}".format( ( ' '*indent, commandLineArguments) ) )
+    print( "{}debugFlag: {}".format( ( ' '*indent, debugFlag) ) )
+    print( "{}verbosityString: {}".format( ( ' '*indent, verbosityString) ) )
+    print( "{}verbosityLevel: {}".format( ( ' '*indent, verbosityLevel) ) )
+    print( "{}strictCheckingFlag: {}".format( ( ' '*indent, strictCheckingFlag) ) )
 # end of printAllGlobals()
 
 
@@ -215,7 +215,7 @@ commandLineOptions, commandLineArguments = None, None
 
 debugFlag = False
 verbosityString = 'Normal'
-verbosityLevel = setVerbosityLevel( verbosityString )
+setVerbosityLevel( verbosityString )
 
 strictCheckingFlag = True
 
@@ -226,10 +226,10 @@ def demo():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     addStandardOptionsAndProcess( parser )
 
-    if verbosityLevel>0: print( "%s V%s" % ( progName, versionString ) )
+    if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
     if verbosityLevel>2:
         printAllGlobals()
 # end of demo
