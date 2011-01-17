@@ -37,20 +37,26 @@ See the supplied ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT BibleOrganizationalSystem (nameEnglish,name+,versificationSystem,punctuationSystem)>
-            <!ELEMENT nameEnglish (#PCDATA)>
+        <!ELEMENT BibleOrganizationalSystem (referenceAbbreviation,languageCode,name+,publicationDate*,versificationSystem*,punctuationSystem*,bookOrderSystem*,booksNamesSystem*,derivedFrom*,usesText*)>
+            <!ATTLIST BibleOrganizationalSystem type CDATA #REQUIRED>
+            <!ELEMENT referenceAbbreviation (#PCDATA)>
+            <!ELEMENT languageCode (#PCDATA)>
             <!ELEMENT name (#PCDATA)>
-                <!ATTLIST name language CDATA #REQUIRED>
+            <!ELEMENT publicationDate (#PCDATA)>
             <!ELEMENT versificationSystem (#PCDATA)>
             <!ELEMENT punctuationSystem (#PCDATA)>
+            <!ELEMENT bookOrderSystem (#PCDATA)>
+            <!ELEMENT booksNamesSystem (#PCDATA)>
+            <!ELEMENT derivedFrom (#PCDATA)>
+            <!ELEMENT usesText (#PCDATA)>
 ]>
 
 <BibleOrganizationalSystems>
 
   <header>
     <work>
-      <version>0.13</version>
-      <date>2010-12-29</date>
+      <version>0.14</version>
+      <date>2011-01-17</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>

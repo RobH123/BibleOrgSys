@@ -4,9 +4,9 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2010-12-25 (also update versionString below)
+#   Last modified: 2011-01-17 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling ISO_639_3_Languages.xml to produce C and Python data tables.
 """
 
 progName = "ISO 639_3_Languages handler"
-versionString = "0.91"
+versionString = "0.92"
 
 import logging, os.path
 from collections import OrderedDict
@@ -39,7 +39,7 @@ import Globals
 
 
 @singleton # Can only ever have one instance
-class _ISO_639_3_Languages_Convertor:
+class _ISO_639_3_Languages_Converter:
     """
     Class for handling and converting ISO 639-3 language codes.
     """
@@ -93,12 +93,12 @@ class _ISO_639_3_Languages_Convertor:
         self.XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from '%s'..." % XMLFilepath )
+        if Globals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from '{}'...".format( XMLFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag  != self._treeTag:
-            logging.error( "Expected to load '%s' but got '%s'" % ( self._treeTag, self._XMLtree.tag ) )
+            logging.error( "Expected to load '{}' but got '{}'".format( self._treeTag, self._XMLtree.tag ) )
     # end of _load
 
     def _validate( self ):
@@ -117,32 +117,32 @@ class _ISO_639_3_Languages_Convertor:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '%s' attribute is missing from %s element in record %i" % ( attributeName, element.tag, j ) )
+                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, j ) )
+                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '%s' attribute is blank on %s element in record %i" % ( attributeName, element.tag, j ) )
+                            logging.warning( "Optional '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( "Additional '%s' attribute ('%s') found on %s element in record %i" % ( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '%s' data repeated in '%s' field on %s element in record %i" % ( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
             else:
-                logging.warning( "Unexpected element: %s in record %i" % ( element.tag, j ) )
+                logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
     # end of _validate
 
     def __str__( self ):
@@ -152,7 +152,7 @@ class _ISO_639_3_Languages_Convertor:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = "_ISO_639_3_Languages_Convertor object"
+        result = "_ISO_639_3_Languages_Converter object"
         if self.title: result += ('\n' if result else '') + self.title
         result += ('\n' if result else '') + "  Num entries = " + str(len(self._XMLtree))
         return result
@@ -199,10 +199,10 @@ class _ISO_639_3_Languages_Convertor:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "%s = {\n  # Key is %s\n  # Fields are: %s\n" % ( dictName, keyComment, fieldsComment ) )
+            theFile.write( "{} = {{\n  # Key is {}\n  # Fields are: {}\n".format( dictName, keyComment, fieldsComment ) )
             for dictKey in sorted(theDict.keys()):
-                theFile.write( "  %s: %s,\n" % ( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "}\n# end of %s\n\n" % ( dictName ) )
+                theFile.write( "  {}: {},\n".format( repr(dictKey), theDict[dictKey] ) )
+            theFile.write( "}}\n# end of {}\n\n".format( dictName ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -212,19 +212,19 @@ class _ISO_639_3_Languages_Convertor:
         assert( self._DataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Languages_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
 
         IDDict, NameDict = self._DataDicts
         with open( filepath, 'wt' ) as myFile:
-            myFile.write( "# %s\n#\n" % ( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by ISO_639_3_Languages_Convertor.py %s\n#\n" % ( datetime.now() ) )
-            if self.title: myFile.write( "# %s\n" % ( self.title ) )
-            #if self.version: myFile.write( "#  Version: %s\n" % ( self.version ) )
-            #if self.date: myFile.write( "#  Date: %s\n#\n" % ( self.date ) )
-            myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "# {}\n#\n".format( filepath ) )
+            myFile.write( "# This UTF-8 file was automatically generated by ISO_639_3_Languages_Converter.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
+            if self.title: myFile.write( "# {}\n".format( self.title ) )
+            #if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
+            #if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
+            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
             exportPythonDict( myFile, IDDict, "ISO639_3_Languages_IDDict", "id", "Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_Languages_NameDict", "name", "ID, Type, Scope, Part1Code, Part2Code" )
-            myFile.write( "# end of %s" % os.path.basename(filepath) )
+            myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -241,16 +241,16 @@ class _ISO_639_3_Languages_Convertor:
         assert( self._DataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "__Languages_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( filepath ) )
+        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
-            #myFile.write( "# %s\n#\n" % ( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
-            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n#\n" % ( datetime.now() ) )
-            #if self.titleString: myFile.write( "# %s data\n" % ( self.titleString ) )
-            #if self.versionString: myFile.write( "#  Version: %s\n" % ( self.versionString ) )
-            #if self.dateString: myFile.write( "#  Date: %s\n#\n" % ( self.dateString ) )
-            #myFile.write( "#   %i %s loaded from the original XML file.\n#\n\n" % ( len(self._XMLtree), self._XMLtreeTag ) )
+            #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
+            #if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
+            #if self.versionString: myFile.write( "#  Version: {}\n".format( self.versionString ) )
+            #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
+            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._XMLtreeTag ) )
             json.dump( self._DataDicts, myFile, indent=2 )
-            #myFile.write( "\n\n# end of %s" % os.path.basename(filepath) )
+            #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToJSON
 
     def exportDataToC( self, filepath=None ):
@@ -271,9 +271,9 @@ class _ISO_639_3_Languages_Convertor:
                         elif isinstance( field, str):
                             if j>0 and len(field)==1: result += "'" + field + "'" # Catch the character fields
                             else: result += '"' + str(field).replace('"','\\"') + '"' # String fields
-                        else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
+                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
                 else:
-                    logging.error( "Can't handle this type of entry yet: %s" % repr(entry) )
+                    logging.error( "Can't handle this type of entry yet: {}".format( repr(entry) ) )
                 return result
             # end of convertEntry
 
@@ -281,22 +281,22 @@ class _ISO_639_3_Languages_Convertor:
                 fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
                 break # We only check the first (random) entry we get
 
-            #hFile.write( "typedef struct %sEntryStruct { %s } %sEntry;\n\n" % ( dictName, structure, dictName ) )
-            hFile.write( "typedef struct %sEntryStruct {\n" % dictName )
+            #hFile.write( "typedef struct {}EntryStruct { {} } {}Entry;\n\n".format( dictName, structure, dictName ) )
+            hFile.write( "typedef struct {}EntryStruct {{\n".format( dictName ) )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
-                if adjDeclaration: hFile.write( "    %s;\n" % adjDeclaration )
-            hFile.write( "} %sEntry;\n\n" % dictName )
+                if adjDeclaration: hFile.write( "    {};\n".format( adjDeclaration ) )
+            hFile.write( "}} {}Entry;\n\n".format( dictName ) )
 
-            cFile.write( "const static %sEntry\n %s[%i] = {\n  // Fields (%i) are %s\n  // Sorted by %s\n" % ( dictName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            cFile.write( "const static {}Entry\n {}[{}] = {{\n  // Fields ({}) are {}\n  // Sorted by {}\n".format( dictName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( "  {{\"{}\", {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 elif isinstance( dictKey, int ):
-                    cFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of key data yet: %s" % ( dictKey ) )
-            cFile.write( "}; // %s (%i entries)\n\n" % ( dictName, len(theDict) ) )
+                    logging.error( "Can't handle this type of key data yet: {}".format( dictKey ) )
+            cFile.write( "}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
         def XXXexportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
@@ -309,18 +309,18 @@ class _ISO_639_3_Languages_Convertor:
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                     elif isinstance( field, int): result += str(field)
-                    else: logging.error( "Cannot convert unknown field type '%s' in entry '%s'" % ( field, entry ) )
+                    else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
                 return result
 
-            theFile.write( "static struct %s %s[] = {\n  // Fields are %s\n" % ( structName, dictName, fieldsComment ) )
+            theFile.write( "static struct {} {}[] = {{\n  // Fields are {}\n".format( structName, dictName, fieldsComment ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    theFile.write( "  {\"%s\", %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    theFile.write( "  {\"{}\", {}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 elif isinstance( dictKey, int ):
-                    theFile.write( "  {%i, %s},\n" % ( dictKey, convertEntry(theDict[dictKey]) ) )
+                    theFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: %s" % ( dictKey ) )
-            theFile.write( "}; // %s\n\n" % ( dictName) )
+                    logging.error( "Can't handle this type of data yet: {}".format( dictKey ) )
+            theFile.write( "}}; // {}\n\n".format( dictName) )
         # end of XXXexportPythonDict
 
         from datetime import datetime
@@ -332,63 +332,63 @@ class _ISO_639_3_Languages_Convertor:
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to %s..." % ( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self._DataDicts
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
-            myHFile.write( "// %s\n//\n" % ( hFilepath ) )
-            myCFile.write( "// %s\n//\n" % ( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BibleBooksCodes.py on %s\n//\n" % datetime.now()
+            myHFile.write( "// {}\n//\n".format( hFilepath ) )
+            myCFile.write( "// {}\n//\n".format( cFilepath ) )
+            lines = "// This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n//\n".format( versionString, datetime.now() )
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self._XMLtree), self._treeTag ) )
-            myHFile.write( "\n#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
-            myCFile.write( '#include "%s"\n\n' % os.path.basename(hFilepath) )
+            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
+            myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
 
             CHAR = "const unsigned char"
             BYTE = "const int"
             dictInfo = {
                 "IDDict":("referenceNumber (integer 1..255)",
-                    "%s referenceNumber; %s* ByzantineAbbreviation; %s* CCELNumberString; %s* NETBibleAbbreviation; %s* OSISAbbreviation; %s ParatextAbbreviation[3+1]; %s ParatextNumberString[2+1]; %s* SBLAbbreviation; %s* SwordAbbreviation; %s* nameEnglish; %s* numExpectedChapters; %s* possibleAlternativeBooks; %s referenceAbbreviation[3+1];"
-                    % (BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
+                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} ParatextAbbreviation[3+1]; {} ParatextNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} referenceAbbreviation[3+1];"
+                   .format(BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "referenceAbbreviationDict":("referenceAbbreviation",
-                    "%s referenceAbbreviation[3+1]; %s* ByzantineAbbreviation; %s* CCELNumberString; %s referenceNumber; %s* NETBibleAbbreviation; %s* OSISAbbreviation; %s ParatextAbbreviation[3+1]; %s ParatextNumberString[2+1]; %s* SBLAbbreviation; %s* SwordAbbreviation; %s* nameEnglish; %s* numExpectedChapters; %s* possibleAlternativeBooks;"
-                    % (CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
-                "CCELDict":("CCELNumberString", "%s* CCELNumberString; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "SBLDict":("SBLAbbreviation", "%s* SBLAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "OSISAbbreviationDict":("OSISAbbreviation", "%s* OSISAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "SwordAbbreviationDict":("SwordAbbreviation", "%s* SwordAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "ParatextAbbreviationDict":("ParatextAbbreviation", "%s ParatextAbbreviation[3+1]; %s referenceNumber; %s referenceAbbreviation[3+1]; %s ParatextNumberString[2+1];" % (CHAR,BYTE,CHAR,CHAR) ),
-                "ParatextNumberDict":("ParatextNumberString", "%s ParatextNumberString[2+1]; %s referenceNumber; %s referenceAbbreviation[3+1]; %s ParatextAbbreviation[3+1];" % (CHAR,BYTE,CHAR,CHAR) ),
-                "NETBibleAbbreviationDict":("NETBibleAbbreviation", "%s* NETBibleAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "ByzantineAbbreviationDict":("ByzantineAbbreviation", "%s* ByzantineAbbreviation; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ),
-                "EnglishNameDict":("nameEnglish", "%s* nameEnglish; %s referenceNumber; %s referenceAbbreviation[3+1];" % (CHAR,BYTE,CHAR) ) }
+                    "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} ParatextAbbreviation[3+1]; {} ParatextNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
+                   .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
+                "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "SBLDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "ParatextAbbreviationDict":("ParatextAbbreviation", "{} ParatextAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "ParatextNumberDict":("ParatextNumberString", "{} ParatextNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ) }
 
             #for dictName,dictData in self._DataDicts.items():
             #    exportPythonDict( myHFile, myCFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
-            exportPythonDict( myHFile, myCFile, IDDict, "IDDict", "3-character lower-case ID field", "%s* ID; %s* Name; %s Type; %s Scope; %s* Part1Code; %s* Part2Code;" % (CHAR,CHAR,CHAR,CHAR,CHAR,CHAR) )
-            exportPythonDict( myHFile, myCFile, NameDict, "NameDict", "language name (alphabetical)", "%s* Name; %s* ID; %s Type; %s Scope; %s* Part1Code; %s* Part2Code;" % (CHAR,CHAR,CHAR,CHAR,CHAR,CHAR)  )
+            exportPythonDict( myHFile, myCFile, IDDict, "IDDict", "3-character lower-case ID field", "{}* ID; {}* Name; {} Type; {} Scope; {}* Part1Code; {}* Part2Code;".format(CHAR,CHAR,CHAR,CHAR,CHAR,CHAR) )
+            exportPythonDict( myHFile, myCFile, NameDict, "NameDict", "language name (alphabetical)", "{}* Name; {}* ID; {} Type; {} Scope; {}* Part1Code; {}* Part2Code;".format(CHAR,CHAR,CHAR,CHAR,CHAR,CHAR)  )
 
-            myHFile.write( "#endif // %s\n\n" % ( ifdefName ) )
-            myHFile.write( "// end of %s" % os.path.basename(hFilepath) )
-            myCFile.write( "// end of %s" % os.path.basename(cFilepath) )
+            myHFile.write( "#endif // {}\n\n".format( ifdefName ) )
+            myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
+            myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
 
 
 
         return
         with open( filepath, 'wt' ) as myFile:
-            myFile.write( "// %s\n//\n" % ( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by ISO_639_3_Languages.py %s\n//\n" % ( datetime.now() ) )
-            if self.title: myFile.write( "// %s\n" % ( self.title ) )
-            #if self.version: myFile.write( "//  Version: %s\n" % ( self.version ) )
-            #if self.date: myFile.write( "//  Date: %s\n//\n" % ( self.date ) )
-            myFile.write( "//   %i %s loaded from the original XML file.\n//\n\n" % ( len(self._XMLtree), self._treeTag ) )
-            myFile.write( "#ifndef %s\n#define %s\n\n" % ( ifdefName, ifdefName ) )
+            myFile.write( "// {}\n//\n".format( filepath ) )
+            myFile.write( "// This UTF-8 file was automatically generated by ISO_639_3_Languages.py V{} on {}\n//\n".format( versionString, datetime.now() ) )
+            if self.title: myFile.write( "// {}\n".format( self.title ) )
+            #if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
+            #if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
+            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
             exportPythonDict( myFile, IDDict, "ISO639_3_Languages_IDDict", "{char* ID; char* Name; char* Type; char* Scope; char* Part1Code; char* Part2Code;}", "ID (sorted), Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_Languages_NameDict", "{char* Name; char* ID; char* Type; char* Scope; char* Part1Code; char* Part2Code;}", "Name (sorted), ID, Type, Scope, Part1Code, Part2Code" )
-            myFile.write( "#endif // %s\n" % ( ifdefName ) )
+            myFile.write( "#endif // {}\n".format( ifdefName ) )
     # end of exportDataToC
-# end of _ISO_639_3_Languages_Convertor class
+# end of _ISO_639_3_Languages_Converter class
 
 
 @singleton # Can only ever have one instance
@@ -405,7 +405,7 @@ class ISO_639_3_Languages:
         """
         Constructor: 
         """
-        self.lgC = _ISO_639_3_Languages_Convertor()
+        self.lgC = _ISO_639_3_Languages_Converter()
         self._IDDict = self._NameDict = None # We'll import into this in loadData
     # end of __init__
 
@@ -418,17 +418,17 @@ class ISO_639_3_Languages:
         """
         result = "ISO_639_3_Languages object"
         assert( len(self._IDDict) == len(self._NameDict) )
-        result += ('\n' if result else '') + "  Num entries = %i" % ( len(self._IDDict) )
+        result += ('\n' if result else '') + "  Num entries = {}".format( len(self._IDDict) )
         return result
     # end of __str__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self._IDDict and not self._NameDict: # Don't do this unnecessarily
-            if XMLFilepath is not None: logging.warning( "ISO 639-3 language codes are already loaded -- your given filepath of '%s' was ignored" % XMLFilepath )
+            if XMLFilepath is not None: logging.warning( "ISO 639-3 language codes are already loaded -- your given filepath of '{}' was ignored".format( XMLFilepath ) )
             self.lgC.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
             self._IDDict, self._NameDict = self.lgC.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self.lgC # Now the convertor class (that handles the XML) is no longer needed
+            del self.lgC # Now the converter class (that handles the XML) is no longer needed
         return self
     # end of loadData
 
@@ -451,21 +451,21 @@ def main():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
-        lgC = _ISO_639_3_Languages_Convertor().loadAndValidate() # Load the XML
+        lgC = _ISO_639_3_Languages_Converter().loadAndValidate() # Load the XML
         lgC.exportDataToPython() # Produce the .py tables
         lgC.exportDataToJSON() # Produce a json output file
         lgC.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
-        # Demo the convertor object
-        lgC = _ISO_639_3_Languages_Convertor().loadAndValidate() # Load the XML
+        # Demo the converter object
+        lgC = _ISO_639_3_Languages_Converter().loadAndValidate() # Load the XML
         print( lgC ) # Just print a summary
 
         # Demo the languages object

@@ -282,6 +282,7 @@
         "defaultName": "2 Maccabees", 
         "inputFields": [
           "2 Maccabees", 
+          "2 Mac", 
           "2 Mccbs", 
           "2 Mcbs"
         ]
@@ -291,6 +292,7 @@
         "defaultName": "5 Maccabees", 
         "inputFields": [
           "5 Maccabees", 
+          "5 Mac", 
           "5 Mccbs", 
           "5 Mcbs"
         ]
@@ -300,6 +302,7 @@
         "defaultName": "4 Maccabees", 
         "inputFields": [
           "4 Maccabees", 
+          "4 Mac", 
           "4 Mccbs", 
           "4 Mcbs"
         ]
@@ -309,6 +312,7 @@
         "defaultName": "Sirach", 
         "inputFields": [
           "Sirach", 
+          "Sir", 
           "Srch"
         ]
       }, 
@@ -317,6 +321,7 @@
         "defaultName": "Tite", 
         "inputFields": [
           "Tite", 
+          "Tit", 
           "Tte"
         ]
       }, 
@@ -325,6 +330,7 @@
         "defaultName": "Exode", 
         "inputFields": [
           "Exode", 
+          "Exo", 
           "Exde", 
           "L'Exode", 
           "L'Exde", 
@@ -337,6 +343,7 @@
         "defaultName": "Nahum", 
         "inputFields": [
           "Nahum", 
+          "Nah", 
           "Nahm", 
           "Nhum"
         ]
@@ -346,6 +353,7 @@
         "defaultName": "3 Maccabees", 
         "inputFields": [
           "3 Maccabees", 
+          "3 Mac", 
           "3 Mccbs", 
           "3 Mcbs"
         ]
@@ -355,6 +363,7 @@
         "defaultName": "\u00c9ph\u00e9siens", 
         "inputFields": [
           "\u00c9ph\u00e9siens", 
+          "\u00c9ph", 
           "Eph\u00e9siens", 
           "\u00c9phesiens", 
           "Ephesiens", 
@@ -367,6 +376,7 @@
         "defaultName": "Josue", 
         "inputFields": [
           "Josue", 
+          "Jos", 
           "Jsue"
         ]
       }, 
@@ -375,6 +385,7 @@
         "defaultName": "Samuel", 
         "inputFields": [
           "Samuel", 
+          "Sam", 
           "Sml"
         ]
       }, 
@@ -383,6 +394,7 @@
         "defaultName": "Proverbes", 
         "inputFields": [
           "Proverbes", 
+          "Pro", 
           "Prvrbs", 
           "Prvbs"
         ]
@@ -392,6 +404,7 @@
         "defaultName": "2 Thessaloniciens", 
         "inputFields": [
           "2 Thessaloniciens", 
+          "2 Thess", 
           "2 Thsslncns", 
           "2 Thslns", 
           "2 Thesalloniciens", 
@@ -404,6 +417,7 @@
         "defaultName": "1 Thessaloniciens", 
         "inputFields": [
           "1 Thessaloniciens", 
+          "1 Thess", 
           "1 Thsslncns", 
           "1 Thslns", 
           "1 Thesalloniciens", 
@@ -431,6 +445,7 @@
         "defaultName": "1 Chroniques", 
         "inputFields": [
           "1 Chroniques", 
+          "1 Chr", 
           "1 Chrnqs", 
           "1 Croniqs", 
           "1 Crnq"
@@ -441,6 +456,7 @@
         "defaultName": "2 Chroniques", 
         "inputFields": [
           "2 Chroniques", 
+          "2 Chr", 
           "2 Chrnqs", 
           "2 Croniqs", 
           "2 Crnq"
@@ -487,6 +503,7 @@
         "defaultName": "Habacuc", 
         "inputFields": [
           "Habacuc", 
+          "Hab", 
           "Hbcc"
         ]
       }, 
@@ -495,6 +512,7 @@
         "defaultName": "Agg\u00e9e", 
         "inputFields": [
           "Agg\u00e9e", 
+          "Agg", 
           "Aggee", 
           "Ag\u00e9e", 
           "Agee"
@@ -505,6 +523,7 @@
         "defaultName": "1 Meqabyan", 
         "inputFields": [
           "1 Meqabyan", 
+          "1 Meq", 
           "1 Mqbyn", 
           "1 Makabian", 
           "1 Mkbn", 
@@ -527,6 +546,7 @@
         "defaultName": "Jacques", 
         "inputFields": [
           "Jacques", 
+          "Jac", 
           "Jcqs", 
           "Saint Jacques", 
           "Saint Jcqs"
@@ -549,6 +569,7 @@
         "defaultName": "2 Samuel", 
         "inputFields": [
           "2 Samuel", 
+          "2 Sam", 
           "2 Sml"
         ]
       }, 
@@ -557,6 +578,7 @@
         "defaultName": "1 Samuel", 
         "inputFields": [
           "1 Samuel", 
+          "1 Sam", 
           "1 Sml"
         ]
       }, 
@@ -565,6 +587,7 @@
         "defaultName": "Moses", 
         "inputFields": [
           "Moses", 
+          "Mos", 
           "Mss"
         ]
       }, 
@@ -573,6 +596,7 @@
         "defaultName": "Lamentations", 
         "inputFields": [
           "Lamentations", 
+          "Lam", 
           "Lmnts"
         ]
       }, 
@@ -581,6 +605,7 @@
         "defaultName": "Laodiceans", 
         "inputFields": [
           "Laodiceans", 
+          "Lao", 
           "Eps Lao", 
           "Ltr Lao"
         ]
@@ -590,6 +615,7 @@
         "defaultName": "Matthieu", 
         "inputFields": [
           "Matthieu", 
+          "Mat", 
           "Mtth", 
           "Mth", 
           "Saint Matthieu", 
@@ -612,6 +638,7 @@
         "defaultName": "1 Timoth\u00e9e", 
         "inputFields": [
           "1 Timoth\u00e9e", 
+          "1 Tim", 
           "1 Tmth", 
           "1 Timothee"
         ]
@@ -621,6 +648,7 @@
         "defaultName": "2 Timoth\u00e9e", 
         "inputFields": [
           "2 Timoth\u00e9e", 
+          "2 Tim", 
           "2 Tmth", 
           "2 Timothee"
         ]
@@ -630,6 +658,7 @@
         "defaultName": "Jonas", 
         "inputFields": [
           "Jonas", 
+          "Jon", 
           "Jns"
         ]
       }, 
@@ -648,6 +677,7 @@
         "defaultName": "Malachie", 
         "inputFields": [
           "Malachie", 
+          "Mal", 
           "Mlchie"
         ]
       }, 
@@ -669,6 +699,7 @@
         "defaultName": "Bel and the Dragon", 
         "inputFields": [
           "Bel and the Dragon", 
+          "Bel", 
           "BaD"
         ]
       }, 
@@ -677,6 +708,7 @@
         "defaultName": "Jude", 
         "inputFields": [
           "Jude", 
+          "Jud", 
           "Jde"
         ]
       }, 
@@ -685,6 +717,7 @@
         "defaultName": "Juges", 
         "inputFields": [
           "Juges", 
+          "Jug", 
           "Jgs"
         ]
       }, 
@@ -693,6 +726,7 @@
         "defaultName": "Deut\u00e9ronome", 
         "inputFields": [
           "Deut\u00e9ronome", 
+          "Deu", 
           "Deuteronome", 
           "Dtrnme", 
           "5 Moses", 
@@ -722,6 +756,7 @@
         "defaultName": "1 Esdras", 
         "inputFields": [
           "1 Esdras", 
+          "1 Esd", 
           "1 Esdrs"
         ]
       }, 
@@ -730,6 +765,7 @@
         "defaultName": "Romains", 
         "inputFields": [
           "Romains", 
+          "Rom", 
           "Rmns"
         ]
       }, 
@@ -756,6 +792,7 @@
         "defaultName": "2 Enoch", 
         "inputFields": [
           "2 Enoch", 
+          "2 Eno", 
           "2 Ench"
         ]
       }, 
@@ -764,6 +801,7 @@
         "defaultName": "Chronicles", 
         "inputFields": [
           "Chronicles", 
+          "Chr", 
           "Chrncls"
         ]
       }, 
@@ -772,6 +810,7 @@
         "defaultName": "Genese", 
         "inputFields": [
           "Genese", 
+          "Gen", 
           "Gns", 
           "1 Moses", 
           "1 Mss"
@@ -782,6 +821,7 @@
         "defaultName": "Mich\u00e9e", 
         "inputFields": [
           "Mich\u00e9e", 
+          "Mic", 
           "Michee", 
           "Mch\u00e9e", 
           "Mchee"
@@ -813,6 +853,7 @@
         "defaultName": "Enoch", 
         "inputFields": [
           "Enoch", 
+          "Eno", 
           "Ench", 
           "1 Enoch", 
           "1 Ench"
@@ -858,6 +899,7 @@
         "defaultName": "Psaumes", 
         "inputFields": [
           "Psaumes", 
+          "Psa", 
           "Psms"
         ]
       }, 
@@ -910,6 +952,7 @@
         "defaultName": "1 Maccabees", 
         "inputFields": [
           "1 Maccabees", 
+          "1 Mac", 
           "1 Mccbs", 
           "1 Mcbs"
         ]
@@ -919,6 +962,7 @@
         "defaultName": "Reproof", 
         "inputFields": [
           "Reproof", 
+          "Rep", 
           "Rprf"
         ]
       }, 
@@ -927,6 +971,7 @@
         "defaultName": "Apocalypse", 
         "inputFields": [
           "Apocalypse", 
+          "Apo", 
           "Apclypse", 
           "Apclpse"
         ]
@@ -936,6 +981,7 @@
         "defaultName": "Susanna", 
         "inputFields": [
           "Susanna", 
+          "Sus", 
           "Ssnn"
         ]
       }, 
@@ -944,6 +990,7 @@
         "defaultName": "Actes", 
         "inputFields": [
           "Actes", 
+          "Act", 
           "Acts"
         ]
       }, 
@@ -952,6 +999,7 @@
         "defaultName": "\u00c9saie", 
         "inputFields": [
           "\u00c9saie", 
+          "\u00c9sa", 
           "Esaie"
         ]
       }, 
@@ -970,6 +1018,7 @@
         "defaultName": "Colossiens", 
         "inputFields": [
           "Colossiens", 
+          "Col", 
           "Clssns", 
           "Clsns", 
           "Cllssns", 
@@ -983,6 +1032,7 @@
         "defaultName": "Eccl\u00e9siaste", 
         "inputFields": [
           "Eccl\u00e9siaste", 
+          "Ecc", 
           "Ecclesiaste", 
           "L'Eccl\u00e9siaste", 
           "L'Ecclesiaste", 
@@ -1011,6 +1061,7 @@
         "defaultName": "Didache", 
         "inputFields": [
           "Didache", 
+          "Did", 
           "Ddch"
         ]
       }, 
@@ -1019,6 +1070,7 @@
         "defaultName": "Nombres", 
         "inputFields": [
           "Nombres", 
+          "Nom", 
           "Nmbrs", 
           "4 Moses", 
           "4 Mss"
@@ -1029,6 +1081,7 @@
         "defaultName": "Odes", 
         "inputFields": [
           "Odes", 
+          "Ode", 
           "Odae"
         ]
       }, 
@@ -1037,6 +1090,7 @@
         "defaultName": "2 Clement", 
         "inputFields": [
           "2 Clement", 
+          "2 Cle", 
           "2 Clmnt"
         ]
       }, 
@@ -1045,6 +1099,7 @@
         "defaultName": "J\u00e9r\u00e9mie", 
         "inputFields": [
           "J\u00e9r\u00e9mie", 
+          "J\u00e9r", 
           "Jeremie", 
           "Jer\u00e9mie", 
           "J\u00e9remie", 
@@ -1065,6 +1120,7 @@
         "defaultName": "Abdias", 
         "inputFields": [
           "Abdias", 
+          "Abd", 
           "Abds"
         ]
       }, 
@@ -1092,6 +1148,7 @@
         "defaultName": "1 Corinthiens", 
         "inputFields": [
           "1 Corinthiens", 
+          "1 Cor", 
           "1 Crnthns"
         ]
       }, 
@@ -1100,6 +1157,7 @@
         "defaultName": "Zacharie", 
         "inputFields": [
           "Zacharie", 
+          "Zac", 
           "Zchrie"
         ]
       }, 
@@ -1108,6 +1166,7 @@
         "defaultName": "3 Corinthians", 
         "inputFields": [
           "3 Corinthians", 
+          "3 Cor", 
           "3 Crnthns"
         ]
       }, 
@@ -1116,6 +1175,7 @@
         "defaultName": "2 Corinthiens", 
         "inputFields": [
           "2 Corinthiens", 
+          "2 Cor", 
           "2 Crnthns"
         ]
       }, 
@@ -1124,6 +1184,7 @@
         "defaultName": "1 Pierre", 
         "inputFields": [
           "1 Pierre", 
+          "1 Pie", 
           "1 Prre", 
           "1 Saint Pierre", 
           "1 Saint Prre"
@@ -1134,6 +1195,7 @@
         "defaultName": "2 Pierre", 
         "inputFields": [
           "2 Pierre", 
+          "2 Pie", 
           "2 Prre", 
           "2 Saint Pierre", 
           "2 Saint Prre"
@@ -1144,6 +1206,7 @@
         "defaultName": "1 Clement", 
         "inputFields": [
           "1 Clement", 
+          "1 Cle", 
           "1 Clmnt"
         ]
       }, 
@@ -1161,6 +1224,7 @@
         "defaultName": "Sophonie", 
         "inputFields": [
           "Sophonie", 
+          "Sop", 
           "Sphnie"
         ]
       }, 
@@ -1169,6 +1233,7 @@
         "defaultName": "2 Esdras", 
         "inputFields": [
           "2 Esdras", 
+          "2 Esd", 
           "2 Esdrs"
         ]
       }, 
@@ -1177,6 +1242,7 @@
         "defaultName": "Wisdom of Solomon", 
         "inputFields": [
           "Wisdom of Solomon", 
+          "Wis", 
           "Wsdm of Slmn"
         ]
       }, 
@@ -1185,6 +1251,7 @@
         "defaultName": "Levitique", 
         "inputFields": [
           "Levitique", 
+          "Lev", 
           "Lvtque", 
           "3 Moses", 
           "3 Mss"
@@ -1195,6 +1262,7 @@
         "defaultName": "Ruth", 
         "inputFields": [
           "Ruth", 
+          "Rut", 
           "Rth"
         ]
       }, 
@@ -1203,6 +1271,7 @@
         "defaultName": "Baruch", 
         "inputFields": [
           "Baruch", 
+          "Bar", 
           "Brch"
         ]
       }, 
@@ -1221,6 +1290,7 @@
         "defaultName": "5 Ezra", 
         "inputFields": [
           "5 Ezra", 
+          "5 Ezr", 
           "5 Esdras"
         ]
       }, 
@@ -1229,6 +1299,7 @@
         "defaultName": "6 Ezra", 
         "inputFields": [
           "6 Ezra", 
+          "6 Ezr", 
           "6 Esdras"
         ]
       }, 
@@ -1256,6 +1327,7 @@
         "defaultName": "Tobit", 
         "inputFields": [
           "Tobit", 
+          "Tob", 
           "Tobias", 
           "Tbt", 
           "Tbs"
@@ -1275,6 +1347,7 @@
         "defaultName": "Daniel", 
         "inputFields": [
           "Daniel", 
+          "Dan", 
           "Dnl"
         ]
       }, 
@@ -1283,6 +1356,7 @@
         "defaultName": "Galates", 
         "inputFields": [
           "Galates", 
+          "Gal", 
           "Glts"
         ]
       }, 
@@ -1291,6 +1365,7 @@
         "defaultName": "Jubilees", 
         "inputFields": [
           "Jubilees", 
+          "Jub", 
           "Jbls"
         ]
       }, 
@@ -1299,6 +1374,7 @@
         "defaultName": "Ester", 
         "inputFields": [
           "Ester", 
+          "Est", 
           "Estr"
         ]
       }, 
@@ -1316,6 +1392,7 @@
         "defaultName": "Os\u00e8e", 
         "inputFields": [
           "Os\u00e8e", 
+          "Os\u00e8", 
           "Osee"
         ]
       }, 
@@ -1324,6 +1401,7 @@
         "defaultName": "4 Baruch", 
         "inputFields": [
           "4 Baruch", 
+          "4 Bar", 
           "4 Brch", 
           "Paralipomenon of Jeremiah", 
           "Prlp of Jrmh", 
@@ -1335,6 +1413,7 @@
         "defaultName": "2 Baruch", 
         "inputFields": [
           "2 Baruch", 
+          "2 Bar", 
           "2 Brch", 
           "Apocalypse of Baruch", 
           "Apoc of Baruch", 
@@ -1346,6 +1425,7 @@
         "defaultName": "3 Baruch", 
         "inputFields": [
           "3 Baruch", 
+          "3 Bar", 
           "3 Brch"
         ]
       }, 
@@ -1354,6 +1434,7 @@
         "defaultName": "3 Meqabyan", 
         "inputFields": [
           "3 Meqabyan", 
+          "3 Meq", 
           "3 Mqbyn", 
           "3 Makabian", 
           "3 Mkbn"
@@ -1364,6 +1445,7 @@
         "defaultName": "Esdras", 
         "inputFields": [
           "Esdras", 
+          "Esd", 
           "Esdrs"
         ]
       }, 
@@ -1381,6 +1463,7 @@
         "defaultName": "2 Meqabyan", 
         "inputFields": [
           "2 Meqabyan", 
+          "2 Meq", 
           "2 Mqbyn", 
           "2 Makabian", 
           "2 Mkbn", 
@@ -1394,6 +1477,7 @@
         "defaultName": "\u00c9z\u00e9chiel", 
         "inputFields": [
           "\u00c9z\u00e9chiel", 
+          "\u00c9z\u00e9", 
           "Ezechiel", 
           "Ez\u00e9chiel", 
           "\u00c9zechiel", 
@@ -1408,6 +1492,762 @@
           "Apocalypse of Ezra", 
           "ApEz", 
           "Ap Ezra"
+        ]
+      }
+    }
+  ], 
+  "mbt": [
+    [
+      {
+        "defaultAbbreviation": "DnK", 
+        "defaultName": "Daan ne Kasabutan", 
+        "includedBooks": [
+          "GEN", 
+          "EXO", 
+          "LEV", 
+          "NUM", 
+          "DEU", 
+          "JOS", 
+          "JDG", 
+          "RUT", 
+          "SA1", 
+          "SA2", 
+          "KI1", 
+          "KI2", 
+          "CH1", 
+          "CH2", 
+          "EZR", 
+          "NEH", 
+          "EST", 
+          "JOB", 
+          "PSA", 
+          "PRO", 
+          "ECC", 
+          "SNG", 
+          "ISA", 
+          "JER", 
+          "LAM", 
+          "EZK", 
+          "DAN", 
+          "HOS", 
+          "JOL", 
+          "AMO", 
+          "OBA", 
+          "JNA", 
+          "MIC", 
+          "NAH", 
+          "HAB", 
+          "ZEP", 
+          "HAG", 
+          "ZEC", 
+          "MAL"
+        ], 
+        "inputFields": [
+          "Daan ne Kasabutan", 
+          "DnK", 
+          "Daan Kasabutan", 
+          "Tapey ne Kasabutan", 
+          "Daan ne Tugon"
+        ]
+      }, 
+      {
+        "defaultAbbreviation": "InK", 
+        "defaultName": "Iyam ne Kasabutan", 
+        "includedBooks": [
+          "MAT", 
+          "MRK", 
+          "LUK", 
+          "JHN", 
+          "ACT", 
+          "ROM", 
+          "CO1", 
+          "CO2", 
+          "GAL", 
+          "EPH", 
+          "PHP", 
+          "COL", 
+          "TH1", 
+          "TH2", 
+          "TI1", 
+          "TI2", 
+          "TIT", 
+          "PHM", 
+          "HEB", 
+          "JAM", 
+          "PE1", 
+          "PE2", 
+          "JN1", 
+          "JN2", 
+          "JN3", 
+          "JDE", 
+          "REV"
+        ], 
+        "inputFields": [
+          "Iyam ne Kasabutan", 
+          "InK", 
+          "Iyam Kasabutan", 
+          "Bag-u ne Kasabutan", 
+          "Bag-o ne Tugon"
+        ]
+      }
+    ], 
+    {
+      "1 ": [
+        "I ", 
+        "Hun-an ne ", 
+        "An-anayan ne ", 
+        "1st ", 
+        "Saa ", 
+        "Sabekan "
+      ], 
+      "2 ": [
+        "II ", 
+        "Igkarangeb ne ", 
+        "Scnd ", 
+        "2nd ", 
+        "Duwa ", 
+        "Daruwan "
+      ], 
+      "Saint ": [
+        "Santu ", 
+        "Santo ", 
+        "St ", 
+        "Snt. ", 
+        "St. "
+      ]
+    }, 
+    {
+      "JN3": {
+        "defaultAbbreviation": "3 Huw", 
+        "defaultName": "3 Huwan", 
+        "inputFields": [
+          "3 Huwan", 
+          "3 Huw", 
+          "3 Hwn", 
+          "3 Hn", 
+          "3 Juan", 
+          "3 Jn"
+        ]
+      }, 
+      "JN2": {
+        "defaultAbbreviation": "2 Huw", 
+        "defaultName": "2 Huwan", 
+        "inputFields": [
+          "2 Huwan", 
+          "2 Huw", 
+          "2 Hwn", 
+          "2 Hn", 
+          "2 Juan", 
+          "2 Jn"
+        ]
+      }, 
+      "JN1": {
+        "defaultAbbreviation": "1 Huw", 
+        "defaultName": "1 Huwan", 
+        "inputFields": [
+          "1 Huwan", 
+          "1 Huw", 
+          "1 Hwn", 
+          "1 Hn", 
+          "1 Juan", 
+          "1 Jn"
+        ]
+      }, 
+      "NEH": {
+        "defaultAbbreviation": "Nih", 
+        "defaultName": "Nihimiyas", 
+        "inputFields": [
+          "Nihimiyas", 
+          "Nih", 
+          "Nhmys"
+        ]
+      }, 
+      "TIT": {
+        "defaultAbbreviation": "Tit", 
+        "defaultName": "Titu", 
+        "inputFields": [
+          "Titu", 
+          "Tit", 
+          "Ttu"
+        ]
+      }, 
+      "EXO": {
+        "defaultAbbreviation": "Iks", 
+        "defaultName": "Iksudu", 
+        "inputFields": [
+          "Iksudu", 
+          "Iks", 
+          "Iksd"
+        ]
+      }, 
+      "JDG": {
+        "defaultAbbreviation": "Tal", 
+        "defaultName": "Me Talewukum", 
+        "inputFields": [
+          "Me Talewukum", 
+          "Tal", 
+          "Tlwkm"
+        ]
+      }, 
+      "REV": {
+        "defaultAbbreviation": "Imp", 
+        "defaultName": "Impakita", 
+        "inputFields": [
+          "Impakita", 
+          "Imp", 
+          "Impkta", 
+          "Gipadayag"
+        ]
+      }, 
+      "DEU": {
+        "defaultAbbreviation": "Diy", 
+        "defaultName": "Diyuturunumiyu", 
+        "inputFields": [
+          "Diyuturunumiyu", 
+          "Diy", 
+          "Dytrnmy"
+        ]
+      }, 
+      "JHN": {
+        "defaultAbbreviation": "Huw", 
+        "defaultName": "Huwan", 
+        "inputFields": [
+          "Huwan", 
+          "Huw", 
+          "Hwn", 
+          "Juan", 
+          "Jn"
+        ]
+      }, 
+      "TI2": {
+        "defaultAbbreviation": "2 Tim", 
+        "defaultName": "2 Timutiyu", 
+        "inputFields": [
+          "2 Timutiyu", 
+          "2 Tim", 
+          "2 Tmtyu"
+        ]
+      }, 
+      "EPH": {
+        "defaultAbbreviation": "Ipi", 
+        "defaultName": "Matig-Ipisu", 
+        "inputFields": [
+          "Matig-Ipisu", 
+          "Ipi", 
+          "MatigIpisu", 
+          "Ipisu", 
+          "Ipsu"
+        ]
+      }, 
+      "ACT": {
+        "defaultAbbreviation": "Himu", 
+        "defaultName": "Me Himu", 
+        "inputFields": [
+          "Me Himu", 
+          "Himu", 
+          "Hmu"
+        ]
+      }, 
+      "ISA": {
+        "defaultAbbreviation": "Isa", 
+        "defaultName": "Isayas", 
+        "inputFields": [
+          "Isayas", 
+          "Isa"
+        ]
+      }, 
+      "LUK": {
+        "defaultAbbreviation": "Luk", 
+        "defaultName": "Lukas", 
+        "inputFields": [
+          "Lukas", 
+          "Luk", 
+          "Lks"
+        ]
+      }, 
+      "COL": {
+        "defaultAbbreviation": "Kul", 
+        "defaultName": "Matig-Kulusas", 
+        "inputFields": [
+          "Matig-Kulusas", 
+          "Kul", 
+          "MatigKulusas", 
+          "Kulusas", 
+          "Klss"
+        ]
+      }, 
+      "TH2": {
+        "defaultAbbreviation": "2 Tis", 
+        "defaultName": "2 Matig-Tisalunika", 
+        "inputFields": [
+          "2 Matig-Tisalunika", 
+          "2 Tis", 
+          "2 MatigTisalunika", 
+          "2 Tisalunika", 
+          "2 Tslnka"
+        ]
+      }, 
+      "NAH": {
+        "defaultAbbreviation": "Nah", 
+        "defaultName": "Nahum", 
+        "inputFields": [
+          "Nahum", 
+          "Nah", 
+          "Nahm", 
+          "Nhum", 
+          "Nhm"
+        ]
+      }, 
+      "JOS": {
+        "defaultAbbreviation": "Huswi", 
+        "defaultName": "Huswi", 
+        "inputFields": [
+          "Huswi", 
+          "Hswi", 
+          "Juswi"
+        ]
+      }, 
+      "ECC": {
+        "defaultAbbreviation": "Ikl", 
+        "defaultName": "Iklisyastis", 
+        "inputFields": [
+          "Iklisyastis", 
+          "Ikl", 
+          "Iklsysts"
+        ]
+      }, 
+      "ROM": {
+        "defaultAbbreviation": "Rum", 
+        "defaultName": "Matig-Ruma", 
+        "inputFields": [
+          "Matig-Ruma", 
+          "Rum", 
+          "MatigRuma", 
+          "Ruma", 
+          "Rma", 
+          "Rumanh"
+        ]
+      }, 
+      "AMO": {
+        "defaultAbbreviation": "Amu", 
+        "defaultName": "Amus", 
+        "inputFields": [
+          "Amus", 
+          "Amu", 
+          "Ams"
+        ]
+      }, 
+      "PRO": {
+        "defaultAbbreviation": "Lal", 
+        "defaultName": "Lalahen", 
+        "inputFields": [
+          "Lalahen", 
+          "Lal", 
+          "Llhn"
+        ]
+      }, 
+      "CH2": {
+        "defaultAbbreviation": "2 Kru", 
+        "defaultName": "2 Krunikas", 
+        "inputFields": [
+          "2 Krunikas", 
+          "2 Kru", 
+          "2 Krnks"
+        ]
+      }, 
+      "TH1": {
+        "defaultAbbreviation": "1 Tis", 
+        "defaultName": "1 Matig-Tisalunika", 
+        "inputFields": [
+          "1 Matig-Tisalunika", 
+          "1 Tis", 
+          "1 MatigTisalunika", 
+          "1 Tisalunika", 
+          "1 Tslnka"
+        ]
+      }, 
+      "MAL": {
+        "defaultAbbreviation": "Mal", 
+        "defaultName": "Malakyas", 
+        "inputFields": [
+          "Malakyas", 
+          "Mal", 
+          "Mlkys"
+        ]
+      }, 
+      "CH1": {
+        "defaultAbbreviation": "1 Kru", 
+        "defaultName": "1 Krunikas", 
+        "inputFields": [
+          "1 Krunikas", 
+          "1 Kru", 
+          "1 Krnks"
+        ]
+      }, 
+      "JOB": {
+        "defaultAbbreviation": "Hub", 
+        "defaultName": "Hub", 
+        "inputFields": [
+          "Hub", 
+          "Hb", 
+          "Jub"
+        ]
+      }, 
+      "NUM": {
+        "defaultAbbreviation": "Num", 
+        "defaultName": "Numiru", 
+        "inputFields": [
+          "Numiru", 
+          "Num", 
+          "Nmr"
+        ]
+      }, 
+      "KI2": {
+        "defaultAbbreviation": "2 Hari", 
+        "defaultName": "2 Me Hari", 
+        "inputFields": [
+          "2 Me Hari", 
+          "2 Hari", 
+          "2 Hri"
+        ]
+      }, 
+      "JDE": {
+        "defaultAbbreviation": "Hud", 
+        "defaultName": "Hudas", 
+        "inputFields": [
+          "Hudas", 
+          "Hud", 
+          "Hds", 
+          "Judas"
+        ]
+      }, 
+      "JOL": {
+        "defaultAbbreviation": "Huwil", 
+        "defaultName": "Huwil", 
+        "inputFields": [
+          "Huwil", 
+          "Hwl"
+        ]
+      }, 
+      "KI1": {
+        "defaultAbbreviation": "1 Hari", 
+        "defaultName": "1 Me Hari", 
+        "inputFields": [
+          "1 Me Hari", 
+          "1 Hari", 
+          "1 Hri"
+        ]
+      }, 
+      "ZEC": {
+        "defaultAbbreviation": "Sak", 
+        "defaultName": "Sakariyas", 
+        "inputFields": [
+          "Sakariyas", 
+          "Sak", 
+          "Skrys"
+        ]
+      }, 
+      "JER": {
+        "defaultAbbreviation": "Hir", 
+        "defaultName": "Hirimiyas", 
+        "inputFields": [
+          "Hirimiyas", 
+          "Hir", 
+          "Hrmys"
+        ]
+      }, 
+      "MIC": {
+        "defaultAbbreviation": "Mic", 
+        "defaultName": "Mikiyas", 
+        "inputFields": [
+          "Mikiyas", 
+          "Mic", 
+          "Mkys"
+        ]
+      }, 
+      "EST": {
+        "defaultAbbreviation": "Ist", 
+        "defaultName": "Istir", 
+        "inputFields": [
+          "Istir", 
+          "Ist", 
+          "Istr"
+        ]
+      }, 
+      "LAM": {
+        "defaultAbbreviation": "Peg", 
+        "defaultName": "Pegkalange", 
+        "inputFields": [
+          "Pegkalange", 
+          "Peg", 
+          "Pgklange"
+        ]
+      }, 
+      "HAB": {
+        "defaultAbbreviation": "Hab", 
+        "defaultName": "Habakuk", 
+        "inputFields": [
+          "Habakuk", 
+          "Hab", 
+          "Hbkk", 
+          "Habbakkuk", 
+          "Habbakuk", 
+          "Hbbkk"
+        ]
+      }, 
+      "TI1": {
+        "defaultAbbreviation": "1 Tim", 
+        "defaultName": "1 Timutiyu", 
+        "inputFields": [
+          "1 Timutiyu", 
+          "1 Tim", 
+          "1 Tmtyu"
+        ]
+      }, 
+      "OBA": {
+        "defaultAbbreviation": "Abd", 
+        "defaultName": "Abdiyas", 
+        "inputFields": [
+          "Abdiyas", 
+          "Abd", 
+          "Abdy"
+        ]
+      }, 
+      "JAM": {
+        "defaultAbbreviation": "San", 
+        "defaultName": "Santiyagu", 
+        "inputFields": [
+          "Santiyagu", 
+          "San", 
+          "Sntygu", 
+          "Hakubu"
+        ]
+      }, 
+      "HOS": {
+        "defaultAbbreviation": "Hus", 
+        "defaultName": "Husiya", 
+        "inputFields": [
+          "Husiya", 
+          "Hus", 
+          "Hsya"
+        ]
+      }, 
+      "HEB": {
+        "defaultAbbreviation": "Heb", 
+        "defaultName": "Hibruwanen", 
+        "inputFields": [
+          "Hibruwanen", 
+          "Heb", 
+          "Hibruhanen", 
+          "Hibruhanun", 
+          "Hbrws"
+        ]
+      }, 
+      "MRK": {
+        "defaultAbbreviation": "Mar", 
+        "defaultName": "Markus", 
+        "inputFields": [
+          "Markus", 
+          "Mar", 
+          "Mrks", 
+          "Mks"
+        ]
+      }, 
+      "SA2": {
+        "defaultAbbreviation": "2 Sam", 
+        "defaultName": "2 Samwil", 
+        "inputFields": [
+          "2 Samwil", 
+          "2 Sam", 
+          "2 Smwl"
+        ]
+      }, 
+      "SA1": {
+        "defaultAbbreviation": "1 Sam", 
+        "defaultName": "1 Samwil", 
+        "inputFields": [
+          "1 Samwil", 
+          "1 Sam", 
+          "1 Smwl"
+        ]
+      }, 
+      "HAG": {
+        "defaultAbbreviation": "Hag", 
+        "defaultName": "Hagiyu", 
+        "inputFields": [
+          "Hagiyu", 
+          "Hag", 
+          "Hgy", 
+          "Haggiyu"
+        ]
+      }, 
+      "ZEP": {
+        "defaultAbbreviation": "Sup", 
+        "defaultName": "Supuniyas", 
+        "inputFields": [
+          "Supuniyas", 
+          "Sup", 
+          "Spnys"
+        ]
+      }, 
+      "PE1": {
+        "defaultAbbreviation": "1 Pid", 
+        "defaultName": "1 Pidru", 
+        "inputFields": [
+          "1 Pidru", 
+          "1 Pid", 
+          "1 Pdru"
+        ]
+      }, 
+      "CO1": {
+        "defaultAbbreviation": "1 Kur", 
+        "defaultName": "1 Matig-Kurintu", 
+        "inputFields": [
+          "1 Matig-Kurintu", 
+          "1 Kur", 
+          "1 MatigKurintu", 
+          "1 Kurintu", 
+          "1 Krntu"
+        ]
+      }, 
+      "SNG": {
+        "defaultAbbreviation": "UNS", 
+        "defaultName": "Ulahingen ni Sulumun", 
+        "inputFields": [
+          "Ulahingen ni Sulumun", 
+          "UNS", 
+          "Ulahingen ni Slmn"
+        ]
+      }, 
+      "CO2": {
+        "defaultAbbreviation": "2 Kur", 
+        "defaultName": "2 Matig-Kurintu", 
+        "inputFields": [
+          "2 Matig-Kurintu", 
+          "2 Kur", 
+          "2 MatigKurintu", 
+          "2 Kurintu", 
+          "2 Krntu"
+        ]
+      }, 
+      "MAT": {
+        "defaultAbbreviation": "Mat", 
+        "defaultName": "Matiyu", 
+        "inputFields": [
+          "Matiyu", 
+          "Mat", 
+          "Mtyu", 
+          "Mattiyu"
+        ]
+      }, 
+      "PHM": {
+        "defaultAbbreviation": "Pilim", 
+        "defaultName": "Pilimun", 
+        "inputFields": [
+          "Pilimun", 
+          "Pilim", 
+          "Plmn"
+        ]
+      }, 
+      "PSA": {
+        "defaultAbbreviation": "Sal", 
+        "defaultName": "Me Salmu", 
+        "inputFields": [
+          "Me Salmu", 
+          "Sal", 
+          "Slmu"
+        ]
+      }, 
+      "GAL": {
+        "defaultAbbreviation": "Gal", 
+        "defaultName": "Matig-Galasya", 
+        "inputFields": [
+          "Matig-Galasya", 
+          "Gal", 
+          "MatigGalasya", 
+          "Galasya", 
+          "Glsya"
+        ]
+      }, 
+      "EZR": {
+        "defaultAbbreviation": "Isd", 
+        "defaultName": "Isdras", 
+        "inputFields": [
+          "Isdras", 
+          "Isd"
+        ]
+      }, 
+      "GEN": {
+        "defaultAbbreviation": "Hin", 
+        "defaultName": "Hinisis", 
+        "inputFields": [
+          "Hinisis", 
+          "Hin", 
+          "Hn"
+        ]
+      }, 
+      "JNA": {
+        "defaultAbbreviation": "Hun", 
+        "defaultName": "Hunas", 
+        "inputFields": [
+          "Hunas", 
+          "Hun", 
+          "Juns"
+        ]
+      }, 
+      "PE2": {
+        "defaultAbbreviation": "2 Pid", 
+        "defaultName": "2 Pidru", 
+        "inputFields": [
+          "2 Pidru", 
+          "2 Pid", 
+          "2 Pdru"
+        ]
+      }, 
+      "LEV": {
+        "defaultAbbreviation": "Lib", 
+        "defaultName": "Libitiku", 
+        "inputFields": [
+          "Libitiku", 
+          "Lib", 
+          "Lbtk"
+        ]
+      }, 
+      "EZK": {
+        "defaultAbbreviation": "Isi", 
+        "defaultName": "Isikil", 
+        "inputFields": [
+          "Isikil", 
+          "Isi", 
+          "Iskl"
+        ]
+      }, 
+      "PHP": {
+        "defaultAbbreviation": "Pil", 
+        "defaultName": "Matig-Pilipu", 
+        "inputFields": [
+          "Matig-Pilipu", 
+          "Pil", 
+          "MatigPilipu", 
+          "Pilipu", 
+          "Plpu"
+        ]
+      }, 
+      "DAN": {
+        "defaultAbbreviation": "Dan", 
+        "defaultName": "Danyil", 
+        "inputFields": [
+          "Danyil", 
+          "Dan", 
+          "Dnyl"
+        ]
+      }, 
+      "RUT": {
+        "defaultAbbreviation": "Rut", 
+        "defaultName": "Rut", 
+        "inputFields": [
+          "Rut", 
+          "Rt"
         ]
       }
     }
@@ -1832,6 +2672,7 @@
         "defaultName": "2 Maccabees", 
         "inputFields": [
           "2 Maccabees", 
+          "2 Mac", 
           "2 Mccbs", 
           "2 Mcbs"
         ]
@@ -1841,6 +2682,7 @@
         "defaultName": "5 Maccabees", 
         "inputFields": [
           "5 Maccabees", 
+          "5 Mac", 
           "5 Mccbs", 
           "5 Mcbs"
         ]
@@ -1850,6 +2692,7 @@
         "defaultName": "4 Maccabees", 
         "inputFields": [
           "4 Maccabees", 
+          "4 Mac", 
           "4 Mccbs", 
           "4 Mcbs"
         ]
@@ -1859,6 +2702,7 @@
         "defaultName": "Sirach", 
         "inputFields": [
           "Sirach", 
+          "Sir", 
           "Srch"
         ]
       }, 
@@ -1867,6 +2711,7 @@
         "defaultName": "Titus", 
         "inputFields": [
           "Titus", 
+          "Tit", 
           "Tts"
         ]
       }, 
@@ -1875,6 +2720,7 @@
         "defaultName": "2 Moses", 
         "inputFields": [
           "2 Moses", 
+          "2 Mos", 
           "2 Mss", 
           "Exodus", 
           "Exds"
@@ -1885,6 +2731,7 @@
         "defaultName": "Nahum", 
         "inputFields": [
           "Nahum", 
+          "Nah", 
           "Nahm", 
           "Nhum", 
           "Nhm"
@@ -1895,6 +2742,7 @@
         "defaultName": "3 Maccabees", 
         "inputFields": [
           "3 Maccabees", 
+          "3 Mac", 
           "3 Mccbs", 
           "3 Mcbs"
         ]
@@ -1904,6 +2752,7 @@
         "defaultName": "Epheser", 
         "inputFields": [
           "Epheser", 
+          "Eph", 
           "Ephsr"
         ]
       }, 
@@ -1912,6 +2761,7 @@
         "defaultName": "Josua", 
         "inputFields": [
           "Josua", 
+          "Jos", 
           "Js"
         ]
       }, 
@@ -1920,6 +2770,7 @@
         "defaultName": "Samuel", 
         "inputFields": [
           "Samuel", 
+          "Sam", 
           "Sml"
         ]
       }, 
@@ -1928,6 +2779,7 @@
         "defaultName": "Spr\u00fcche", 
         "inputFields": [
           "Spr\u00fcche", 
+          "Spr", 
           "Sprch", 
           "Sprichw\u00f6rter"
         ]
@@ -1937,6 +2789,7 @@
         "defaultName": "2 Thessalonicher", 
         "inputFields": [
           "2 Thessalonicher", 
+          "2 Thess", 
           "2 Thsslchr", 
           "2 Thslchr"
         ]
@@ -1946,6 +2799,7 @@
         "defaultName": "1 Thessalonicher", 
         "inputFields": [
           "1 Thessalonicher", 
+          "1 Thess", 
           "1 Thsslchr", 
           "1 Thslchr"
         ]
@@ -1970,6 +2824,7 @@
         "defaultName": "1 Chronik", 
         "inputFields": [
           "1 Chronik", 
+          "1 Chr", 
           "1 Chrnk", 
           "1 Cronik", 
           "1 Crnk"
@@ -1980,6 +2835,7 @@
         "defaultName": "2 Chronik", 
         "inputFields": [
           "2 Chronik", 
+          "2 Chr", 
           "2 Chrnk", 
           "2 Cronik", 
           "2 Crnk"
@@ -2014,6 +2870,7 @@
         "defaultName": "Hoheslied", 
         "inputFields": [
           "Hoheslied", 
+          "Hoh", 
           "Hohelied Salomos", 
           "Hhld"
         ]
@@ -2023,6 +2880,7 @@
         "defaultName": "Habakuk", 
         "inputFields": [
           "Habakuk", 
+          "Hab", 
           "Hbkk"
         ]
       }, 
@@ -2031,6 +2889,7 @@
         "defaultName": "Haggai", 
         "inputFields": [
           "Haggai", 
+          "Hag", 
           "Hgg", 
           "Hagai"
         ]
@@ -2040,6 +2899,7 @@
         "defaultName": "1 Meqabyan", 
         "inputFields": [
           "1 Meqabyan", 
+          "1 Meq", 
           "1 Mqbyn", 
           "1 Makabian", 
           "1 Mkbn", 
@@ -2062,6 +2922,7 @@
         "defaultName": "Jakobus", 
         "inputFields": [
           "Jakobus", 
+          "Jak", 
           "Jkbs"
         ]
       }, 
@@ -2080,6 +2941,7 @@
         "defaultName": "2 Samuel", 
         "inputFields": [
           "2 Samuel", 
+          "2 Sam", 
           "2 Sml"
         ]
       }, 
@@ -2088,6 +2950,7 @@
         "defaultName": "1 Samuel", 
         "inputFields": [
           "1 Samuel", 
+          "1 Sam", 
           "1 Sml"
         ]
       }, 
@@ -2096,6 +2959,7 @@
         "defaultName": "Moses", 
         "inputFields": [
           "Moses", 
+          "Mos", 
           "Mss"
         ]
       }, 
@@ -2104,6 +2968,7 @@
         "defaultName": "Klagelieder", 
         "inputFields": [
           "Klagelieder", 
+          "Klag", 
           "Klgldr"
         ]
       }, 
@@ -2112,6 +2977,7 @@
         "defaultName": "Laodiceans", 
         "inputFields": [
           "Laodiceans", 
+          "Lao", 
           "Eps Lao", 
           "Ltr Lao"
         ]
@@ -2121,6 +2987,7 @@
         "defaultName": "Matth\u00e4us", 
         "inputFields": [
           "Matth\u00e4us", 
+          "Mat", 
           "Matthaus", 
           "Mtths", 
           "Mths"
@@ -2140,6 +3007,7 @@
         "defaultName": "1 Timotheus", 
         "inputFields": [
           "1 Timotheus", 
+          "1 Tim", 
           "1 Tmths"
         ]
       }, 
@@ -2148,6 +3016,7 @@
         "defaultName": "2 Timotheus", 
         "inputFields": [
           "2 Timotheus", 
+          "2 Tim", 
           "2 Tmths"
         ]
       }, 
@@ -2156,6 +3025,7 @@
         "defaultName": "Jona", 
         "inputFields": [
           "Jona", 
+          "Jon", 
           "Jna"
         ]
       }, 
@@ -2174,6 +3044,7 @@
         "defaultName": "Maleachi", 
         "inputFields": [
           "Maleachi", 
+          "Mal", 
           "Mlchi"
         ]
       }, 
@@ -2195,6 +3066,7 @@
         "defaultName": "Bel and the Dragon", 
         "inputFields": [
           "Bel and the Dragon", 
+          "Bel", 
           "BaD"
         ]
       }, 
@@ -2203,6 +3075,7 @@
         "defaultName": "Judas", 
         "inputFields": [
           "Judas", 
+          "Jud", 
           "Jds"
         ]
       }, 
@@ -2219,6 +3092,7 @@
         "defaultName": "5 Moses", 
         "inputFields": [
           "5 Moses", 
+          "5 Mos", 
           "5 Mss", 
           "Deuteronomium", 
           "Dtrnmm"
@@ -2247,6 +3121,7 @@
         "defaultName": "1 Esdras", 
         "inputFields": [
           "1 Esdras", 
+          "1 Esd", 
           "1 Esdrs"
         ]
       }, 
@@ -2255,6 +3130,7 @@
         "defaultName": "R\u00f6mer", 
         "inputFields": [
           "R\u00f6mer", 
+          "R\u00f6m", 
           "Romer", 
           "Rmr"
         ]
@@ -2282,6 +3158,7 @@
         "defaultName": "2 Enoch", 
         "inputFields": [
           "2 Enoch", 
+          "2 Eno", 
           "2 Ench"
         ]
       }, 
@@ -2290,6 +3167,7 @@
         "defaultName": "Chronicles", 
         "inputFields": [
           "Chronicles", 
+          "Chr", 
           "Chrncls"
         ]
       }, 
@@ -2298,6 +3176,7 @@
         "defaultName": "1 Moses", 
         "inputFields": [
           "1 Moses", 
+          "1 Mos", 
           "1 Mss", 
           "Genesis", 
           "Gns"
@@ -2308,6 +3187,7 @@
         "defaultName": "Micha", 
         "inputFields": [
           "Micha", 
+          "Mic", 
           "Mcha"
         ]
       }, 
@@ -2337,6 +3217,7 @@
         "defaultName": "Enoch", 
         "inputFields": [
           "Enoch", 
+          "Eno", 
           "Ench", 
           "1 Enoch", 
           "1 Ench"
@@ -2382,6 +3263,7 @@
         "defaultName": "Psalter", 
         "inputFields": [
           "Psalter", 
+          "Psa", 
           "Psltr", 
           "Psalm", 
           "Pslm"
@@ -2424,6 +3306,7 @@
         "defaultName": "Nehemia", 
         "inputFields": [
           "Nehemia", 
+          "Neh", 
           "Nhmia"
         ]
       }, 
@@ -2432,6 +3315,7 @@
         "defaultName": "1 Maccabees", 
         "inputFields": [
           "1 Maccabees", 
+          "1 Mac", 
           "1 Mccbs", 
           "1 Mcbs"
         ]
@@ -2441,6 +3325,7 @@
         "defaultName": "Reproof", 
         "inputFields": [
           "Reproof", 
+          "Rep", 
           "Rprf"
         ]
       }, 
@@ -2449,6 +3334,7 @@
         "defaultName": "Offenbarung", 
         "inputFields": [
           "Offenbarung", 
+          "Off", 
           "Offnbrng", 
           "Ofnbrng"
         ]
@@ -2458,6 +3344,7 @@
         "defaultName": "Susanna", 
         "inputFields": [
           "Susanna", 
+          "Sus", 
           "Ssnn"
         ]
       }, 
@@ -2475,6 +3362,7 @@
         "defaultName": "Jesaja", 
         "inputFields": [
           "Jesaja", 
+          "Jes", 
           "Jsj"
         ]
       }, 
@@ -2483,6 +3371,7 @@
         "defaultName": "Lukas", 
         "inputFields": [
           "Lukas", 
+          "Luk", 
           "Lks"
         ]
       }, 
@@ -2491,6 +3380,7 @@
         "defaultName": "Kolosser", 
         "inputFields": [
           "Kolosser", 
+          "Kol", 
           "Klssr", 
           "Klsr"
         ]
@@ -2500,6 +3390,7 @@
         "defaultName": "Prediger", 
         "inputFields": [
           "Prediger", 
+          "Pred", 
           "Prdgr", 
           "Kohelet", 
           "Khlt"
@@ -2528,6 +3419,7 @@
         "defaultName": "Didache", 
         "inputFields": [
           "Didache", 
+          "Did", 
           "Ddch"
         ]
       }, 
@@ -2536,6 +3428,7 @@
         "defaultName": "4 Moses", 
         "inputFields": [
           "4 Moses", 
+          "4 Mos", 
           "4 Mss", 
           "Numeri", 
           "Nmr"
@@ -2546,6 +3439,7 @@
         "defaultName": "Odes", 
         "inputFields": [
           "Odes", 
+          "Ode", 
           "Odae"
         ]
       }, 
@@ -2554,6 +3448,7 @@
         "defaultName": "2 Clement", 
         "inputFields": [
           "2 Clement", 
+          "2 Cle", 
           "2 Clmnt"
         ]
       }, 
@@ -2562,6 +3457,7 @@
         "defaultName": "Jeremia", 
         "inputFields": [
           "Jeremia", 
+          "Jer", 
           "Jrm"
         ]
       }, 
@@ -2579,6 +3475,7 @@
         "defaultName": "Obadja", 
         "inputFields": [
           "Obadja", 
+          "Oba", 
           "Obdj"
         ]
       }, 
@@ -2587,6 +3484,7 @@
         "defaultName": "Hebr\u00e4er", 
         "inputFields": [
           "Hebr\u00e4er", 
+          "Heb", 
           "Hebraer", 
           "Hbrr"
         ]
@@ -2605,6 +3503,7 @@
         "defaultName": "1 Korinther", 
         "inputFields": [
           "1 Korinther", 
+          "1 Kor", 
           "1 Krnthr"
         ]
       }, 
@@ -2613,6 +3512,7 @@
         "defaultName": "Sacharja", 
         "inputFields": [
           "Sacharja", 
+          "Sach", 
           "Schrja"
         ]
       }, 
@@ -2621,6 +3521,7 @@
         "defaultName": "3 Corinthians", 
         "inputFields": [
           "3 Corinthians", 
+          "3 Cor", 
           "3 Crnthns"
         ]
       }, 
@@ -2629,6 +3530,7 @@
         "defaultName": "2 Korinther", 
         "inputFields": [
           "2 Korinther", 
+          "2 Kor", 
           "2 Krnthr"
         ]
       }, 
@@ -2637,6 +3539,7 @@
         "defaultName": "1 Petrus", 
         "inputFields": [
           "1 Petrus", 
+          "1 Pet", 
           "1 Ptrs"
         ]
       }, 
@@ -2645,6 +3548,7 @@
         "defaultName": "2 Petrus", 
         "inputFields": [
           "2 Petrus", 
+          "2 Pet", 
           "2 Ptrs"
         ]
       }, 
@@ -2653,6 +3557,7 @@
         "defaultName": "1 Clement", 
         "inputFields": [
           "1 Clement", 
+          "1 Cle", 
           "1 Clmnt"
         ]
       }, 
@@ -2670,6 +3575,7 @@
         "defaultName": "Zefanja", 
         "inputFields": [
           "Zefanja", 
+          "Zef", 
           "Zfnja"
         ]
       }, 
@@ -2678,6 +3584,7 @@
         "defaultName": "2 Esdras", 
         "inputFields": [
           "2 Esdras", 
+          "2 Esd", 
           "2 Esdrs"
         ]
       }, 
@@ -2686,6 +3593,7 @@
         "defaultName": "Wisdom of Solomon", 
         "inputFields": [
           "Wisdom of Solomon", 
+          "Wis", 
           "Wsdm of Slmn"
         ]
       }, 
@@ -2694,6 +3602,7 @@
         "defaultName": "3 Moses", 
         "inputFields": [
           "3 Moses", 
+          "3 Mos", 
           "3 Mss", 
           "Levitikus", 
           "Lvtks"
@@ -2712,6 +3621,7 @@
         "defaultName": "Baruch", 
         "inputFields": [
           "Baruch", 
+          "Bar", 
           "Brch"
         ]
       }, 
@@ -2730,6 +3640,7 @@
         "defaultName": "5 Ezra", 
         "inputFields": [
           "5 Ezra", 
+          "5 Ezr", 
           "5 Esdras"
         ]
       }, 
@@ -2738,6 +3649,7 @@
         "defaultName": "6 Ezra", 
         "inputFields": [
           "6 Ezra", 
+          "6 Ezr", 
           "6 Esdras"
         ]
       }, 
@@ -2765,6 +3677,7 @@
         "defaultName": "Tobit", 
         "inputFields": [
           "Tobit", 
+          "Tob", 
           "Tobias", 
           "Tbt", 
           "Tbs"
@@ -2784,6 +3697,7 @@
         "defaultName": "Daniel", 
         "inputFields": [
           "Daniel", 
+          "Dan", 
           "Dnl"
         ]
       }, 
@@ -2792,6 +3706,7 @@
         "defaultName": "Galater", 
         "inputFields": [
           "Galater", 
+          "Gal", 
           "Gltr"
         ]
       }, 
@@ -2800,6 +3715,7 @@
         "defaultName": "Jubilees", 
         "inputFields": [
           "Jubilees", 
+          "Jub", 
           "Jbls"
         ]
       }, 
@@ -2808,6 +3724,7 @@
         "defaultName": "Ester", 
         "inputFields": [
           "Ester", 
+          "Est", 
           "Estr"
         ]
       }, 
@@ -2825,6 +3742,7 @@
         "defaultName": "Hosea", 
         "inputFields": [
           "Hosea", 
+          "Hos", 
           "Hs"
         ]
       }, 
@@ -2833,6 +3751,7 @@
         "defaultName": "4 Baruch", 
         "inputFields": [
           "4 Baruch", 
+          "4 Bar", 
           "4 Brch", 
           "Paralipomenon of Jeremiah", 
           "Prlp of Jrmh", 
@@ -2844,6 +3763,7 @@
         "defaultName": "2 Baruch", 
         "inputFields": [
           "2 Baruch", 
+          "2 Bar", 
           "2 Brch", 
           "Apocalypse of Baruch", 
           "Apoc of Baruch", 
@@ -2855,6 +3775,7 @@
         "defaultName": "3 Baruch", 
         "inputFields": [
           "3 Baruch", 
+          "3 Bar", 
           "3 Brch"
         ]
       }, 
@@ -2863,6 +3784,7 @@
         "defaultName": "3 Meqabyan", 
         "inputFields": [
           "3 Meqabyan", 
+          "3 Meq", 
           "3 Mqbyn", 
           "3 Makabian", 
           "3 Mkbn"
@@ -2872,7 +3794,8 @@
         "defaultAbbreviation": "Esr", 
         "defaultName": "Esra", 
         "inputFields": [
-          "Esra"
+          "Esra", 
+          "Esr"
         ]
       }, 
       "EZN": {
@@ -2889,6 +3812,7 @@
         "defaultName": "2 Meqabyan", 
         "inputFields": [
           "2 Meqabyan", 
+          "2 Meq", 
           "2 Mqbyn", 
           "2 Makabian", 
           "2 Mkbn", 
@@ -2902,6 +3826,7 @@
         "defaultName": "Hesekiel", 
         "inputFields": [
           "Hesekiel", 
+          "Hes", 
           "Hskl", 
           "Ezechiel", 
           "Ezchl"
@@ -3198,6 +4123,7 @@
         "defaultName": "2 Maccabees", 
         "inputFields": [
           "2 Maccabees", 
+          "2 Mac", 
           "2 Mccbs", 
           "2 Mcbs"
         ]
@@ -3207,6 +4133,7 @@
         "defaultName": "5 Maccabees", 
         "inputFields": [
           "5 Maccabees", 
+          "5 Mac", 
           "5 Mccbs", 
           "5 Mcbs"
         ]
@@ -3216,6 +4143,7 @@
         "defaultName": "4 Maccabees", 
         "inputFields": [
           "4 Maccabees", 
+          "4 Mac", 
           "4 Mccbs", 
           "4 Mcbs"
         ]
@@ -3225,6 +4153,7 @@
         "defaultName": "Sirach", 
         "inputFields": [
           "Sirach", 
+          "Sir", 
           "Srch"
         ]
       }, 
@@ -3233,6 +4162,7 @@
         "defaultName": "Titus", 
         "inputFields": [
           "Titus", 
+          "Tit", 
           "Tts"
         ]
       }, 
@@ -3241,6 +4171,7 @@
         "defaultName": "Exodus", 
         "inputFields": [
           "Exodus", 
+          "Exo", 
           "Exds", 
           "2 Moses", 
           "2 Mss"
@@ -3251,6 +4182,7 @@
         "defaultName": "Nahum", 
         "inputFields": [
           "Nahum", 
+          "Nah", 
           "Nahm", 
           "Nhum", 
           "Nhm"
@@ -3261,6 +4193,7 @@
         "defaultName": "3 Maccabees", 
         "inputFields": [
           "3 Maccabees", 
+          "3 Mac", 
           "3 Mccbs", 
           "3 Mcbs"
         ]
@@ -3270,6 +4203,7 @@
         "defaultName": "Ephesians", 
         "inputFields": [
           "Ephesians", 
+          "Eph", 
           "Ephsns", 
           "Efsns"
         ]
@@ -3279,6 +4213,7 @@
         "defaultName": "Joshua", 
         "inputFields": [
           "Joshua", 
+          "Josh", 
           "Jsh"
         ]
       }, 
@@ -3287,6 +4222,7 @@
         "defaultName": "Samuel", 
         "inputFields": [
           "Samuel", 
+          "Sam", 
           "Sml"
         ]
       }, 
@@ -3295,6 +4231,7 @@
         "defaultName": "Proverbs", 
         "inputFields": [
           "Proverbs", 
+          "Pro", 
           "Prvrbs", 
           "Prvbs"
         ]
@@ -3304,6 +4241,7 @@
         "defaultName": "2 Thessalonians", 
         "inputFields": [
           "2 Thessalonians", 
+          "2 Thess", 
           "2 Thsslns", 
           "2 Thslns", 
           "2 Thesallonians", 
@@ -3316,6 +4254,7 @@
         "defaultName": "1 Thessalonians", 
         "inputFields": [
           "1 Thessalonians", 
+          "1 Thess", 
           "1 Thsslns", 
           "1 Thslns", 
           "1 Thesallonians", 
@@ -3343,6 +4282,7 @@
         "defaultName": "1 Chronicles", 
         "inputFields": [
           "1 Chronicles", 
+          "1 Chr", 
           "1 Chrnc", 
           "1 Cronic", 
           "1 Crnc"
@@ -3353,6 +4293,7 @@
         "defaultName": "2 Chronicles", 
         "inputFields": [
           "2 Chronicles", 
+          "2 Chr", 
           "2 Chrnc", 
           "2 Cronic", 
           "2 Crnc"
@@ -3364,7 +4305,8 @@
         "inputFields": [
           "2 Kings", 
           "2 Kgs", 
-          "2 Kngs"
+          "2 Kngs", 
+          "2 Ks"
         ]
       }, 
       "JOL": {
@@ -3381,7 +4323,8 @@
         "inputFields": [
           "1 Kings", 
           "1 Kgs", 
-          "1 Kngs"
+          "1 Kngs", 
+          "1 Ks"
         ]
       }, 
       "SNG": {
@@ -3402,6 +4345,7 @@
         "defaultName": "Habakkuk", 
         "inputFields": [
           "Habakkuk", 
+          "Hab", 
           "Hbkk", 
           "Habbakkuk", 
           "Habbakuk", 
@@ -3414,6 +4358,7 @@
         "defaultName": "Haggai", 
         "inputFields": [
           "Haggai", 
+          "Hag", 
           "Hgg", 
           "Hagai"
         ]
@@ -3423,6 +4368,7 @@
         "defaultName": "1 Meqabyan", 
         "inputFields": [
           "1 Meqabyan", 
+          "1 Meq", 
           "1 Mqbyn", 
           "1 Makabian", 
           "1 Mkbn", 
@@ -3445,6 +4391,7 @@
         "defaultName": "James", 
         "inputFields": [
           "James", 
+          "Jam", 
           "Jms"
         ]
       }, 
@@ -3465,7 +4412,9 @@
         "defaultName": "2 Samuel", 
         "inputFields": [
           "2 Samuel", 
-          "2 Sml"
+          "2 Sam", 
+          "2 Sml", 
+          "2 Sl"
         ]
       }, 
       "SA1": {
@@ -3473,7 +4422,9 @@
         "defaultName": "1 Samuel", 
         "inputFields": [
           "1 Samuel", 
-          "1 Sml"
+          "1 Sam", 
+          "1 Sml", 
+          "1 Sl"
         ]
       }, 
       "MOS": {
@@ -3481,6 +4432,7 @@
         "defaultName": "Moses", 
         "inputFields": [
           "Moses", 
+          "Mos", 
           "Mss"
         ]
       }, 
@@ -3489,6 +4441,7 @@
         "defaultName": "Lamentations", 
         "inputFields": [
           "Lamentations", 
+          "Lam", 
           "Lmnts"
         ]
       }, 
@@ -3497,6 +4450,7 @@
         "defaultName": "Laodiceans", 
         "inputFields": [
           "Laodiceans", 
+          "Lao", 
           "Eps Lao", 
           "Ltr Lao"
         ]
@@ -3506,6 +4460,7 @@
         "defaultName": "Matthew", 
         "inputFields": [
           "Matthew", 
+          "Mat", 
           "Mtthw", 
           "Mthw", 
           "Mtw", 
@@ -3532,6 +4487,7 @@
         "defaultName": "1 Timothy", 
         "inputFields": [
           "1 Timothy", 
+          "1 Tim", 
           "1 Tmthy"
         ]
       }, 
@@ -3540,6 +4496,7 @@
         "defaultName": "2 Timothy", 
         "inputFields": [
           "2 Timothy", 
+          "2 Tim", 
           "2 Tmthy"
         ]
       }, 
@@ -3548,6 +4505,7 @@
         "defaultName": "Jonah", 
         "inputFields": [
           "Jonah", 
+          "Jon", 
           "Jnh"
         ]
       }, 
@@ -3568,6 +4526,7 @@
         "defaultName": "Malachi", 
         "inputFields": [
           "Malachi", 
+          "Mal", 
           "Mlchi"
         ]
       }, 
@@ -3589,6 +4548,7 @@
         "defaultName": "Bel and the Dragon", 
         "inputFields": [
           "Bel and the Dragon", 
+          "Bel", 
           "BaD"
         ]
       }, 
@@ -3597,6 +4557,7 @@
         "defaultName": "Jude", 
         "inputFields": [
           "Jude", 
+          "Jud", 
           "Jde"
         ]
       }, 
@@ -3614,6 +4575,7 @@
         "defaultName": "Deuteronomy", 
         "inputFields": [
           "Deuteronomy", 
+          "Deu", 
           "Dtrnmy", 
           "5 Moses", 
           "5 Mss"
@@ -3642,6 +4604,7 @@
         "defaultName": "1 Esdras", 
         "inputFields": [
           "1 Esdras", 
+          "1 Esd", 
           "1 Esdrs"
         ]
       }, 
@@ -3650,6 +4613,7 @@
         "defaultName": "Romans", 
         "inputFields": [
           "Romans", 
+          "Rom", 
           "Rmns"
         ]
       }, 
@@ -3676,6 +4640,7 @@
         "defaultName": "2 Enoch", 
         "inputFields": [
           "2 Enoch", 
+          "2 Eno", 
           "2 Ench"
         ]
       }, 
@@ -3684,6 +4649,7 @@
         "defaultName": "Chronicles", 
         "inputFields": [
           "Chronicles", 
+          "Chr", 
           "Chrncls"
         ]
       }, 
@@ -3692,6 +4658,7 @@
         "defaultName": "Genesis", 
         "inputFields": [
           "Genesis", 
+          "Gen", 
           "Gnss", 
           "1 Moses", 
           "1 Mss"
@@ -3702,6 +4669,7 @@
         "defaultName": "Micah", 
         "inputFields": [
           "Micah", 
+          "Mic", 
           "Mcah", 
           "Mich", 
           "Mch"
@@ -3733,6 +4701,7 @@
         "defaultName": "Enoch", 
         "inputFields": [
           "Enoch", 
+          "Eno", 
           "Ench", 
           "1 Enoch", 
           "1 Ench"
@@ -3778,6 +4747,7 @@
         "defaultName": "Psalms", 
         "inputFields": [
           "Psalms", 
+          "Psa", 
           "Pslms"
         ]
       }, 
@@ -3818,6 +4788,7 @@
         "defaultName": "Nehemiah", 
         "inputFields": [
           "Nehemiah", 
+          "Neh", 
           "Nhmh"
         ]
       }, 
@@ -3826,6 +4797,7 @@
         "defaultName": "1 Maccabees", 
         "inputFields": [
           "1 Maccabees", 
+          "1 Mac", 
           "1 Mccbs", 
           "1 Mcbs"
         ]
@@ -3835,6 +4807,7 @@
         "defaultName": "Reproof", 
         "inputFields": [
           "Reproof", 
+          "Rep", 
           "Rprf"
         ]
       }, 
@@ -3843,6 +4816,7 @@
         "defaultName": "Revelation", 
         "inputFields": [
           "Revelation", 
+          "Rev", 
           "Rvltn", 
           "Rvln"
         ]
@@ -3852,6 +4826,7 @@
         "defaultName": "Susanna", 
         "inputFields": [
           "Susanna", 
+          "Sus", 
           "Ssnn"
         ]
       }, 
@@ -3860,6 +4835,7 @@
         "defaultName": "Acts", 
         "inputFields": [
           "Acts", 
+          "Act", 
           "Ats"
         ]
       }, 
@@ -3867,7 +4843,8 @@
         "defaultAbbreviation": "Isa", 
         "defaultName": "Isaiah", 
         "inputFields": [
-          "Isaiah"
+          "Isaiah", 
+          "Isa"
         ]
       }, 
       "LUK": {
@@ -3875,6 +4852,7 @@
         "defaultName": "Luke", 
         "inputFields": [
           "Luke", 
+          "Luk", 
           "Lk", 
           "Saint Luke", 
           "Saint Lk"
@@ -3885,6 +4863,7 @@
         "defaultName": "Colossians", 
         "inputFields": [
           "Colossians", 
+          "Col", 
           "Clssns", 
           "Clsns", 
           "Cllssns", 
@@ -3898,6 +4877,7 @@
         "defaultName": "Ecclesiastes", 
         "inputFields": [
           "Ecclesiastes", 
+          "Ecc", 
           "Ecclsts"
         ]
       }, 
@@ -3923,6 +4903,7 @@
         "defaultName": "Didache", 
         "inputFields": [
           "Didache", 
+          "Did", 
           "Ddch"
         ]
       }, 
@@ -3931,6 +4912,7 @@
         "defaultName": "Numbers", 
         "inputFields": [
           "Numbers", 
+          "Num", 
           "Nmbrs", 
           "4 Moses", 
           "4 Mss"
@@ -3941,6 +4923,7 @@
         "defaultName": "Odes", 
         "inputFields": [
           "Odes", 
+          "Ode", 
           "Odae"
         ]
       }, 
@@ -3949,6 +4932,7 @@
         "defaultName": "2 Clement", 
         "inputFields": [
           "2 Clement", 
+          "2 Cle", 
           "2 Clmnt"
         ]
       }, 
@@ -3957,6 +4941,7 @@
         "defaultName": "Jeremiah", 
         "inputFields": [
           "Jeremiah", 
+          "Jer", 
           "Jrmh"
         ]
       }, 
@@ -3974,14 +4959,16 @@
         "defaultName": "Obadiah", 
         "inputFields": [
           "Obadiah", 
+          "Oba", 
           "Obdh"
         ]
       }, 
       "HEB": {
         "defaultAbbreviation": "Heb", 
-        "defaultName": "Hebrew", 
+        "defaultName": "Hebrews", 
         "inputFields": [
-          "Hebrew", 
+          "Hebrews", 
+          "Heb", 
           "Hbrws"
         ]
       }, 
@@ -3999,6 +4986,7 @@
         "defaultName": "1 Corinthians", 
         "inputFields": [
           "1 Corinthians", 
+          "1 Cor", 
           "1 Crnthns"
         ]
       }, 
@@ -4007,6 +4995,7 @@
         "defaultName": "Zechariah", 
         "inputFields": [
           "Zechariah", 
+          "Zec", 
           "Zchrh"
         ]
       }, 
@@ -4015,6 +5004,7 @@
         "defaultName": "3 Corinthians", 
         "inputFields": [
           "3 Corinthians", 
+          "3 Cor", 
           "3 Crnthns"
         ]
       }, 
@@ -4023,6 +5013,7 @@
         "defaultName": "2 Corinthians", 
         "inputFields": [
           "2 Corinthians", 
+          "2 Cor", 
           "2 Crnthns"
         ]
       }, 
@@ -4031,6 +5022,7 @@
         "defaultName": "1 Peter", 
         "inputFields": [
           "1 Peter", 
+          "1 Pet", 
           "1 Ptr"
         ]
       }, 
@@ -4039,6 +5031,7 @@
         "defaultName": "2 Peter", 
         "inputFields": [
           "2 Peter", 
+          "2 Pet", 
           "2 Ptr"
         ]
       }, 
@@ -4047,6 +5040,7 @@
         "defaultName": "1 Clement", 
         "inputFields": [
           "1 Clement", 
+          "1 Cle", 
           "1 Clmnt"
         ]
       }, 
@@ -4064,6 +5058,7 @@
         "defaultName": "Zephaniah", 
         "inputFields": [
           "Zephaniah", 
+          "Zep", 
           "Zphnh", 
           "Zefaniah", 
           "Zfnh"
@@ -4074,6 +5069,7 @@
         "defaultName": "2 Esdras", 
         "inputFields": [
           "2 Esdras", 
+          "2 Esd", 
           "2 Esdrs"
         ]
       }, 
@@ -4082,6 +5078,7 @@
         "defaultName": "Wisdom of Solomon", 
         "inputFields": [
           "Wisdom of Solomon", 
+          "Wis", 
           "Wsdm of Slmn"
         ]
       }, 
@@ -4090,6 +5087,7 @@
         "defaultName": "Leviticus", 
         "inputFields": [
           "Leviticus", 
+          "Lev", 
           "Lvtcs", 
           "3 Moses", 
           "3 Mss"
@@ -4100,6 +5098,7 @@
         "defaultName": "Ruth", 
         "inputFields": [
           "Ruth", 
+          "Rut", 
           "Rth"
         ]
       }, 
@@ -4108,6 +5107,7 @@
         "defaultName": "Baruch", 
         "inputFields": [
           "Baruch", 
+          "Bar", 
           "Brch"
         ]
       }, 
@@ -4126,6 +5126,7 @@
         "defaultName": "5 Ezra", 
         "inputFields": [
           "5 Ezra", 
+          "5 Ezr", 
           "5 Esdras"
         ]
       }, 
@@ -4134,6 +5135,7 @@
         "defaultName": "6 Ezra", 
         "inputFields": [
           "6 Ezra", 
+          "6 Ezr", 
           "6 Esdras"
         ]
       }, 
@@ -4163,6 +5165,7 @@
         "defaultName": "Tobit", 
         "inputFields": [
           "Tobit", 
+          "Tob", 
           "Tobias", 
           "Tbt", 
           "Tbs"
@@ -4182,6 +5185,7 @@
         "defaultName": "Daniel", 
         "inputFields": [
           "Daniel", 
+          "Dan", 
           "Dnl"
         ]
       }, 
@@ -4190,6 +5194,7 @@
         "defaultName": "Galatians", 
         "inputFields": [
           "Galatians", 
+          "Gal", 
           "Gltns"
         ]
       }, 
@@ -4198,6 +5203,7 @@
         "defaultName": "Jubilees", 
         "inputFields": [
           "Jubilees", 
+          "Jub", 
           "Jbls"
         ]
       }, 
@@ -4206,6 +5212,7 @@
         "defaultName": "Esther", 
         "inputFields": [
           "Esther", 
+          "Est", 
           "Esthr", 
           "Estr"
         ]
@@ -4224,6 +5231,7 @@
         "defaultName": "Hosea", 
         "inputFields": [
           "Hosea", 
+          "Hos", 
           "Hs"
         ]
       }, 
@@ -4232,6 +5240,7 @@
         "defaultName": "4 Baruch", 
         "inputFields": [
           "4 Baruch", 
+          "4 Bar", 
           "4 Brch", 
           "Paralipomenon of Jeremiah", 
           "Prlp of Jrmh", 
@@ -4243,6 +5252,7 @@
         "defaultName": "2 Baruch", 
         "inputFields": [
           "2 Baruch", 
+          "2 Bar", 
           "2 Brch", 
           "Apocalypse of Baruch", 
           "Apoc of Baruch", 
@@ -4254,6 +5264,7 @@
         "defaultName": "3 Baruch", 
         "inputFields": [
           "3 Baruch", 
+          "3 Bar", 
           "3 Brch"
         ]
       }, 
@@ -4262,6 +5273,7 @@
         "defaultName": "3 Meqabyan", 
         "inputFields": [
           "3 Meqabyan", 
+          "3 Meq", 
           "3 Mqbyn", 
           "3 Makabian", 
           "3 Mkbn"
@@ -4271,7 +5283,8 @@
         "defaultAbbreviation": "Ezr", 
         "defaultName": "Ezra", 
         "inputFields": [
-          "Ezra"
+          "Ezra", 
+          "Ezr"
         ]
       }, 
       "EZN": {
@@ -4288,6 +5301,7 @@
         "defaultName": "2 Meqabyan", 
         "inputFields": [
           "2 Meqabyan", 
+          "2 Meq", 
           "2 Mqbyn", 
           "2 Makabian", 
           "2 Mkbn", 
@@ -4301,6 +5315,7 @@
         "defaultName": "Ezekiel", 
         "inputFields": [
           "Ezekiel", 
+          "Eze", 
           "Ezkl"
         ]
       }, 

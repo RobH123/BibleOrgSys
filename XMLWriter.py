@@ -4,9 +4,9 @@
 # XMLWriter.py
 #
 # Module handling pretty writing of XML (and xHTML) files
-#   Last modified: 2010-12-22 by RJH (also update versionString below)
+#   Last modified: 2011-01-17 by RJH (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 progName = "XML Writer"
-versionString = "0.22"
+versionString = "0.23"
 
 
 import os, logging
@@ -80,7 +80,7 @@ class XMLWriter:
         @rtype: string
         """
         result = "_XMLWriter object"
-        result += ('\n' if result else '') + "  Status: %s" % self._status
+        result += ('\n' if result else '') + "  Status: {}".format(self._status)
         return result
     # end of __str__
 
@@ -148,7 +148,7 @@ class XMLWriter:
     def start( self, noAutoXML=False ):
         """ Opens the file and writes a header record to it. """
         assert( self._status == 'Idle' )
-        if Globals.verbosityLevel>1: print( "Writing %s..." % self.outputFilePath )
+        if Globals.verbosityLevel>1: print( "Writing {}...".format(self.outputFilePath) )
         self.outputFile = open( self.outputFilePath, 'wt' )
         self._status = 'Open'
         self._currentColumn = 0
@@ -180,7 +180,7 @@ class XMLWriter:
 
     def checkTag( self, tagString ):
         """ Returns a checked string containing the tag name. """
-        #print( "tagString: '%s'", tagString )
+        #print( "tagString: '{}'", tagString )
         assert( tagString ) # It can't be blank
         assert( '<' not in tagString and '>' not in tagString and '"' not in tagString )
         return tagString
@@ -214,21 +214,21 @@ class XMLWriter:
         if isinstance( attribInfo, tuple ): # Assume it's a single pair
             assert( len(attribInfo) == 2 )
             if result: result += ' '
-            result += '%s="%s"' % ( self.checkAttribName(attribInfo[0]), self.checkAttribValue(attribInfo[1]) )
+            result += '{}="{}"'.format( self.checkAttribName(attribInfo[0]), self.checkAttribValue(attribInfo[1]) )
         elif isinstance( attribInfo, list ):
             for attrib,value in attribInfo:
                 if result: result += ' '
-                result += '%s="%s"' % ( self.checkAttribName(attrib), self.checkAttribValue(value) )
+                result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
         else: # It's not a tuple or a list so we assume it's a dictionary or ordered dictionary
             for attrib,value in attribInfo.items():
                 if result: result += ' '
-                result += '%s="%s"' % ( self.checkAttribName(attrib), self.checkAttribValue(value) )
+                result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
         return result
     # end if getAttributes
 
     def writeLineComment( self, text, noTextCheck=False ):
         """ Writes an XML comment field. """
-        return self._autoWrite( '<!-- %s -->' % (text if noTextCheck else self.checkText(text)) )
+        return self._autoWrite( '<!-- {} -->'.format(text if noTextCheck else self.checkText(text)) )
     # end of writeLineComment
 
     def writeLineText( self, text, noTextCheck=False ):
@@ -239,28 +239,28 @@ class XMLWriter:
     def writeLineOpen( self, openTag, attribInfo=None ):
         """ Writes an opening tag on a line. """
         if attribInfo is None:
-            self._autoWrite( '<%s>' % self.checkTag(openTag) )
+            self._autoWrite( '<{}>'.format(self.checkTag(openTag)) )
         else: # have one or more attributes
-            self._autoWrite( '<%s %s>' % ( self.checkTag(openTag), self.getAttributes(attribInfo) ) )
+            self._autoWrite( '<{} {}>'.format( self.checkTag(openTag), self.getAttributes(attribInfo) ) )
         self._openStack.append( openTag )
     # end of writeLineOpen
 
     def writeLineOpenText( self, openTag, text, attribInfo=None, noTextCheck=False ):
         """ Writes an opening tag on a line. """
-        #print( "text: '%s'" % text )
+        #print( "text: '{}'".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
-            self._autoWrite( '<%s>%s' % ( self.checkTag(openTag), text ) )
+            self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
         else: # have one or more attributes
-            self._autoWrite( '<%s %s>%s' % ( self.checkTag(openTag), self.getAttributes(attribInfo), text ) )
+            self._autoWrite( '<{} {}>{}'.format( self.checkTag(openTag), self.getAttributes(attribInfo), text ) )
         self._openStack.append( openTag )
     # end of writeLineOpenText
 
     def writeLineClose( self, closeTag ):
         """ Writes an opening tag on a line. """
         expectedTag = self._openStack.pop()
-        if expectedTag != closeTag: logging.error( "Closed '%s' tag but should have closed '%s'" % ( closeTag, expectedTag ) )
-        self._autoWrite( '</%s>' % self.checkTag(closeTag) )
+        if expectedTag != closeTag: logging.error( "Closed '{}' tag but should have closed '{}'".format( closeTag, expectedTag ) )
+        self._autoWrite( '</{}>'.format(self.checkTag(closeTag)) )
     # end of writeLineOpen
 
     def writeLineOpenClose( self, tag, text, attribInfo=None, noTextCheck=False ):
@@ -268,18 +268,18 @@ class XMLWriter:
         checkedTag = self.checkTag(tag)
         checkedText = text if noTextCheck else self.checkText(text)
         if attribInfo is None:
-            return self._autoWrite( '<%s>%s</%s>' % ( checkedTag, checkedText, checkedTag ) )
+            return self._autoWrite( '<{}>{}</{}>'.format( checkedTag, checkedText, checkedTag ) )
         #else: # have one or more attributes
-        return self._autoWrite( '<%s %s>%s</%s>' % ( checkedTag, self.getAttributes(attribInfo), checkedText, checkedTag ) )
+        return self._autoWrite( '<{} {}>{}</{}>'.format( checkedTag, self.getAttributes(attribInfo), checkedText, checkedTag ) )
     # end of writeLineOpenClose
 
     def writeLineOpenSelfclose( self, tag, attribInfo=None ):
         """ Writes a self-closing tag with optional attributes. """
         checkedTag = self.checkTag(tag)
         if attribInfo is None:
-            return self._autoWrite( '<%s%s/>' % ( checkedTag, ' ' if self.spaceBeforeSelfcloseTag else '' ) )
+            return self._autoWrite( '<{}{}/>'.format( checkedTag, ' ' if self.spaceBeforeSelfcloseTag else '' ) )
         #else: # have one or more attributes
-        return self._autoWrite( '<%s %s%s/>' % ( checkedTag, self.getAttributes(attribInfo), ' ' if self.spaceBeforeSelfcloseTag else '' ) )
+        return self._autoWrite( '<{} {}{}/>'.format( checkedTag, self.getAttributes(attribInfo), ' ' if self.spaceBeforeSelfcloseTag else '' ) )
     # end of writeLineOpenSelfclose
 
     def writeBuffer( self ):
@@ -293,7 +293,7 @@ class XMLWriter:
     def close( self ):
         """ Finish everything up and close the file. """
         assert( self.outputFile is not None )
-        if self._openStack: logging.error( "Have unclosed tags: %s" % self._openStack )
+        if self._openStack: logging.error( "Have unclosed tags: {}".format(self._openStack) )
         if self._buffer: self.writeBuffer()
         if self._status != "Buffered": pass
         self.outputFile.close()
@@ -304,7 +304,7 @@ class XMLWriter:
         """ Close all open tags and finish everything up and close the file. """
         assert( self.outputFile is not None )
         assert( self._status == 'Open' )
-        if Globals.debugFlag: print( "autoClose stack: %s", self._openStack )
+        if Globals.debugFlag: print( "autoClose stack: {}", self._openStack )
         for index in range( len(self._openStack)-1, -1, -1 ): # Have to step through this backwards
             self.writeLineClose( self._openStack[index] )
         self._sectionName = 'None'
@@ -319,10 +319,10 @@ def demo():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel>0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
 
     # Demo the writer object
     outputFolder = "OutputFiles"

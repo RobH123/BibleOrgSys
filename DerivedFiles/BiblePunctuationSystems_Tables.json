@@ -1,14 +1,43 @@
 {
+  "English_brief": {
+    "booknameCase": "ME", 
+    "chapterBridgeCharacter": "-", 
+    "verseBridgeCharacter": "-", 
+    "booknameLength": "ME", 
+    "spaceAllowedAfterBCS": "E", 
+    "punctuationAfterBookAbbreviation": "", 
+    "chapterVerseSeparator": ":", 
+    "bookChapterSeparator": " ", 
+    "chapterSeparator": ";", 
+    "bookBridgeCharacter": "-", 
+    "bookSeparator": ";", 
+    "verseSeparator": ","
+  }, 
+  "Matigsalug": {
+    "booknameCase": "ME", 
+    "chapterBridgeCharacter": "\u2013", 
+    "verseBridgeCharacter": "-", 
+    "booknameLength": "Unused", 
+    "spaceAllowedAfterBCS": "E", 
+    "punctuationAfterBookAbbreviation": "", 
+    "chapterVerseSeparator": ":", 
+    "bookChapterSeparator": " ", 
+    "chapterSeparator": ";", 
+    "bookBridgeCharacter": "\u2013", 
+    "bookSeparator": ";", 
+    "verseSeparator": ","
+  }, 
   "English": {
     "booknameCase": "ME", 
     "chapterBridgeCharacter": "-", 
     "verseBridgeCharacter": "-", 
     "booknameLength": "ME", 
-    "chapterVerseSeparator": ":", 
-    "punctuationAfterBookAbbreviation": ".", 
     "spaceAllowedAfterBCS": "E", 
+    "punctuationAfterBookAbbreviation": ".", 
+    "chapterVerseSeparator": ":", 
     "bookChapterSeparator": " ", 
     "chapterSeparator": ";", 
+    "bookBridgeCharacter": "-", 
     "bookSeparator": ";", 
     "verseSeparator": ","
   }

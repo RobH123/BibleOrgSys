@@ -1,6 +1,6 @@
 # BibleBooksNames.rnc           Relax NG Compact Syntax schema file
-#   Version 0.10
-#   Last modified: 2010-11-12
+#   Version 0.11
+#   Last modified: 2011-01-17
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksNames.rnc ../DerivedFiles/BibleBooksNames.rng
@@ -45,10 +45,10 @@ work = element work
 }
 
 BibleDivisionNames = element BibleDivisionNames
-{   attribute startsWith { xsd:string { length="3" } },
-    element defaultName { xsd:string { minLength="3" maxLength="20" } },
-    element defaultAbbreviation { xsd:string { minLength="2" maxLength="3" } },
-    element inputAbbreviation { xsd:string { minLength="3" maxLength="10" } }*
+{   element defaultName { xsd:string { minLength="3" maxLength="20" } },
+    element defaultAbbreviation { xsd:string { minLength="2" maxLength="8" } },
+    element inputAbbreviation { xsd:string { minLength="3" maxLength="20" } }*,
+    element includesBook { xsd:string { length="3" } }*
 }
 
 BibleBooknameLeaders = element BibleBooknameLeaders

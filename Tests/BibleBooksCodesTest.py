@@ -4,7 +4,7 @@
 # BibleBooksCodesTest.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-01-15 (also update versionString below)
+#   Last modified: 2011-01-16 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.03"
+versionString = "0.04"
 
 
 import sys, os.path
@@ -59,6 +59,7 @@ class BibleBooksCodesTests(unittest.TestCase):
         results = self.bbc.getAllReferenceAbbreviations()
         self.assert_( isinstance( results, list ) )
         self.assert_( len(results) > 66 )
+        self.assertFalse( None in results )
         for result in results: self.assert_( len(result)==3 )
     # end of test_getAllReferenceAbbreviations
 
@@ -103,6 +104,7 @@ class BibleBooksCodesTests(unittest.TestCase):
         results = self.bbc.getSingleChapterBooksList()
         self.assert_( isinstance( results, list ) )
         self.assert_( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertFalse( None in results )
         for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assert_( BBB in results )
     # end of test_getSingleChapterBooksList
 
@@ -111,6 +113,7 @@ class BibleBooksCodesTests(unittest.TestCase):
         results = self.bbc.getOSISSingleChapterBooksList()
         self.assert_( isinstance( results, list ) )
         self.assert_( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertFalse( None in results )
         for BBB in ('Obad','Phlm','2John','3John','Jude',): self.assert_( BBB in results )
     # end of test_getOSISSingleChapterBooksList
 
@@ -119,6 +122,7 @@ class BibleBooksCodesTests(unittest.TestCase):
         results = self.bbc.getAllParatextBooksCodeNumberTriples()
         self.assert_( isinstance( results, list ) )
         self.assert_( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
+        self.assertFalse( None in results )
         for resultTuple in results:
             self.assert_( len(resultTuple)== 3 )
             self.assert_( len(resultTuple[0]) == 3 )

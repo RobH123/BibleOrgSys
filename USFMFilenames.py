@@ -3,9 +3,9 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2010-12-18 (also update versionString below)
+#   Last modified: 2011-01-17 (also update versionString below)
 #
-# Copyright (C) 2010 Robert Hunt
+# Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.53"
+versionString = "0.54"
 
 
 import os
@@ -140,11 +140,11 @@ def demo():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 0: print( "%s V%s" % ( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     test = USFMFilenames( '/mnt/Data/Matigsalug/Scripture/MBTV' )
     print( test )
@@ -158,3 +158,4 @@ def demo():
 
 if __name__ == '__main__':
     demo()
+# end of USFMFilenames.py

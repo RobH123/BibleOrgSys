@@ -2,8 +2,8 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BibleOrganizationalSystems.rnc           Relax NG Compact Syntax schema file
-      Version 0.10
-      Last modified: 2010-11-44
+      Version 0.21
+      Last modified: 2011-01-17
     
     On Linux, to convert to RNG, use
           trang BibleOrganizationalSystems.rnc ../DerivedFiles/BibleOrganizationalSystems.rng
@@ -88,28 +88,80 @@
   </define>
   <define name="BibleOrganizationalSystem">
     <element name="BibleOrganizationalSystem">
-      <element name="nameEnglish">
+      <attribute name="type">
+        <choice>
+          <value>original</value>
+          <value>translation</value>
+          <value>revision</value>
+          <value>edition</value>
+        </choice>
+      </attribute>
+      <element name="referenceAbbreviation">
         <data type="string">
           <param name="minLength">3</param>
         </data>
       </element>
+      <element name="languageCode">
+        <data type="string">
+          <param name="length">3</param>
+        </data>
+      </element>
       <oneOrMore>
         <element name="name">
-          <attribute name="language">
-            <data type="string">
-              <param name="length">3</param>
-            </data>
-          </attribute>
           <data type="string">
             <param name="minLength">3</param>
           </data>
         </element>
       </oneOrMore>
-      <element name="versificationSystemCode">
-        <data type="string">
-          <param name="minLength">2</param>
-        </data>
-      </element>
+      <zeroOrMore>
+        <element name="publicationDate">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="versificationSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="punctuationSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="bookOrderSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="booksNamesSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="derivedFrom">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="usesText">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
     </element>
   </define>
 </grammar>

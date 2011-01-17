@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.93
-#   Last modified: 2010-12-16
+#   Version 0.95
+#   Last modified: 2011-01-17
 #
 # Abbreviations:
 #   XML = eXtensible Markup Language -- see http://en.wikipedia.org/wiki/XML
@@ -51,7 +51,7 @@
 #
 #   BibleBooksCodes.py (for Python 3)
 #       This small program will load and do some very basic checking of the XML data file.
-#           It contains two classes -- the Convertor class is not intended to be used by most end-user programs.
+#           It contains two classes -- the Converter class is not intended to be used by most end-user programs.
 #       It can be used in a larger Python program to load the XML data into a number of Python dictionaries (with different fields as the key).
 #       It can also be used to convert and export the XML data directly to Python or C code which can be included in another program as well as JSON format
             (if you don't want to have to supply or validate the master XML file).
@@ -66,4 +66,4 @@
 #
 # Robert Hunt
 # Hunt.Robert@gmail.com
-# November-December 2010.
+# November 2010--January 2011.

@@ -4,7 +4,7 @@
 # BibleVersificationSystems.py
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-13 (also update versionString below)
+#   Last modified: 2011-01-17 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.41"
+versionString = "0.42"
 
 
 import os, logging
@@ -41,7 +41,7 @@ from BibleBooksCodes import BibleBooksCodes
 
 
 @singleton # Can only ever have one instance
-class _BibleVersificationSystemsConvertor:
+class _BibleVersificationSystemsConverter:
     """
     A class to handle data for Bible versification systems.
     """
@@ -199,7 +199,7 @@ class _BibleVersificationSystemsConvertor:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = "_BibleVersificationSystemsConvertor object"
+        result = "_BibleVersificationSystemsConverter object"
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version:{}".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date:{}".format( self.date )
@@ -326,10 +326,10 @@ class _BibleVersificationSystemsConvertor:
         """
         def exportPythonDict( theFile, theDict, systemName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( '  "{}": {\n    # Key is{}\n    # Fields are:{}\n'.format( systemName, keyComment, fieldsComment ) )
+            theFile.write( '  "{}": {{\n    # Key is{}\n    # Fields are:{}\n'.format( systemName, keyComment, fieldsComment ) )
             for dictKey in theDict.keys():
                 theFile.write( '   {}:{},\n'.format( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "  }, # end of{} ({} entries)\n\n".format( systemName, len(theDict) ) )
+            theFile.write( "  }}, # end of{} ({} entries)\n\n".format( systemName, len(theDict) ) )
         # end of exportPythonDict
 
         from datetime import datetime
@@ -353,11 +353,11 @@ class _BibleVersificationSystemsConvertor:
             myFile.write( "chapterVerseDict = {\n  # Key is versificationSystemName\n  # Fields are versificationSystem\n" )
             for systemName in versificationSystemDict:
                 exportPythonDict( myFile, versificationSystemDict[systemName][0], systemName, "BBB referenceAbbreviation", "tuples containing (\"numChapters\", numChapters) then (chapterNumber, numVerses)" )
-            myFile.write( "} # end of chapterVerseDict ({} systems)\n\n".format( len(versificationSystemDict) ) )
-            myFile.write( "omittedVersesDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n" )
+            myFile.write( "}} # end of chapterVerseDict ({} systems)\n\n".format( len(versificationSystemDict) ) )
+            myFile.write( "omittedVersesDict = {{\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n" )
             for systemName in versificationSystemDict:
                 exportPythonDict( myFile, versificationSystemDict[systemName][1], systemName, "BBB referenceAbbreviation", "tuples containing (chapterNumber, omittedVerseNumber)" )
-            myFile.write( "} # end of omittedVersesDict ({} systems)\n\n".format( len(versificationSystemDict) ) )
+            myFile.write( "}} # end of omittedVersesDict ({} systems)\n\n".format( len(versificationSystemDict) ) )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -652,7 +652,7 @@ class _BibleVersificationSystemsConvertor:
                     myFile.write( "  </BibleBookVersification>\n" )
                 myFile.write( "\n</BibleVersificationSystem>" )
     # end of checkVersificationSystem
-# end of _BibleVersificationSystemsConvertor class
+# end of _BibleVersificationSystemsConverter class
 
 
 @singleton # Can only ever have one instance
@@ -669,7 +669,7 @@ class BibleVersificationSystems:
         """
         Constructor: 
         """
-        self._bvsc = _BibleVersificationSystemsConvertor()
+        self._bvsc = _BibleVersificationSystemsConverter()
         self._DataDict = None # We'll import into this in loadData
     # end of __init__
 
@@ -679,7 +679,7 @@ class BibleVersificationSystems:
             if folder is not None: logging.warning( "Bible versification systems are already loaded -- your given folder of '{}' was ignored".format( folder ) )
             self._bvsc.loadSystems( folder ) # Load the XML (if not done already)
             self._DataDict = self._bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-            del self._bvsc # Now the convertor class (that handles the XML) is no longer needed
+            del self._bvsc # Now the converter class (that handles the XML) is no longer needed
         return self
     # end of loadData
 
@@ -935,14 +935,14 @@ def main():
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
-        bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
+        bvsc = _BibleVersificationSystemsConverter().loadSystems() # Load the XML
         bvsc.exportDataToPython() # Produce the .py tables
         bvsc.exportDataToJSON() # Produce a json output file
         bvsc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
-        # Demo the convertor object
-        bvsc = _BibleVersificationSystemsConvertor().loadSystems() # Load the XML
+        # Demo the converter object
+        bvsc = _BibleVersificationSystemsConverter().loadSystems() # Load the XML
         print( bvsc ) # Just print a summary
 
         # Demo the BibleVersificationSystems object

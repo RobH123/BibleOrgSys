@@ -4,7 +4,7 @@
 # ControlFiles.py
 #
 # Control file module
-#   Last modified: 2011-01-13 (also update versionString below)
+#   Last modified: 2011-01-17 (also update versionString below)
 #
 # Copyright (C) 2008,2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module for reading and parsing simple text control files.
 """
 
 progName = "ControlFiles"
-versionString = "0.04"
+versionString = "0.05"
 
 import os, logging
 import Globals
@@ -134,7 +134,7 @@ def demo():
     """
     # Handle command line parameters
     from optparse import OptionParser
-    parser = OptionParser( version="v%s" % ( versionString ) )
+    parser = OptionParser( version="v{}".format( versionString ) )
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )

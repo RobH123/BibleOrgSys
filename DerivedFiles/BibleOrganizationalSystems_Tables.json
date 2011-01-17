@@ -1,0 +1,253 @@
+[
+  {
+    "KJV-1611_edition": {
+      "languageCode": "eng", 
+      "name": [
+        "King James Version", 
+        "Authorized Version"
+      ], 
+      "usesText": "KJV-1611_translation", 
+      "referenceAbbreviation": "KJV-1611", 
+      "type": "edition", 
+      "publicationDate": "1611"
+    }, 
+    "NTG_original": {
+      "languageCode": "grc", 
+      "name": [
+        "Greek Scriptures"
+      ], 
+      "referenceAbbreviation": "NTG", 
+      "booksNamesSystem": "None", 
+      "versificationSystem": "KJV", 
+      "punctuationSystem": "None", 
+      "type": "original", 
+      "bookOrderSystem": "Unknown"
+    }, 
+    "MBT_edition": {
+      "languageCode": "mbt", 
+      "name": [
+        "Matigsalug NT+"
+      ], 
+      "usesText": "MBT_translation", 
+      "referenceAbbreviation": "MBT", 
+      "type": "edition", 
+      "publicationDate": "2011"
+    }, 
+    "KJV-1769_revision": {
+      "languageCode": "eng", 
+      "name": [
+        "King James Version", 
+        "Authorized Version"
+      ], 
+      "derivedFrom": "KJV-1611", 
+      "referenceAbbreviation": "KJV-1769", 
+      "publicationDate": "1769", 
+      "versificationSystem": "KJV", 
+      "punctuationSystem": "English", 
+      "type": "revision", 
+      "bookOrderSystem": "EuropeanProtestantBible", 
+      "booksNamesSystem": "eng_traditional"
+    }, 
+    "RSV52_revision": {
+      "languageCode": "eng", 
+      "name": [
+        "Revised Standard Version"
+      ], 
+      "derivedFrom": "ASV", 
+      "referenceAbbreviation": "RSV52", 
+      "publicationDate": "1952", 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "English", 
+      "type": "revision", 
+      "bookOrderSystem": "EuropeanProtestantBible", 
+      "booksNamesSystem": "eng_traditional"
+    }, 
+    "RSV_edition": {
+      "languageCode": "eng", 
+      "name": [
+        "Revised Standard Version"
+      ], 
+      "usesText": "RSV52", 
+      "referenceAbbreviation": "RSV", 
+      "type": "edition", 
+      "publicationDate": "1952"
+    }, 
+    "MBT_translation": {
+      "languageCode": "mbt", 
+      "name": [
+        "Matigsalug"
+      ], 
+      "referenceAbbreviation": "MBT", 
+      "publicationDate": "2010", 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "Matigsalug", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanProtestantBible", 
+      "booksNamesSystem": "mbt"
+    }, 
+    "KJV-1611_translation": {
+      "languageCode": "eng", 
+      "name": [
+        "King James Version", 
+        "Authorized Version"
+      ], 
+      "referenceAbbreviation": "KJV-1611", 
+      "publicationDate": "1611", 
+      "versificationSystem": "KJV", 
+      "punctuationSystem": "English", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanProtestantBible", 
+      "booksNamesSystem": "eng_traditional"
+    }, 
+    "KJV-1769_edition": {
+      "languageCode": "eng", 
+      "name": [
+        "King James Version", 
+        "Authorized Version"
+      ], 
+      "usesText": "KJV-1769_revision", 
+      "referenceAbbreviation": "KJV-1769", 
+      "type": "edition", 
+      "publicationDate": "1769"
+    }, 
+    "LXX_translation": {
+      "languageCode": "grc", 
+      "name": [
+        "Septuagint", 
+        "LXX"
+      ], 
+      "referenceAbbreviation": "LXX", 
+      "publicationDate": "300 BC", 
+      "versificationSystem": "Septuagint", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "Septuagint", 
+      "booksNamesSystem": "None"
+    }, 
+    "ASV_translation": {
+      "languageCode": "eng", 
+      "name": [
+        "American Standard Version"
+      ], 
+      "referenceAbbreviation": "ASV", 
+      "publicationDate": "1901", 
+      "versificationSystem": "KJV", 
+      "punctuationSystem": "English", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanProtestantBible", 
+      "booksNamesSystem": "eng_traditional"
+    }, 
+    "HEB_original": {
+      "languageCode": "hbo", 
+      "name": [
+        "Hebrew Scriptures"
+      ], 
+      "referenceAbbreviation": "HEB", 
+      "booksNamesSystem": "None", 
+      "versificationSystem": "Hebrew", 
+      "punctuationSystem": "None", 
+      "type": "original", 
+      "bookOrderSystem": "Hebrew"
+    }
+  }, 
+  {
+    "ASV": [
+      "ASV_translation"
+    ], 
+    "KJV-1769": [
+      "KJV-1769_revision", 
+      "KJV-1769_edition"
+    ], 
+    "RSV52": [
+      "RSV52_revision"
+    ], 
+    "LXX": [
+      "LXX_translation"
+    ], 
+    "HEB": [
+      "HEB_original"
+    ], 
+    "MBT": [
+      "MBT_translation", 
+      "MBT_edition"
+    ], 
+    "RSV": [
+      "RSV_edition"
+    ], 
+    "KJV-1611": [
+      "KJV-1611_translation", 
+      "KJV-1611_edition"
+    ], 
+    "NTG": [
+      "NTG_original"
+    ]
+  }, 
+  {
+    "KJV-1611_edition": [
+      "KJV-1611_edition"
+    ], 
+    "NTG_original": [
+      "NTG_original"
+    ], 
+    "KJV-1611": [
+      "KJV-1611_translation", 
+      "KJV-1611_edition"
+    ], 
+    "KJV-1769_revision": [
+      "KJV-1769_revision"
+    ], 
+    "ASV": [
+      "ASV_translation"
+    ], 
+    "RSV52_revision": [
+      "RSV52_revision"
+    ], 
+    "KJV-1769": [
+      "KJV-1769_revision", 
+      "KJV-1769_edition"
+    ], 
+    "MBT_translation": [
+      "MBT_translation"
+    ], 
+    "KJV-1611_translation": [
+      "KJV-1611_translation"
+    ], 
+    "KJV-1769_edition": [
+      "KJV-1769_edition"
+    ], 
+    "RSV52": [
+      "RSV52_revision"
+    ], 
+    "LXX_translation": [
+      "LXX_translation"
+    ], 
+    "RSV_edition": [
+      "RSV_edition"
+    ], 
+    "ASV_translation": [
+      "ASV_translation"
+    ], 
+    "HEB": [
+      "HEB_original"
+    ], 
+    "MBT": [
+      "MBT_translation", 
+      "MBT_edition"
+    ], 
+    "HEB_original": [
+      "HEB_original"
+    ], 
+    "RSV": [
+      "RSV_edition"
+    ], 
+    "LXX": [
+      "LXX_translation"
+    ], 
+    "MBT_edition": [
+      "MBT_edition"
+    ], 
+    "NTG": [
+      "NTG_original"
+    ]
+  }
+]
