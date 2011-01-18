@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,10 +28,11 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.26"
+versionString = "0.27"
 
 
 import os, logging
+from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
@@ -82,12 +83,12 @@ class _BibleBooksNamesSystemsConverter:
         """
         if not self.XMLSystems: # Only ever do this once
             if folder==None: folder = "DataFiles/BookNames"
-            if Globals.verbosityLevel > 2: print( "Loading book names systems from {}...".format( folder ) )
+            if Globals.verbosityLevel > 2: print( _("Loading book names systems from {}...").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(self.filenameBase.upper()+"_"):
                     booksNamesSystemCode = filepart[len(self.filenameBase)+1:]
-                    if Globals.verbosityLevel > 3: print( "Loading {} books names system from {}...".format( booksNamesSystemCode, filename ) )
+                    if Globals.verbosityLevel > 3: print( _("Loading {} books names system from {}...").format( booksNamesSystemCode, filename ) )
                     self.XMLSystems[booksNamesSystemCode] = {}
                     self.XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
@@ -100,9 +101,9 @@ class _BibleBooksNamesSystemsConverter:
                             self.XMLSystems[booksNamesSystemCode]["header"] = header
                             self.XMLSystems[booksNamesSystemCode]["tree"].remove( header )
                             if len(header)>1:
-                                logging.info( "Unexpected elements in header" )
+                                logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
-                                logging.info( "Missing work element in header" )
+                                logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
                                 if work.tag == "work":
@@ -110,15 +111,15 @@ class _BibleBooksNamesSystemsConverter:
                                     self.XMLSystems[booksNamesSystemCode]["date"] = work.find("date").text
                                     self.XMLSystems[booksNamesSystemCode]["title"] = work.find("title").text
                                 else:
-                                    logging.warning( "Missing work element in header" )
+                                    logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( "Missing header element (looking for '{}' tag)".format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
                     else:
-                        logging.error( "Expected to load '{}' but got '{}'".format( self.treeTag, self.XMLSystems[booksNamesSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load '{}' but got '{}'").format( self.treeTag, self.XMLSystems[booksNamesSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.XMLSystems[booksNamesSystemCode]["tree"]:
                         bookCount += 1
-                    logging.info( "    Loaded {} books".format( bookCount ) )
+                    logging.info( _("    Loaded {} books").format( bookCount ) )
 
                     if Globals.strictCheckingFlag:
                         self.__validateSystem( booksNamesSystemCode )
@@ -133,9 +134,9 @@ class _BibleBooksNamesSystemsConverter:
         assert( self.XMLSystems[systemName]["tree"] )
 
         if len(self.XMLSystems[systemName]["languageCode"]) != 3:
-            logging.error( "Couldn't find 3-letter language code in '{}' book names system".format( systemName ) )
+            logging.error( _("Couldn't find 3-letter language code in '{}' book names system").format( systemName ) )
         if self.__ISOLanguages and not self.__ISOLanguages.isValidLanguageCode( self.XMLSystems[systemName]["languageCode"] ): # Check that we have a valid language code
-            logging.error( "Unrecognized '{}' ISO-639-3 language code in '{}' book names system".format( self.XMLSystems[systemName]["languageCode"], systemName ) )
+            logging.error( _("Unrecognized '{}' ISO-639-3 language code in '{}' book names system").format( self.XMLSystems[systemName]["languageCode"], systemName ) )
 
         uniqueDict = {}
         for index in range( 0, len(self.mainElementTags) ):
@@ -151,48 +152,48 @@ class _BibleBooksNamesSystemsConverter:
                 for attributeName in self.compulsoryAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {} in {}".format( attributeName, element.tag, k, systemName ) )
+                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {} in {}".format( attributeName, element.tag, k, systemName ) )
+                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on {} element in record {} in {}".format( attributeName, element.tag, k, systemName ) )
+                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes[index] and attributeName not in self.optionalAttributes[index]:
-                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {} in {}".format( attributeName, attributeValue, element.tag, k, systemName ) )
+                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {} in {}").format( attributeName, attributeValue, element.tag, k, systemName ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+str(index)+"_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {} in {}".format( attributeValue, attributeName, element.tag, k, systemName ) )
+                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {} in {}").format( attributeValue, attributeName, element.tag, k, systemName ) )
                         uniqueDict["Attribute_"+str(index)+"_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements[index]:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '{}' element is missing (record {}) in {}".format( elementName, k, systemName ) )
+                        logging.error( _("Compulsory '{}' element is missing (record {}) in {}").format( elementName, k, systemName ) )
                     if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '{}' element is blank (record {}) in {}".format( elementName, k, systemName ) )
+                        logging.warning( _("Compulsory '{}' element is blank (record {}) in {}").format( elementName, k, systemName ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements[index]:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '{}' element is blank (record {}) in {}".format( elementName, k, systemName ) )
+                            logging.warning( _("Optional '{}' element is blank (record {}) in {}").format( elementName, k, systemName ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements[index] and subelement.tag not in self.optionalElements[index]:
-                        logging.warning( "Additional '{}' element ('{}') found (record {}) in {} {}".format( subelement.tag, subelement.text, k, systemName, element.tag ) )
+                        logging.warning( _("Additional '{}' element ('{}') found (record {}) in {} {}").format( subelement.tag, subelement.text, k, systemName, element.tag ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements[index]:
@@ -200,10 +201,10 @@ class _BibleBooksNamesSystemsConverter:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+str(index)+"_"+elementName]:
                             myLogging = logging.info if element.tag == 'BibleDivisionNames' else logging.error
-                            myLogging( "Found '{}' data repeated in '{}' element (record {}) in {}".format( text, elementName, k, systemName ) )
+                            myLogging( _("Found '{}' data repeated in '{}' element (record {}) in {}").format( text, elementName, k, systemName ) )
                         uniqueDict["Element_"+str(index)+"_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element: {} in record {} in {}".format( element.tag, k, systemName ) )
+                logging.warning( _("Unexpected element: {} in record {} in {}").format( element.tag, k, systemName ) )
     # end of __validateSystem
 
     def __str__( self ):
@@ -219,14 +220,14 @@ class _BibleBooksNamesSystemsConverter:
             for x in self.XMLSystems:
                 result += ('\n' if result else '') + "  {}".format( x )
                 if self.__ISOLanguages and self.XMLSystems[x]["languageCode"] and self.__ISOLanguages.isValidLanguageCode( self.XMLSystems[x]["languageCode"] ):
-                    result += ('\n' if result else '') + "    Language code {} = {}".format( self.XMLSystems[x]["languageCode"], self.__ISOLanguages.getLanguageName( self.XMLSystems[x]["languageCode"]) )
+                    result += ('\n' if result else '') + "    " + _("Language code {} = {}").format( self.XMLSystems[x]["languageCode"], self.__ISOLanguages.getLanguageName( self.XMLSystems[x]["languageCode"]) )
                 title = self.XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    {}".format( title )
                 version = self.XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: {}".format( version )
+                if version: result += ('\n' if result else '') + '    ' + _("Version: {}").format( version )
                 date = self.XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: {}".format( date )
-                result += ('\n' if result else '') + "    Num entries = {}".format( len(self.XMLSystems[x]["tree"]) )
+                if date: result += ('\n' if result else '') + '    ' + _("Last updated: {}").format( date )
+                result += ('\n' if result else '') + '    ' + _("Num entries = {}").format( len(self.XMLSystems[x]["tree"]) )
                 numDivisions, numLeaders, numBooks = 0, 0, 0
                 for element in self.XMLSystems[x]["tree"]:
                     if element.tag == "BibleDivisionNames":
@@ -235,9 +236,9 @@ class _BibleBooksNamesSystemsConverter:
                         numLeaders += 1
                     elif element.tag == "BibleBookNames":
                         numBooks += 1
-                if numDivisions: result += ('\n' if result else '') + "      Num divisions = {}".format( numDivisions )
-                if numLeaders: result += ('\n' if result else '') + "      Num bookname leaders = {}".format( numLeaders )
-                if numBooks: result += ('\n' if result else '') + "      Num books = {}".format( numBooks )
+                if numDivisions: result += ('\n' if result else '') + '      ' + _("Num divisions = {}").format( numDivisions )
+                if numLeaders: result += ('\n' if result else '') + '      ' + _("Num bookname leaders = {}").format( numLeaders )
+                if numBooks: result += ('\n' if result else '') + '      ' + _("Num books = {}").format( numBooks )
         return result
     # end of __str__
 
@@ -259,11 +260,11 @@ class _BibleBooksNamesSystemsConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' in booklist requested for expansion".format(BBB) )
+                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
 
-        if Globals.verbosityLevel > 1: print( "Expanding input abbreviations..." )
+        if Globals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
         for systemName in self.__BookNamesSystemsDict:
-            if Globals.verbosityLevel > 2: print( "  Expanding {}...".format( systemName ) )
+            if Globals.verbosityLevel > 2: print( _("  Expanding {}...").format( systemName ) )
             divisionsNamesList, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
             self.__expandedInputSystems[systemName] = expandBibleNamesInputs( systemName, divisionsNamesList, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
@@ -281,7 +282,7 @@ class _BibleBooksNamesSystemsConverter:
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
         # We'll create a number of dictionaries
-        if Globals.verbosityLevel > 3: print( "Importing data into Python dictionary..." )
+        if Globals.verbosityLevel > 3: print( _("Importing data into Python dictionary...") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.XMLSystems.keys():
             #print( booksNamesSystemCode )
@@ -296,15 +297,15 @@ class _BibleBooksNamesSystemsConverter:
                         inputFields.append( defaultAbbreviation )
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
-                            logging.warning( "Superfluous '{}' entry in inputAbbreviation field for {} division in '{}' booksNames system".format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.warning( _("Superfluous '{}' entry in inputAbbreviation field for {} division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: inputFields.append( subelement.text )
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
                         if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                            logging.error( "Unrecognized '{}' book abbreviation in BibleDivisionNames in '{}' booksNames system".format( BBB, booksNamesSystemCode ) )
+                            logging.error( _("Unrecognized '{}' book abbreviation in BibleDivisionNames in '{}' booksNames system").format( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
-                            logging.error( "Duplicate '{}' entry in includesBook field for '{}' division in '{}' booksNames system".format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.error( _("Duplicate '{}' entry in includesBook field for '{}' division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: includedBooks.append( BBB )
                     myDivisionsNamesList.append( {"includedBooks":includedBooks, "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields } )
                 elif element.tag == "BibleBooknameLeaders":
@@ -313,20 +314,20 @@ class _BibleBooksNamesSystemsConverter:
                     for subelement in element.findall("inputAbbreviation"):
                         adjField = subelement.text + ' '
                         if adjField in inputFields:
-                            logging.error( "Duplicate '{}' entry in inputAbbreviation field for '{}' bookname leaders in '{}' booksNames system".format( subelement.text, standardLeader, booksNamesSystemCode ) )
+                            logging.error( _("Duplicate '{}' entry in inputAbbreviation field for '{}' bookname leaders in '{}' booksNames system").format( subelement.text, standardLeader, booksNamesSystemCode ) )
                         else: inputFields.append( adjField )
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
                     if not self.__BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
-                        logging.error( "Unrecognized '{}' book abbreviation in BibleBookNames in '{}' booksNames system".format( referenceAbbreviation, booksNamesSystemCode ) )
+                        logging.error( _("Unrecognized '{}' book abbreviation in BibleBookNames in '{}' booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ] # Add the default name to the allowed input fields
                     if defaultAbbreviation != defaultName: inputFields.append( defaultAbbreviation ) # Automatically add the default abbreviation if it's different
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
-                            logging.info( "Superfluous '{}' entry in inputAbbreviation field for {} book in '{}' booksNames system".format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.info( _("Superfluous '{}' entry in inputAbbreviation field for {} book in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: inputFields.append( subelement.text )
                     myBookNamesDict[referenceAbbreviation] = { "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields }
 
@@ -335,9 +336,9 @@ class _BibleBooksNamesSystemsConverter:
                     checkDivisionsNamesList, checkBooknameLeadersDict, checkBookNamesDict = self.__BookNamesSystemsDict[checkSystemCode]
                     if checkDivisionsNamesList==myDivisionsNamesList and checkBookNamesDict==myBookNamesDict:
                         if checkBooknameLeadersDict == myBooknameLeadersDict:
-                            logging.error( "{} and {} book name systems are exactly identical ({} divisions, {} book names, {} leaders)".format( booksNamesSystemCode, checkSystemCode, len(myDivisionsNamesList), len(myBookNamesDict), len(myBooknameLeadersDict) ) )
+                            logging.error( _("{} and {} book name systems are exactly identical ({} divisions, {} book names, {} leaders)").format( booksNamesSystemCode, checkSystemCode, len(myDivisionsNamesList), len(myBookNamesDict), len(myBooknameLeadersDict) ) )
                         else: # only the leaders are different
-                            logging.error( "{} and {} book name systems are mostly identical ({} divisions, {} book names)".format( booksNamesSystemCode, checkSystemCode, len(myDivisionsNamesList), len(myBookNamesDict) ) )
+                            logging.error( _("{} and {} book name systems are mostly identical ({} divisions, {} book names)").format( booksNamesSystemCode, checkSystemCode, len(myDivisionsNamesList), len(myBookNamesDict) ) )
 
             # Now put it into my dictionary for easy access
             self.__BookNamesSystemsDict[booksNamesSystemCode] = myDivisionsNamesList, myBooknameLeadersDict, myBookNamesDict
@@ -379,7 +380,7 @@ class _BibleBooksNamesSystemsConverter:
         assert( self.__BookNamesSystemsDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -434,7 +435,7 @@ class _BibleBooksNamesSystemsConverter:
         assert( self.__BookNamesSystemsDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
@@ -460,7 +461,7 @@ class _BibleBooksNamesSystemsConverter:
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                     elif isinstance( field, int): result += str(field)
-                    else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                    else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 return result
 
             theFile.write( "static struct {} {}[] = {\n  // Fields are {}\n".format( structName, dictName, fieldsComment ) )
@@ -470,7 +471,7 @@ class _BibleBooksNamesSystemsConverter:
                 elif isinstance( entry, int ):
                     theFile.write( "  {{}, {}},\n".format( entry, convertEntry(theDict[entry]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: {}".format( entry ) )
+                    logging.error( _("Can't handle this type of data yet: {}").format( entry ) )
             theFile.write( "}; // {}\n\n".format( dictName) )
         # end of exportPythonDict
 
@@ -481,7 +482,7 @@ class _BibleBooksNamesSystemsConverter:
         assert( self.__BookNamesSystemsDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.h" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 
         ifdefName = self.filenameBase.upper() + "_Tables_h"
@@ -559,7 +560,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
     assert( divisionsNamesList ); assert( booknameLeadersDict ); assert( bookNamesDict )
     assert( bookList )
 
-    if Globals.verbosityLevel > 2: print( "  Expanding {} input abbreviations (for {} books)...".format( systemName, len(bookList) ) )
+    if Globals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)...").format( systemName, len(bookList) ) )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -577,7 +578,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
         for field in entryDict["inputFields"]:
             UCField = field.upper()
             if UCField in divNameInputDict or UCField in bkNameInputDict:
-                logging.warning( "Have duplicate entries of '{}' in divisionsNames for {}".format( UCField, systemName ) )
+                logging.warning( _("Have duplicate entries of '{}' in divisionsNames for {}").format( UCField, systemName ) )
                 ambigSet.add( UCField )
             divNameInputDict[UCField] = k # Store the index into divisionsNamesList
     for refAbbrev in bookNamesDict.keys():
@@ -585,7 +586,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesList, booknameLeadersDict
             for field in bookNamesDict[refAbbrev]["inputFields"]: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
                 UCField = field.upper()
                 if UCField in divNameInputDict or UCField in bkNameInputDict:
-                    logging.warning( "Have duplicate entries of '{}' in divisions and book names for {}".format( UCField, systemName ) )
+                    logging.warning( _("Have duplicate entries of '{}' in divisions and book names for {}").format( UCField, systemName ) )
                     ambigSet.add( UCField )
                 bkNameInputDict[UCField] = refAbbrev # Store the index to the book
     #print( 'amb', len(ambigSet), ambigSet )
@@ -688,7 +689,7 @@ class BibleBooksNamesSystems:
         """
         result = "BibleBooksNamesSystems object"
         if self.__ExpandedDicts: assert( len(self.__DataDicts) == len(self.__ExpandedDicts) )
-        result += ('\n' if result else '') + "  Num loaded bookname systems = {}".format( len(self.__DataDicts) )
+        result += ('\n' if result else '') + '  ' + _("Num loaded bookname systems = {}").format( len(self.__DataDicts) )
         return result
     # end of __str__
 
@@ -701,7 +702,7 @@ class BibleBooksNamesSystems:
         """ Returns two dictionaries and a list object."""
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' in booklist requested for {} books names system".format(BBB,systemName) )
+                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
 
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
@@ -713,13 +714,13 @@ class BibleBooksNamesSystems:
                 # else we haven't done any previous input abbreviation expansion
                 return divisionsNamesList, booknameLeadersDict, bookNamesDict, {}, {}
             # else we were given a booklist so we need to expand the input abbreviations here now
-            if self.__ExpandedDicts: logging.warning( "This {} book names system was already expanded, but never mind :)".format(systemName) )
+            if self.__ExpandedDicts: logging.warning( _("This {} book names system was already expanded, but never mind :)").format(systemName) )
             sortedDNDict, sortedBNDict = expandBibleNamesInputs( systemName, divisionsNamesList, booknameLeadersDict, bookNamesDict, bookList )
             #print( sortedBNDict )
             return divisionsNamesList, booknameLeadersDict, bookNamesDict, sortedDNDict, sortedBNDict
         # else we couldn't find the requested system name
-        logging.error( "No '{}' system in Bible Books Names Systems".format(systemName) )
-        if Globals.verbosityLevel > 2: logging.error( "Available systems are {}".format(self.getAvailableSystemNames()) )
+        logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
+        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format(self.getAvailableSystemNames()) )
     # end of getBooksNamesSystem
 
     # TODO: Add more useful routines in here
@@ -755,14 +756,14 @@ class BibleBooksNamesSystem:
         @rtype: string
         """
         result = "BibleBooksNamesSystem object"
-        result += ('\n' if result else '') + "  {} Bible books names system".format( self.__systemName )
-        result += ('\n' if result else '') + "  Language code = {}".format( self.__languageCode )
+        result += ('\n' if result else '') + "  " + _("{} Bible books names system").format( self.__systemName )
+        result += ('\n' if result else '') + "  " + _("Language code = {}").format( self.__languageCode )
         if Globals.verbosityLevel > 2: # Make it verbose
-            result += ('\n' if result else '') + "    Num divisions = {}".format( len(self.__divisionsNamesList) )
-            result += ('\n' if result else '') + "    Num bookname leaders = {}".format( len(self.__booknameLeadersDict) )
-            result += ('\n' if result else '') + "    Num books = {}".format( len(self.__bookNamesDict) )
-            result += ('\n' if result else '') + "    Num expanded division name abbreviations = {}".format( len(self.__sortedDivisionNamesDict) )
-            result += ('\n' if result else '') + "    Num expanded book name abbreviations = {}".format( len(self.__sortedBookNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Num divisions = {}").format( len(self.__divisionsNamesList) )
+            result += ('\n' if result else '') + "    " + _("Num bookname leaders = {}").format( len(self.__booknameLeadersDict) )
+            result += ('\n' if result else '') + "    " + _("Num books = {}").format( len(self.__bookNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Num expanded division name abbreviations = {}").format( len(self.__sortedDivisionNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Num expanded book name abbreviations = {}").format( len(self.__sortedBookNamesDict) )
         return result
     # end of __str__
 

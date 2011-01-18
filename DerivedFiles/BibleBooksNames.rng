@@ -3,7 +3,7 @@
   <!--
     BibleBooksNames.rnc           Relax NG Compact Syntax schema file
       Version 0.11
-      Last modified: 2011-01-17
+      Last modified: 2011-01-18
     
     On Linux, to convert to RNG, use
           trang BibleBooksNames.rnc ../DerivedFiles/BibleBooksNames.rng
@@ -98,20 +98,20 @@
       <element name="defaultName">
         <data type="string">
           <param name="minLength">3</param>
-          <param name="maxLength">20</param>
+          <param name="maxLength">22</param>
         </data>
       </element>
       <element name="defaultAbbreviation">
         <data type="string">
           <param name="minLength">2</param>
-          <param name="maxLength">8</param>
+          <param name="maxLength">9</param>
         </data>
       </element>
       <zeroOrMore>
         <element name="inputAbbreviation">
           <data type="string">
             <param name="minLength">3</param>
-            <param name="maxLength">20</param>
+            <param name="maxLength">22</param>
           </data>
         </element>
       </zeroOrMore>
@@ -136,7 +136,7 @@
         <element name="inputAbbreviation">
           <data type="string">
             <param name="minLength">1</param>
-            <param name="maxLength">6</param>
+            <param name="maxLength">15</param>
           </data>
         </element>
       </zeroOrMore>

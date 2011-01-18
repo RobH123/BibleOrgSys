@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,10 +27,12 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.54"
+versionString = "0.55"
 
 
 import os
+from gettext import gettext as _
+
 
 from singleton import singleton
 import Globals
@@ -52,7 +54,7 @@ class USFMFilenames:
 
         self.folder = folder
         files = os.listdir( self.folder )
-        if not files: raise IOError("No files in given folder: " + self.folder)
+        if not files: raise IOError( _("No files in given folder: ") + self.folder)
         for foundFilename in files:
             if not foundFilename.endswith('~'):
                 foundFileBit, foundExtBit = os.path.splitext( foundFilename )
@@ -83,7 +85,7 @@ class USFMFilenames:
                                 self.digitsIndex = digitsIndex
                                 self.paratextBookCodeIndex = paratextBookCodeIndex
                                 self.pattern = "nnnddbbb"
-                            else: raise ValueError( "Unrecognized USFM filename template at "+foundFileBit )
+                            else: raise ValueError( _("Unrecognized USFM filename template at ")+foundFileBit )
                             if self.languageCode.isupper(): self.pattern = self.pattern.replace( 'n', 'N' )
                             if paratextBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             self.fileExtension = foundExtBit[1:]
@@ -91,8 +93,9 @@ class USFMFilenames:
                             break
                 if matched: break
         if not matched:
-            raise ValueError( "Unable to recognize valid USFM files in " + folder )
+            raise ValueError( _("Unable to recognize valid USFM files in ") + folder )
         #print( self.pattern, self.fileExtension )
+    # end of __init__
         
 
     def __str__( self ):
@@ -106,6 +109,7 @@ class USFMFilenames:
         if self.pattern: result += ('\n' if result else '') + self.pattern
         if self.fileExtension: result += ('\n' if result else '') + self.fileExtension
         return result
+    # end of __str___
 
 
     def possibleFiles( self ):
@@ -120,6 +124,7 @@ class USFMFilenames:
             #print( filename )
             filelist.append( (bookReferenceCode,filename,) )
         return filelist
+    # end of possibleFiles
 
 
     def actualFiles( self ):
@@ -132,6 +137,7 @@ class USFMFilenames:
                 #paratextBookCode = possibleFilename[self.paratextBookCodeIndex:self.paratextBookCodeIndex+3].upper()
                 filelist.append( (bookReferenceCode, possibleFilename,) )
         return filelist
+    # end of actualFiles
 # end of class USFMFiles
 
 

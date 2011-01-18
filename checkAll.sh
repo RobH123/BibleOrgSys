@@ -2,7 +2,7 @@
 #
 # checkAll.sh
 #
-#   Last modified: 2010-11-26 RJH
+#   Last modified: 2011-01-18 RJH
 #
 # Run xmllint on all the XML files in the DataFiles folder
 #
@@ -68,3 +68,11 @@ xmllint --noout --relaxng DerivedFiles/BibleBookOrder.rng --valid DataFiles/Book
 xmllint --noout --relaxng DerivedFiles/BibleBookOrder.rng --valid DataFiles/BookOrders/BibleBookOrder_VulgateOldTestament.xml 2>&1 | grep -v validates
 
 xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BookNames/BibleBooksNames_eng_traditional.xml 2>&1 | grep -v validates
+xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BookNames/BibleBooksNames_deu_traditional.xml 2>&1 | grep -v validates
+xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BookNames/BibleBooksNames_fra_traditional.xml 2>&1 | grep -v validates
+xmllint --noout --relaxng DerivedFiles/BibleBooksNames.rng --valid DataFiles/BookNames/BibleBooksNames_mbt.xml 2>&1 | grep -v validates
+
+xmllint --noout --relaxng DerivedFiles/BiblePunctuationSystem.rng --valid DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml 2>&1 | grep -v validates
+xmllint --noout --relaxng DerivedFiles/BiblePunctuationSystem.rng --valid DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml 2>&1 | grep -v validates
+xmllint --noout --relaxng DerivedFiles/BiblePunctuationSystem.rng --valid DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml 2>&1 | grep -v validates
+

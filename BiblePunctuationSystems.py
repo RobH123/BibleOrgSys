@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,10 +28,11 @@ Module handling BiblePunctuation_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.18"
+versionString = "0.19"
 
 
 import os, logging
+from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
@@ -55,7 +56,7 @@ class _BiblePunctuationSystemsConverter:
         self.treeTag = "BiblePunctuationSystem"
         self.headerTag = "header"
         self.mainElementTags = ( "booknameCase", "booknameLength", "punctuationAfterBookAbbreviation", "bookChapterSeparator", "spaceAllowedAfterBCS",
-                    "chapterVerseSeparator", "verseSeparator", "bookBridgeCharacter", "chapterBridgeCharacter", "verseBridgeCharacter", "chapterSeparator", "bookSeparator" )
+                    "chapterVerseSeparator", "verseSeparator", "bookBridgeCharacter", "chapterBridgeCharacter", "verseBridgeCharacter", "chapterSeparator", "bookSeparator", "allowedVerseSuffixes" )
 
         # These fields are used for automatically checking/validating the XML
         self.compulsoryAttributes = ()
@@ -78,14 +79,14 @@ class _BiblePunctuationSystemsConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/PunctuationSystems"
             self.XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( "Loading punctuations systems from {}...".format( self.XMLFolder ) )
+            if Globals.verbosityLevel > 2: print( _("Loading punctuations systems from {}...").format( self.XMLFolder ) )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
 
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     punctuationSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( "Loading {} punctuation system from {}...".format( punctuationSystemCode, filename ) )
+                    if Globals.verbosityLevel > 3: print( _("Loading {} punctuation system from {}...").format( punctuationSystemCode, filename ) )
                     self._XMLSystems[punctuationSystemCode] = {}
                     self._XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert( self._XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -97,9 +98,9 @@ class _BiblePunctuationSystemsConverter:
                             self._XMLSystems[punctuationSystemCode]["header"] = header
                             self._XMLSystems[punctuationSystemCode]["tree"].remove( header )
                             if len(header)>1:
-                                logging.info( "Unexpected elements in header" )
+                                logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
-                                logging.info( "Missing work element in header" )
+                                logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
                                 if work.tag == "work":
@@ -107,15 +108,15 @@ class _BiblePunctuationSystemsConverter:
                                     self._XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
                                     self._XMLSystems[punctuationSystemCode]["title"] = work.find("title").text
                                 else:
-                                    logging.warning( "Missing work element in header" )
+                                    logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( "Missing header element (looking for '{}' tag)".format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
                     else:
-                        logging.error( "Expected to load '{}' but got '{}'".format( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load '{}' but got '{}'").format( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[punctuationSystemCode]["tree"]:
                         bookCount += 1
-                    logging.info( "    Loaded {} books".format( bookCount ) )
+                    logging.info( _("    Loaded {} books").format( bookCount ) )
 
                     if Globals.strictCheckingFlag:
                         self._validateSystem( self._XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
@@ -138,58 +139,58 @@ class _BiblePunctuationSystemsConverter:
                 for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, k ) )
+                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, k ) )
+                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, k ) )
+                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
-                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {}".format( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '{}' element is missing in record with ID '{}' (record {})".format( elementName, ID, k ) )
+                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, k ) )
                     if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, k ) )
+                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, k ) )
+                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
-                        logging.warning( "Additional '{}' element ('{}') found in record with ID '{}' (record {})".format( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record {})".format( text, elementName, ID, k ) )
+                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, k ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element: {} in record {}".format( element.tag, k ) )
+                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
     # end of _validateSystem
 
     def __str__( self ):
@@ -207,10 +208,10 @@ class _BiblePunctuationSystemsConverter:
                 title = self._XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "    {}".format( title )
                 version = self._XMLSystems[x]["version"]
-                if version: result += ('\n' if result else '') + "    Version: {}".format( version )
+                if version: result += ('\n    ' if result else '    ') + _("Version: {}").format( version )
                 date = self._XMLSystems[x]["date"]
-                if date: result += ('\n' if result else '') + "    Last updated: {}".format( date )
-                result += ('\n' if result else '') + "    Num books = {}".format( len(self._XMLSystems[x]["tree"]) )
+                if date: result += ('\n    ' if result else '    ') + _("Last updated: {}").format( date )
+                result += ('\n    ' if result else '    ') + _("Num books = {}").format( len(self._XMLSystems[x]["tree"]) )
         return result
     # end of __str__
 
@@ -230,13 +231,13 @@ class _BiblePunctuationSystemsConverter:
                 tag = element.tag
                 text = element.text
                 if text is None: text = '' # If a tag was given, but contained an empty string, indicate that 
-                if tag in punctuationDict: logging.error( "Multiple {} entries in {} punctuation system".format( tag, punctuationSystemCode ) )
+                if tag in punctuationDict: logging.error( _("Multiple {} entries in {} punctuation system").format( tag, punctuationSystemCode ) )
                 punctuationDict[tag] = text
 
             if Globals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode,checkSystemDataDict in self._DataDict.items():
                     if checkSystemDataDict == punctuationDict:
-                        logging.error( "{} and {} punctuation systems are identical".format( punctuationSystemCode, checkSystemCode ) )
+                        logging.error( _("{} and {} punctuation systems are identical").format( punctuationSystemCode, checkSystemCode ) )
 
             # Now put it into my dictionaries for easy access
             self._DataDict[punctuationSystemCode] = punctuationDict
@@ -263,7 +264,7 @@ class _BiblePunctuationSystemsConverter:
         assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -274,7 +275,7 @@ class _BiblePunctuationSystemsConverter:
             #myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self.namesTree), self.treeTag ) )
             myFile.write( "#   {} {} loaded from the original XML files.\n#\n\n".format( len(self._XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
-            myFile.write( "bookDataDict = {{\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
+            myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName, systemDict in self._DataDict.items():
                 exportPythonDict( myFile, systemDict, systemName, "referenceAbbreviation", "id" )
             myFile.write( "}} # end of bookDataDict ({} systems)\n\n\n\n".format( len(self._DataDict) ) )
@@ -295,7 +296,7 @@ class _BiblePunctuationSystemsConverter:
         assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
@@ -333,7 +334,7 @@ class _BiblePunctuationSystemsConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 return result
             # end of convertEntry
 
@@ -349,7 +350,7 @@ class _BiblePunctuationSystemsConverter:
                 elif isinstance( dictKey, int ):
                     cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: {}".format( dictKey ) )
+                    logging.error( _("Can't handle this type of data yet: {}").format( dictKey ) )
             cFile.write( "}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
@@ -362,7 +363,7 @@ class _BiblePunctuationSystemsConverter:
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -442,7 +443,7 @@ class _BiblePunctuationSystemsConverter:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BiblePunctuation_"+systemName + ".xml" )
-            if Globals.verbosityLevel > 1: print( "Writing {} books to {}...".format( len(punctuationSchemeToCheck), outputFilepath ) )
+            if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -470,7 +471,7 @@ class BiblePunctuationSystems:
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if self.__Dict is None or not self.__Dict: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible punctuation systems are already loaded -- your given folder of '{}' was ignored".format(XMLFolder) )
+            if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
             self.__bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__Dict = self.__bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
             del self.__bpsc # Now the converter class (that handles the XML) is no longer needed
@@ -486,7 +487,7 @@ class BiblePunctuationSystems:
         """
         assert( self.__Dict )
         result = "BiblePunctuationSystems object"
-        result += ('\n' if result else '') + "  Num systems = {}".format( len(self.__Dict) )
+        result += ('\n  ' if result else '  ') + _("Num systems = {}").format( len(self.__Dict) )
         return result
     # end of __str__
 
@@ -510,8 +511,8 @@ class BiblePunctuationSystems:
         if systemName in self.__Dict:
             return self.__Dict[systemName]
         # else
-        logging.error( "No '{}' system in Bible Punctuation Systems".format(systemName) )
-        if Globals.verbosityLevel>2: logging.error( "  Available systems are {}".format(self.getAvailableSystemNames()) )
+        logging.error( _("No '{}' system in Bible Punctuation Systems").format(systemName) )
+        if Globals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailableSystemNames()) )
     # end of getPunctuationSystem
 # end of BiblePunctuationSystems class
 
@@ -542,8 +543,8 @@ class BiblePunctuationSystem:
         @rtype: string
         """
         result = "BiblePunctuationSystem object"
-        result += ('\n' if result else '') + "  {} Bible punctuation system".format( self.__systemName )
-        result += ('\n' if result else '') + "  Num values = {}".format( len(self.__punctuationDict) )
+        result += ('\n  ' if result else '  ') + _("{} Bible punctuation system").format( self.__systemName )
+        result += ('\n  ' if result else '  ') + _("Num values = {}").format( len(self.__punctuationDict) )
         return result
     # end of __str__
 
@@ -567,8 +568,8 @@ class BiblePunctuationSystem:
         assert( name )
         #print( "yyy", self.__punctuationDict )
         if name in self.__punctuationDict: return self.__punctuationDict[name]
-        logging.error( "No '{}' value in {} punctuation system".format(name,self.__systemName) )
-        if Globals.verbosityLevel > 3: logging.error( "  Available values are: {}".format(self.getAvailablePunctuationValueNames()) )
+        logging.error( _("No '{}' value in {} punctuation system").format(name,self.__systemName) )
+        if Globals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
     # end of getValue
 # end of BiblePunctuationSystem class
 
@@ -599,7 +600,7 @@ def main():
         # Demo the BiblePunctuationSystems object
         bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( bpss ) # Just print a summary
-        print( "Available system names are: {}".format(bpss.getAvailablePunctuationSystemNames()) )
+        print( _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
 
         # Demo the BiblePunctuationSystem object
         bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)

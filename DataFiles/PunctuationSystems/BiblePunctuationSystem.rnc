@@ -1,6 +1,6 @@
 # BiblePunctuationSystem.rnc           Relax NG Compact Syntax schema file
-#   Version 0.01
-#   Last modified: 2010-12-22
+#   Version 0.02
+#   Last modified: 2011-01-18
 #
 # On Linux, to convert to RNG, use
 #       trang BiblePunctuationSystem.rnc ../DerivedFiles/BiblePunctuationSystem.rng
@@ -13,12 +13,24 @@
 #
 
 # The root element
-start = BiblePunctuationSystemSystem
+start = BiblePunctuationSystem
 
 # A single header, then books
-BiblePunctuationSystemSystem = element BiblePunctuationSystemSystem
+BiblePunctuationSystem = element BiblePunctuationSystem
 {   header,
-    element book { attribute id {xsd:positiveInteger { minInclusive="1" maxInclusive="120" } }, xsd:string { length="3" } }+
+    element booknameCase { xsd:string { maxLength="2" } },
+    element booknameLength { xsd:string { maxLength="6" } },
+    element punctuationAfterBookAbbreviation { xsd:string { maxLength="2" } },
+    element bookChapterSeparator { xsd:string { maxLength="2" } },
+    element spaceAllowedAfterBCS { xsd:string { maxLength="2" } },
+    element chapterVerseSeparator { xsd:string { maxLength="2" } },
+    element verseSeparator { xsd:string { maxLength="2" } },
+    element bookBridgeCharacter { xsd:string { maxLength="2" } },
+    element chapterBridgeCharacter { xsd:string { maxLength="2" } },
+    element verseBridgeCharacter { xsd:string { maxLength="2" } },
+    element chapterSeparator { xsd:string { maxLength="2" } },
+    element bookSeparator { xsd:string { maxLength="2" } },
+    element allowedVerseSuffixes { xsd:string { maxLength="6" } }
 }
 
 header  = element header
@@ -35,7 +47,7 @@ work = element work
 {   element version { xsd:decimal { totalDigits="2" } },
     element date { xsd:date },
     element title { xsd:string },
-    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element contributor { attribute role {"com"|"cre"|"edt"}, xsd:string }+,
     element identifier { attribute type {"URL"}, xsd:anyURI }*,
     element rights { xsd:string }
 }

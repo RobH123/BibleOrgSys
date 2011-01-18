@@ -2,8 +2,8 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BiblePunctuationSystem.rnc           Relax NG Compact Syntax schema file
-      Version 0.01
-      Last modified: 2010-12-22
+      Version 0.02
+      Last modified: 2011-01-18
     
     On Linux, to convert to RNG, use
           trang BiblePunctuationSystem.rnc ../DerivedFiles/BiblePunctuationSystem.rng
@@ -17,25 +17,77 @@
   -->
   <!-- The root element -->
   <start>
-    <ref name="BiblePunctuationSystemSystem"/>
+    <ref name="BiblePunctuationSystem"/>
   </start>
   <!-- A single header, then books -->
-  <define name="BiblePunctuationSystemSystem">
-    <element name="BiblePunctuationSystemSystem">
+  <define name="BiblePunctuationSystem">
+    <element name="BiblePunctuationSystem">
       <ref name="header"/>
-      <oneOrMore>
-        <element name="book">
-          <attribute name="id">
-            <data type="positiveInteger">
-              <param name="minInclusive">1</param>
-              <param name="maxInclusive">120</param>
-            </data>
-          </attribute>
-          <data type="string">
-            <param name="length">3</param>
-          </data>
-        </element>
-      </oneOrMore>
+      <element name="booknameCase">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="booknameLength">
+        <data type="string">
+          <param name="maxLength">6</param>
+        </data>
+      </element>
+      <element name="punctuationAfterBookAbbreviation">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="bookChapterSeparator">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="spaceAllowedAfterBCS">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="chapterVerseSeparator">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="verseSeparator">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="bookBridgeCharacter">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="chapterBridgeCharacter">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="verseBridgeCharacter">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="chapterSeparator">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="bookSeparator">
+        <data type="string">
+          <param name="maxLength">2</param>
+        </data>
+      </element>
+      <element name="allowedVerseSuffixes">
+        <data type="string">
+          <param name="maxLength">6</param>
+        </data>
+      </element>
     </element>
   </define>
   <define name="header">
@@ -76,6 +128,7 @@
           <attribute name="role">
             <choice>
               <value>com</value>
+              <value>cre</value>
               <value>edt</value>
             </choice>
           </attribute>

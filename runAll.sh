@@ -2,7 +2,7 @@
 #
 # runAll.sh
 #
-#   Last modified: 2011-01-17 by RJH
+#   Last modified: 2011-01-18 by RJH
 #
 # Run xmllint on all the XML files in the DataFiles folder
 # Then run Python code for each module
@@ -21,6 +21,9 @@ $Python BibleBookOrders.py
 $Python BibleBooksNames.py
 $Python BiblePunctuationSystems.py
 $Python BibleOrganizationalSystems.py
+$Python USFMFilenames.py
+$Python USFMBible.py
+$Python BibleReferences.py
 
 echo "Running Python module exports..."
 $Python ISO_639_3_Languages.py --export

@@ -46,7 +46,7 @@ See the supplied ReadMe.txt for more details.
 -->
 
 <!DOCTYPE BiblePunctuationSystem [
-    <!ELEMENT BiblePunctuationSystem (header,booknameCase,booknameLength,punctuationAfterBookAbbreviation,bookChapterSeparator,spaceAllowedAfterBCS,chapterBridgeCharacter,chapterVerseSeparator,verseSeparator,verseBridgeCharacter,chapterSeparator,bookSeparator)>
+    <!ELEMENT BiblePunctuationSystem (header,booknameCase,booknameLength,punctuationAfterBookAbbreviation,bookChapterSeparator,spaceAllowedAfterBCS,chapterVerseSeparator,verseSeparator,bookBridgeCharacter,chapterBridgeCharacter,verseBridgeCharacter,chapterSeparator,bookSeparator,allowedVerseSuffixes)>
         <!ELEMENT header (revisionDesc*,work)>
             <!ELEMENT revisionDesc (date,p+)>
                 <!ELEMENT date (#PCDATA)>
@@ -64,20 +64,22 @@ See the supplied ReadMe.txt for more details.
         <!ELEMENT punctuationAfterBookAbbreviation (#PCDATA)>
         <!ELEMENT bookChapterSeparator (#PCDATA)>
         <!ELEMENT spaceAllowedAfterBCS (#PCDATA)>
-        <!ELEMENT chapterBridgeCharacter (#PCDATA)>
         <!ELEMENT chapterVerseSeparator (#PCDATA)>
         <!ELEMENT verseSeparator (#PCDATA)>
+        <!ELEMENT bookBridgeCharacter (#PCDATA)>
+        <!ELEMENT chapterBridgeCharacter (#PCDATA)>
         <!ELEMENT verseBridgeCharacter (#PCDATA)>
         <!ELEMENT chapterSeparator (#PCDATA)>
         <!ELEMENT bookSeparator (#PCDATA)>
+        <!ELEMENT allowedVerseSuffixes (#PCDATA)>
 ]>
 
 <BiblePunctuationSystem>
 
   <header>
     <work>
-      <version>0.01</version>
-      <date>2011-01-10</date>
+      <version>0.02</version>
+      <date>2011-01-18</date>
       <title>English Bible brief punctuation system</title>
       <contributor role="cre">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -99,4 +101,5 @@ See the supplied ReadMe.txt for more details.
   <chapterSeparator>;</chapterSeparator>
   <bookSeparator>;</bookSeparator>
 
+  <allowedVerseSuffixes>abcdef</allowedVerseSuffixes>
 </BiblePunctuationSystem>

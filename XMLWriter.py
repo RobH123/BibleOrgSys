@@ -4,7 +4,7 @@
 # XMLWriter.py
 #
 # Module handling pretty writing of XML (and xHTML) files
-#   Last modified: 2011-01-17 by RJH (also update versionString below)
+#   Last modified: 2011-01-18 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -37,10 +37,11 @@ TODO: Add writeAutoDTD
 """
 
 progName = "XML Writer"
-versionString = "0.23"
+versionString = "0.24"
 
 
 import os, logging
+from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
@@ -80,7 +81,7 @@ class XMLWriter:
         @rtype: string
         """
         result = "_XMLWriter object"
-        result += ('\n' if result else '') + "  Status: {}".format(self._status)
+        result += ('\n' if result else '') + "  " + _("Status: {}").format(self._status)
         return result
     # end of __str__
 
@@ -148,7 +149,7 @@ class XMLWriter:
     def start( self, noAutoXML=False ):
         """ Opens the file and writes a header record to it. """
         assert( self._status == 'Idle' )
-        if Globals.verbosityLevel>1: print( "Writing {}...".format(self.outputFilePath) )
+        if Globals.verbosityLevel>1: print( _("Writing {}...").format(self.outputFilePath) )
         self.outputFile = open( self.outputFilePath, 'wt' )
         self._status = 'Open'
         self._currentColumn = 0
@@ -259,7 +260,7 @@ class XMLWriter:
     def writeLineClose( self, closeTag ):
         """ Writes an opening tag on a line. """
         expectedTag = self._openStack.pop()
-        if expectedTag != closeTag: logging.error( "Closed '{}' tag but should have closed '{}'".format( closeTag, expectedTag ) )
+        if expectedTag != closeTag: logging.error( _("Closed '{}' tag but should have closed '{}'").format( closeTag, expectedTag ) )
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)) )
     # end of writeLineOpen
 
@@ -293,7 +294,7 @@ class XMLWriter:
     def close( self ):
         """ Finish everything up and close the file. """
         assert( self.outputFile is not None )
-        if self._openStack: logging.error( "Have unclosed tags: {}".format(self._openStack) )
+        if self._openStack: logging.error( _("Have unclosed tags: {}").format(self._openStack) )
         if self._buffer: self.writeBuffer()
         if self._status != "Buffered": pass
         self.outputFile.close()

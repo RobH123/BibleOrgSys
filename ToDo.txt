@@ -1,6 +1,6 @@
 # ToDo.txt
 #
-# Last modified: 2011-01-11
+# Last modified: 2011-01-18
 #
 # Top jobs will be done sooner
 #
@@ -10,9 +10,6 @@ Handle specification of Bible versions (i.e., fix BibleOrganizationalSystems.py)
         web link
         download file format type
     What about long book names?
-
-Think more about how best to do versification systems
-    include combined verses (e.g., 2-3)?
 
 Handle Versification mappings
     Define an internal/canonical versification system

@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -32,6 +32,7 @@ versionString = "0.95"
 
 
 import logging, os.path
+from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
@@ -86,7 +87,7 @@ class _BibleBooksCodesConverter:
             if Globals.strictCheckingFlag:
                 self.__validate()
         else: # The data must have been already loaded
-            if XMLFilepath != self.__XMLFilepath: logging.error( "Bible books codes are already loaded -- your different filepath of '{}' was ignored".format( XMLFilepath ) )
+            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
         return self
     # end of loadAndValidate
 
@@ -99,7 +100,7 @@ class _BibleBooksCodesConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( "Loading BibleBooksCodes XML file from '{}'...".format( self.__XMLFilepath ) )
+        if Globals.verbosityLevel > 2: print( _("Loading BibleBooksCodes XML file from '{}'...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -122,9 +123,9 @@ class _BibleBooksCodesConverter:
                         logging.warning( _("Missing work element in header") )
             else:
                 logging.warning( _("Missing header element (looking for '{}' tag)".format( self._headerTag ) ) )
-            if header.tail is not None and header.tail.strip(): logging.error( "Unexpected '{}' tail data after header".format( element.tail ) )
+            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected '{}' tail data after header").format( element.tail ) )
         else:
-            logging.error( "Expected to load '{}' but got '{}'".format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
     # end of __load
 
     def __validate( self ):
@@ -144,29 +145,29 @@ class _BibleBooksCodesConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Get the referenceAbbreviation to use as a record ID
@@ -175,32 +176,32 @@ class _BibleBooksCodesConverter:
                 # Check compulsory elements
                 for elementName in self._compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '{}' element is missing in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, j ) )
                     elif not element.find( elementName ).text:
-                        logging.warning( "Compulsory '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
                 # Check optional elements
                 for elementName in self._optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
-                        logging.warning( "Additional '{}' element ('{}') found in record with ID '{}' (record {})".format( subelement.tag, subelement.text, ID, j ) )
+                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record {})".format( text, elementName, ID, j ) )
+                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, j ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in record {}".format( element.tail, element.tag, j ) )
-        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element".format( self._XMLtree.tail, self._XMLtree.tag ) )
+                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
+            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element in record {}").format( element.tail, element.tag, j ) )
+        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
     # end of __validate
 
     def __str__( self ):
@@ -210,11 +211,12 @@ class _BibleBooksCodesConverter:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        indent = 2
         result = "_BibleBooksCodesConverter object"
-        if self.titleString: result += ('\n' if result else '') + "  Title: {}".format( self.titleString )
-        if self.versionString: result += ('\n' if result else '') + "  Version: {}".format( self.versionString )
-        if self.dateString: result += ('\n' if result else '') + "  Date: {}".format( self.dateString )
-        if self._XMLtree is not None: result += ('\n' if result else '') + "  Num entries = {}".format( len(self._XMLtree) )
+        if self.titleString: result += ('\n' if result else '') + ' '*indent + _("Title: {}").format( self.titleString )
+        if self.versionString: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.versionString )
+        if self.dateString: result += ('\n' if result else '') + ' '*indent + _("Date: {}").format( self.dateString )
+        if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Num entries = {}").format( len(self._XMLtree) )
         return result
     # end of __str__
 
@@ -235,7 +237,7 @@ class _BibleBooksCodesConverter:
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             referenceAbbreviation = element.find("referenceAbbreviation").text
             if referenceAbbreviation.upper() != referenceAbbreviation:
-                logging.error( "Reference abbreviation '{}' should be UPPER CASE".format( referenceAbbreviation ) )
+                logging.error( _("Reference abbreviation '{}' should be UPPER CASE").format( referenceAbbreviation ) )
             ID = element.find("referenceNumber").text
             intID = int( ID )
             # The optional elements are set to None if they don't exist
@@ -327,7 +329,7 @@ class _BibleBooksCodesConverter:
         assert( self._dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
@@ -359,7 +361,7 @@ class _BibleBooksCodesConverter:
         assert( self._dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
@@ -388,7 +390,7 @@ class _BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
                         field = entry[key]
@@ -396,9 +398,9 @@ class _BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 else:
-                    logging.error( "Can't handle this type of entry yet: {}".format( repr(entry) ) )
+                    logging.error( _("Can't handle this type of entry yet: {}").format( repr(entry) ) )
                 return result
             # end of convertEntry
 
@@ -420,7 +422,7 @@ class _BibleBooksCodesConverter:
                 elif isinstance( dictKey, int ):
                     cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of key data yet: {}".format( dictKey ) )
+                    logging.error( _("Can't handle this type of key data yet: {}").format( dictKey ) )
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
@@ -433,7 +435,7 @@ class _BibleBooksCodesConverter:
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -517,10 +519,16 @@ class BibleBooksCodes:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        indent = 2
         result = "BibleBooksCodes object"
-        result += ('\n' if result else '') + "  Num entries = {}".format( len(self._dataDicts["referenceAbbreviationDict"]) )
+        result += ('\n' if result else '') + ' '*indent + _("Num entries = {}").format( len(self._dataDicts["referenceAbbreviationDict"]) )
         return result
     # end of __str__
+
+    def getBBB( self, referenceNumber ):
+        """ Return the referenceAbbreviation for the given book number (referenceNumber). """
+        if not 1 <= referenceNumber <= 255: raise ValueError
+        return self._dataDicts["referenceNumber"][referenceNumber]["referenceAbbreviation"]
 
     def isValidReferenceAbbreviation( self, BBB ):
         """ Returns True or False. """
@@ -535,13 +543,37 @@ class BibleBooksCodes:
         """ Return the referenceNumber 1..255 for the given book code (referenceAbbreviation). """
         return self._dataDicts["referenceAbbreviationDict"][BBB]["referenceNumber"]
 
+    def getCCELNumber( self, BBB ):
+        """ Return the CCEL number string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["CCELNumberString"]
+
+    def getSBLAbbreviation( self, BBB ):
+        """ Return the SBL abbreviation string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["SBLAbbreviation"]
+
     def getOSISAbbreviation( self, BBB ):
-        """ Return the OSIS abbrevation string for the given book code (referenceAbbreviation). """
+        """ Return the OSIS abbreviation string for the given book code (referenceAbbreviation). """
         return self._dataDicts["referenceAbbreviationDict"][BBB]["OSISAbbreviation"]
 
     def getSwordAbbreviation( self, BBB ):
-        """ Return the Sword abbrevation string for the given book code (referenceAbbreviation). """
+        """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
         return self._dataDicts["referenceAbbreviationDict"][BBB]["SwordAbbreviation"]
+
+    def getParatextAbbreviation( self, BBB ):
+        """ Return the Paratext abbreviation string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["ParatextAbbreviation"]
+
+    def getParatextNumber( self, BBB ):
+        """ Return the Paratext number string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["ParatextNumberString"]
+
+    def getNETBibleAbbreviation( self, BBB ):
+        """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["NETBibleAbbreviation"]
+
+    def getByzantineAbbreviation( self, BBB ):
+        """ Return the Byzantine abbreviation string for the given book code (referenceAbbreviation). """
+        return self._dataDicts["referenceAbbreviationDict"][BBB]["ByzantineAbbreviation"]
 
     def getExpectedChaptersList( self, BBB ):
         """

@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -32,6 +32,7 @@ versionString = "0.55"
 
 
 import os, logging
+from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
@@ -81,13 +82,13 @@ class _BibleBookOrdersConverter:
         if not self.XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
             self.XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( "Loading book order systems from{}...".format( self.XMLFolder ) )
+            if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( "  Loading{} book order system from{}...".format( bookOrderSystemCode, filename ) )
+                    if Globals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
                     self.XMLSystems[bookOrderSystemCode] = {}
                     self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -99,9 +100,9 @@ class _BibleBookOrdersConverter:
                             self.XMLSystems[bookOrderSystemCode]["header"] = header
                             self.XMLSystems[bookOrderSystemCode]["tree"].remove( header )
                             if len(header)>1:
-                                logging.info( "Unexpected elements in header" )
+                                logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
-                                logging.info( "Missing work element in header" )
+                                logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
                                 if work.tag == "work":
@@ -109,15 +110,15 @@ class _BibleBookOrdersConverter:
                                     self.XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
                                     self.XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
                                 else:
-                                    logging.warning( "Missing work element in header" )
+                                    logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( "Missing header element (looking for '{}' tag)".format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
                     else:
-                        logging.error( "Expected to load '{}' but got '{}'".format( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load '{}' but got '{}'").format( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.XMLSystems[bookOrderSystemCode]["tree"]:
                         bookCount += 1
-                    logging.info( "    Loaded{} books".format( bookCount ) )
+                    logging.info( _("    Loaded {} books").format( bookCount ) )
 
                 if Globals.strictCheckingFlag:
                     self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
@@ -139,71 +140,71 @@ class _BibleBookOrdersConverter:
                 ID = element.get("id")
                 intID = int( ID )
                 if intID != expectedID:
-                    logging.error( "ID numbers out of sequence in record{} (got{} when expecting{}) for{}".format( k, intID, expectedID, systemName ) )
+                    logging.error( _("ID numbers out of sequence in record {} (got {} when expecting {}) for {}").format( k, intID, expectedID, systemName ) )
                 expectedID += 1
 
                 # Check that this is unique
                 if element.text:
                     if element.text in uniqueDict:
-                        logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record{}) for{}".format( element.text, element.tag, ID, k, systemName ) )
+                        logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {}) for {}").format( element.text, element.tag, ID, k, systemName ) )
                     uniqueDict[element.text] = None
 
                 # Check compulsory attributes on this main element
                 for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from{} element in record{}".format( attributeName, element.tag, k ) )
+                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '{}' attribute is blank on{} element in record{}".format( attributeName, element.tag, k ) )
+                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on{} element in record{}".format( attributeName, element.tag, k ) )
+                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
-                        logging.warning( "Additional '{}' attribute ('{}') found on{} element in record{}".format( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on{} element in record{}".format( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '{}' element is missing in record with ID '{}' (record{})".format( elementName, ID, k ) )
+                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, k ) )
                     if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '{}' element is blank in record with ID '{}' (record{})".format( elementName, ID, k ) )
+                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '{}' element is blank in record with ID '{}' (record{})".format( elementName, ID, k ) )
+                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
-                        logging.warning( "Additional '{}' element ('{}') found in record with ID '{}' (record{})".format( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record{})".format( text, elementName, ID, k ) )
+                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, k ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element:{} in record{}".format( element.tag, k ) )
+                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
     # end of __validateSystem
 
     def __str__( self ):
@@ -251,20 +252,20 @@ class _BibleBookOrdersConverter:
                 ID = bookElement.get( "id" )
                 intID = int( ID )
                 if not self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
-                    logging.error( "Unrecognized '{}' book abbreviation in '{}' book order system".format( bookRA, bookOrderSystemCode ) )
+                    logging.error( _("Unrecognized '{}' book abbreviation in '{}' book order system").format( bookRA, bookOrderSystemCode ) )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:
-                    logging.error( "Duplicate{} book reference abbreviations in '{}' book order system".format( bookRA, bookOrderSystemCode ) )
+                    logging.error( _("Duplicate {} book reference abbreviations in '{}' book order system").format( bookRA, bookOrderSystemCode ) )
                 bookDataDict[bookRA] = intID
                 if intID in idDataDict:
-                    logging.error( "Duplicate{} ID (book index) numbers in '{}' book order system".format( intID, bookOrderSystemCode ) )
+                    logging.error( _("Duplicate {} ID (book index) numbers in '{}' book order system").format( intID, bookOrderSystemCode ) )
                 idDataDict[intID] = bookRA
                 BBBList.append( bookRA )
 
             if Globals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataLists:
                     if self.__DataLists[checkSystemCode] == BBBList:
-                        logging.error( "{} and{} book order systems are identical ({} books)".format( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
+                        logging.error( _("{} and {} book order systems are identical ({} books)").format( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
 
             # Now put it into my dictionaries for easy access
             self.__DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
@@ -291,7 +292,7 @@ class _BibleBookOrdersConverter:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -330,7 +331,7 @@ class _BibleBookOrdersConverter:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "#{}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
@@ -368,7 +369,7 @@ class _BibleBookOrdersConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 return result
             # end of convertEntry
 
@@ -384,7 +385,7 @@ class _BibleBookOrdersConverter:
                 elif isinstance( dictKey, int ):
                     cFile.write( "  {{{},{}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet:{}".format( dictKey ) )
+                    logging.error( _("Can't handle this type of data yet: {}").format( dictKey ) )
             cFile.write( "}}; //{} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
@@ -397,7 +398,7 @@ class _BibleBookOrdersConverter:
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to{}...".format( cFilepath ) ) # Don't bother telling them about the .h file
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -467,19 +468,19 @@ class _BibleBookOrdersConverter:
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( "  Matched{} book order (with these{} books)".format( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                print( _("  Matched {} book order (with these {} books)").format( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
             else:
-                print( "  Matched{} book order system(s):{} (with these{} books)".format( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                print( _("  Matched {} book order system(s): {} (with these {} books)").format( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
                 if debugFlag: print( errorSummary )
         else:
-            print( "  Mismatched{} book order systems (with these{} books)".format( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            print( _("  Mismatched {} book order systems (with these {} books)").format( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
             if debugFlag: print( allErrors )
             else: print( errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
-            print( "Writing{} books to{}...".format( len(bookOrderSchemeToCheck), outputFilepath ) )
+            print( _("Writing {} books to {}...").format( len(bookOrderSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -509,7 +510,7 @@ class BibleBookOrderSystems:
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( "Bible book order systems are already loaded -- your given XMLFolder of '{}' was ignored".format( XMLFolder ) )
+            if XMLFolder is not None: logging.warning( _("Bible book order systems are already loaded -- your given XMLFolder of '{}' was ignored").format( XMLFolder ) )
             self.__bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__DataLists = self.__bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
             assert( len(self.__DataDicts) == len(self.__DataLists) )
@@ -545,8 +546,8 @@ class BibleBookOrderSystems:
         if systemName in self.__DataDicts:
             return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
         # else
-        logging.error( "No '{}' system in Bible Book Orders".format( systemName ) )
-        if Globals.verbosityLevel > 2: logging.error( "Available systems are{}".format( self.getAvailableSystemNames() ) )
+        logging.error( _("No '{}' system in Bible Book Orders").format( systemName ) )
+        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableSystemNames() ) )
     # end of getBookOrderSystem
 
     def numBooks( self, systemName ):
@@ -679,29 +680,29 @@ def main():
         # Demo the BibleBookOrders object
         bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( bbos ) # Just print a summary
-        print( "Number of loaded systems:{}".format( len(bbos) ) )
-        print( "Available system names are:{}".format( bbos.getAvailableBookOrderSystemNames() ) )
+        print( _("Number of loaded systems: {}").format( len(bbos) ) )
+        print( _("Available system names are: {}").format( bbos.getAvailableBookOrderSystemNames() ) )
         systemName = "VulgateBible"
-        print( "Number of books in{} is{}".format( systemName, bbos.numBooks(systemName) ) )
+        print( "Number of books in {} is {}".format( systemName, bbos.numBooks(systemName) ) )
         systemName = "Septuagint"; BBB="ROM"
-        print( "{} is in{}:{}".format( BBB, systemName, bbos.containsBook(systemName,BBB) ) )
+        print( "{} is in {}:{}".format( BBB, systemName, bbos.containsBook(systemName,BBB) ) )
         systemName = "ModernJewish"
-        print( "Booklist for{} is{}".format( systemName, bbos.getBookList(systemName) ) )
+        print( "Booklist for {} is {}".format( systemName, bbos.getBookList(systemName) ) )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
         bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )
         if bbo is not None:
             print( bbo ) # Just print a summary
-            print( "Num books is{} or{}".format(len(bbo), bbo.numBooks()) )
-            print( "The 3rd book is{}".format( bbo.getBookAtPosition(3) ) )
-            print( "Contains Psalms:{}".format( bbo.containsBook("PSA") ) )
+            print( "Num books is {} or {}".format(len(bbo), bbo.numBooks()) )
+            print( "The 3rd book is {}".format( bbo.getBookAtPosition(3) ) )
+            print( "Contains Psalms: {}".format( bbo.containsBook("PSA") ) )
             print( "Luke is book #{}".format( bbo.getBookPosition("LUK") ) )
-            print( "Book list is:{}".format( bbo.getBookList() ) )
+            print( "Book list is: {}".format( bbo.getBookList() ) )
             BBB = "TI1"
             while True:
                 BBB2 = bbo.getNextBook( BBB )
                 if BBB2 is None: break
-                print( " Next book after{} is{}".format(BBB,BBB2) )
+                print( " Next book after {} is {}".format(BBB,BBB2) )
                 BBB = BBB2
             
 # end of main

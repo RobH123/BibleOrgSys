@@ -4,7 +4,7 @@
 # BibleOrganizationalSystems.py
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
-#   Last modified: 2011-01-17 (also update versionString below)
+#   Last modified: 2011-01-18 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -32,6 +32,7 @@ versionString = "0.19"
 
 
 import logging, os.path
+from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.cElementTree import ElementTree
 
@@ -128,7 +129,7 @@ class _BibleOrganizationalSystemsConverter:
         self.XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( "Loading BibleOrganisationalSystems XML file from '{}'...".format( self.XMLFilepath ) )
+        if Globals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from '{}'...").format( self.XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -138,9 +139,9 @@ class _BibleOrganizationalSystemsConverter:
                 self.header = header
                 self._XMLtree.remove( header )
                 if len(header)>1:
-                    logging.info( "Unexpected elements in header" )
+                    logging.info( _("Unexpected elements in header") )
                 elif len(header)==0:
-                    logging.info( "Missing work element in header" )
+                    logging.info( _("Missing work element in header") )
                 else:
                     work = header[0]
                     if work.tag == "work":
@@ -148,11 +149,11 @@ class _BibleOrganizationalSystemsConverter:
                         self.date = work.find("date").text
                         self.title = work.find("title").text
                     else:
-                        logging.warning( "Missing work element in header" )
+                        logging.warning( _("Missing work element in header") )
             else:
-                logging.warning( "Missing header element (looking for '{}' tag)".format( self._headerTag ) )
+                logging.warning( _("Missing header element (looking for '{}' tag)").format( self._headerTag ) )
         else:
-            logging.error( "Expected to load '{}' but got '{}'".format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
     # end of _load
 
     def _validate( self ):
@@ -172,29 +173,29 @@ class _BibleOrganizationalSystemsConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
                     if not attributeValue:
-                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 ID = element.find("referenceAbbreviation").text
@@ -202,30 +203,30 @@ class _BibleOrganizationalSystemsConverter:
                 # Check compulsory elements
                 for elementName in self._compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( "Compulsory '{}' element is missing in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, j ) )
                     if not element.find( elementName ).text:
-                        logging.warning( "Compulsory '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
                 # Check optional elements
                 for elementName in self._optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( "Optional '{}' element is blank in record with ID '{}' (record {})".format( elementName, ID, j ) )
+                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
-                        logging.warning( "Additional '{}' element ('{}') found in record with ID '{}' (record {})".format( subelement.tag, subelement.text, ID, j ) )
+                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( "Found '{}' data repeated in '{}' element in record with ID '{}' (record {})".format( text, elementName, ID, j ) )
+                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, j ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
+                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
     # end of _validate
 
     def importDataToPython( self ):
@@ -247,7 +248,7 @@ class _BibleOrganizationalSystemsConverter:
             bits["referenceAbbreviation"] = referenceAbbreviation
             myType = element.get( "type" )
             bits["type"] = myType
-            if myType not in allowedTypes: logging.error( "Unrecognized '{}' type for '{}' (expected one of {})".format(myType,referenceAbbreviation,allowedTypes) )
+            if myType not in allowedTypes: logging.error( _("Unrecognized '{}' type for '{}' (expected one of {})").format(myType,referenceAbbreviation,allowedTypes) )
             languageCode = element.find("languageCode").text
             if self._ISOLanguages and not self._ISOLanguages.isValidLanguageCode( languageCode ): # Check that we have a valid language code
                 logging.error( "Unrecognized '{}' ISO-639-3 language code in '{}' organisational system".format( languageCode, referenceAbbreviation ) )
@@ -260,7 +261,7 @@ class _BibleOrganizationalSystemsConverter:
                         if name not in bits: bits[name] = [nameData.text]
                         else: bits[name].append( nameData.text )
                     else: # Not allowed multiples
-                        if name in bits: logging.error( "Multiple {} elements found in {} {}".format(name, referenceAbbreviation, myType) )
+                        if name in bits: logging.error( _("Multiple {} elements found in {} {}").format(name, referenceAbbreviation, myType) )
                         bits[name] = nameData.text
 
             extension = '_' + myType
@@ -279,8 +280,8 @@ class _BibleOrganizationalSystemsConverter:
                 #print( extendedReferenceAbbreviation, data )
                 systemType = data['type']
                 if systemType=='edition':
-                    if 'usesText' not in data: logging.error( "{} edition doesn't specify 'usesText'".format( referenceAbbreviation ) )
-                    if data['usesText'] not in indexDict: logging.error( "{} edition specifies unknown '{}' text in 'usesText' field".format(referenceAbbreviation,data['usesText']) )
+                    if 'usesText' not in data: logging.error( _("{} edition doesn't specify 'usesText'").format( referenceAbbreviation ) )
+                    if data['usesText'] not in indexDict: logging.error( _("{} edition specifies unknown '{}' text in 'usesText' field").format(referenceAbbreviation,data['usesText']) )
                     elif len(indexDict[data['usesText']]) > 1: # it could be ambiguous
                         found = 0
                         for thisType in ('revision','translation','original'): # but not 'edition'
@@ -290,21 +291,21 @@ class _BibleOrganizationalSystemsConverter:
                                 found += 1
                         assert( found > 0 )
                         if found==1: # ah, it's not actually ambiguous
-                            if Globals.verbosityLevel > 0: print( "Adjusted text used for {} from the ambiguous '{}' to the extended name '{}'".format( extendedReferenceAbbreviation, data['usesText'], foundOne ) )
+                            if Globals.verbosityLevel > 0: print( _("Adjusted text used for {} from the ambiguous '{}' to the extended name '{}'").format( extendedReferenceAbbreviation, data['usesText'], foundOne ) )
                             data['usesText'] = foundOne
-                        else: logging.warning( "{} edition specifies ambiguous '{}' texts in 'usesText' field".format(referenceAbbreviation,indexDict[data['usesText']]) )
+                        else: logging.warning( _("{} edition specifies ambiguous '{}' texts in 'usesText' field").format(referenceAbbreviation,indexDict[data['usesText']]) )
                 elif systemType=='revision':
-                    if 'derivedFrom' not in data: logging.error( "{} revision doesn't specify 'derivedFrom'".format( referenceAbbreviation ) )
-                    if data['derivedFrom'] not in indexDict: logging.error( "{} revision specifies unknown '{}' text in 'derivedFrom' field".format(referenceAbbreviation,data['derivedFrom']) )
-                    elif len(indexDict[data['derivedFrom']]) > 1: logging.warning( "{} edition specifies ambiguous '{}' texts in 'derivedFrom' field".format(referenceAbbreviation,indexDict[data['derivedFrom']]) )
+                    if 'derivedFrom' not in data: logging.error( _("{} revision doesn't specify 'derivedFrom'").format( referenceAbbreviation ) )
+                    if data['derivedFrom'] not in indexDict: logging.error( _("{} revision specifies unknown '{}' text in 'derivedFrom' field").format(referenceAbbreviation,data['derivedFrom']) )
+                    elif len(indexDict[data['derivedFrom']]) > 1: logging.warning( _("{} edition specifies ambiguous '{}' texts in 'derivedFrom' field").format(referenceAbbreviation,indexDict[data['derivedFrom']]) )
                 if 'versificationSystem' in data:
                     if not self._BibleVersificationSystems.isValidVersificationSystemName( data['versificationSystem'] ):
                         extra = "\n  Available systems are {}".format( self._BibleVersificationSystems.getAvailableVersificationSystemNames()) if Globals.verbosityLevel > 2 else ''
-                        logging.error( "Unknown '{}' versification system name in {}{}".format(data['versificationSystem'],extendedReferenceAbbreviation,extra) )
+                        logging.error( _("Unknown '{}' versification system name in {}{}").format(data['versificationSystem'],extendedReferenceAbbreviation,extra) )
                 if 'punctuationSystem' in data:
                     if not self._BiblePunctuationSystems.isValidPunctuationSystemName( data['punctuationSystem'] ):
                         extra = "\n  Available systems are {}".format( self._BiblePunctuationSystems.getAvailablePunctuationSystemNames()) if Globals.verbosityLevel > 2 else ''
-                        logging.error( "Unknown '{}' punctuation system name in {}{}".format(data['punctuationSystem'],extendedReferenceAbbreviation,extra) )
+                        logging.error( _("Unknown '{}' punctuation system name in {}{}").format(data['punctuationSystem'],extendedReferenceAbbreviation,extra) )
 
         self.__dataDicts = dataDict, indexDict, combinedIndexDict
         return self.__dataDicts
@@ -329,12 +330,12 @@ class _BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         dataDict, indexDict, combinedIndexDict = self.importDataToPython()
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} {}\n#\n".format( versionString, datetime.now() ) )
+            myFile.write( "# This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
             if self.title: myFile.write( "# {}\n".format( self.title ) )
             if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
@@ -359,10 +360,10 @@ class _BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
-            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py on {}\n#\n".format( datetime.now() ) )
+            #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( versionString, datetime.now() ) )
             #if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
             #if self.versionString: myFile.write( "#  Version: {}\n".format( self.versionString ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
@@ -386,7 +387,7 @@ class _BibleOrganizationalSystemsConverter:
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                     elif isinstance( field, int): result += str(field)
-                    else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                    else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 return result
 
             theFile.write( "static struct {} {}[] = {\n  // Fields are {}\n".format( structName, dictName, fieldsComment ) )
@@ -396,7 +397,7 @@ class _BibleOrganizationalSystemsConverter:
                 elif isinstance( entry, int ):
                     theFile.write( "  {{}, {}},\n".format( entry, convertEntry(theDict[entry]) ) )
                 else:
-                    logging.error( "Can't handle this type of data yet: {}".format( entry ) )
+                    logging.error( _("Can't handle this type of data yet: {}").format( entry ) )
             theFile.write( "}; // {}\n\n".format( dictName) )
         # end of exportPythonDict
 
@@ -407,13 +408,13 @@ class _BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self._filenameBase + "_Tables.h" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         IDDict, RADict, SBLDict, OADict, PADict, PNDict = self.importDataToPython()
         ifdefName = self._filenameBase.upper() + "_Tables_h"
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "// {}\n//\n".format( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} {}\n//\n".format( versionString, datetime.now() ) )
+            myFile.write( "// This UTF-8 file was automatically generated by BibleOrganizationalSystemsConverter.py V{} on {}\n//\n".format( versionString, datetime.now() ) )
             if self.title: myFile.write( "// {}\n".format( self.title ) )
             if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
@@ -449,7 +450,7 @@ class BibleOrganizationalSystems:
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__dataDict or not self.__indexDict: # Don't do this unnecessarily
-            if XMLFilepath is not None: logging.warning( "Bible books codes are already loaded -- your given filepath of '{}' was ignored".format( XMLFilepath ) )
+            if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of '{}' was ignored").format( XMLFilepath ) )
             self.__bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
             result = self.__bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
             if result is not None:
@@ -504,8 +505,8 @@ class BibleOrganizationalSystems:
                 x = systemName + '_' + possibleType
                 if x in self.__dataDict: return self.__dataDict[x]  
         # else
-        logging.error( "No '{}' system in Bible Organisational Systems".format( systemName ) )
-        if Globals.verbosityLevel>2: logging.error( "Available systems are {}".format( self.getAvailableSystemNames( extended=True ) ) )
+        logging.error( _("No '{}' system in Bible Organisational Systems").format( systemName ) )
+        if Globals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableSystemNames( extended=True ) ) )
     # end of getOrganizationalSystem
 
     def getOrganizationalSystemValue( self, systemName, valueName ):
@@ -527,7 +528,7 @@ class BibleOrganizationalSystems:
                 result = self.getOrganizationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
             # else we couldn't find it anywhere
-            logging.error( "{} Bible Organizational System has no {} specified".format(self.getOrganizationalSystemName(),valueName) )
+            logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
     # end of getOrganizationalSystemValue
 # end of BibleOrganizationalSystems class
 
@@ -620,7 +621,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
         # else we couldn't find it anywhere
-        logging.error( "{} Bible Organizational System has no {} specified".format(self.getOrganizationalSystemName(),valueName) )
+        logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
     # end of getOrganizationalSystemValue
 
     def isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages=False ):
@@ -628,7 +629,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         BBB, C, V, S = referenceTuple
         if BibleBookOrderSystem.containsBook( self, BBB ):
             return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages )
-        elif wantErrorMessages: logging.error( "{} {}:{} is invalid book for reference '{}' in {} versification system for {}".format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+        elif wantErrorMessages: logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
 # end of BibleOrganizationalSystem class
 
@@ -659,7 +660,7 @@ def main():
         # Demo the BibleOrganizationalSystems object
         boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( boss ) # Just print a summary
-        print( "Available system names are: {}".format( boss.getAvailableOrganizationalSystemNames() ) )
+        print( _("Available system names are: {}").format( boss.getAvailableOrganizationalSystemNames() ) )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
         bos = BibleOrganizationalSystem( "KJV-1611_edition" )

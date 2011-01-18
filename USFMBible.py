@@ -3,7 +3,7 @@
 # USFMBible.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-01-17 by RJH (also update versionString below)
+#   Last modified: 2011-01-18 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,10 +27,11 @@ Module for defining and manipulating USFM Bible markers.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.15"
+versionString = "0.16"
 
 
 import os, logging, datetime
+from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
@@ -160,7 +161,7 @@ class USFMBibleBook:
         """
         import SFMFile
 
-        logging.info( "  Loading {}...".format( filename ) )
+        logging.info( "  " + _("Loading {}...").format( filename ) )
         self.bookReferenceCode = bookReferenceCode
         self.sourceFolder = folder
         self.sourceFilename = filename
@@ -184,7 +185,7 @@ class USFMBibleBook:
         for marker,text in self.lines:
             #print( marker, text )
             if marker not in AllLineMarkers:
-                logging.warning( "Unexpected '{}' paragraph marker in Bible book {} (Text is '{}')".format( marker, self.bookReferenceCode, text ) )
+                logging.warning( _("Unexpected '{}' paragraph marker in Bible book {} (Text is '{}')").format( marker, self.bookReferenceCode, text ) )
     # end of load
 
     def getVersification( self ):
@@ -206,17 +207,17 @@ class USFMBibleBook:
                     versification.append( (chapterText, str(lastVerseNumber),) )
                 chapterText = text.strip()
                 if ' ' in chapterText:
-                    logging.warning( "Unexpected space in USFM chapter number field '{}' after chapter {} of {}".format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
+                    logging.warning( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #print( "{} chapter {}".format( self.bookReferenceCode, chapterText ) )
                 chapterNumberString = int( chapterText)
                 if chapterNumberString != lastChapterNumber+1:
-                    logging.error( "USFM chapter numbers out of sequence in Bible book {} ({} after {})".format( self.bookReferenceCode, chapterNumberString, lastChapterNumber ) )
+                    logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.bookReferenceCode, chapterNumberString, lastChapterNumber ) )
                 lastChapterNumber = chapterNumberString
                 verseText, verseNumberString, lastVerseNumber = '0', 0, 0
             elif marker == 'v':
                 if not text:
-                    logging.warning( "Missing USFM verse number after {} in chapter {} of {}".format( lastVerseNumber, chapterNumberString, self.bookReferenceCode ) )
+                    logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumber, chapterNumberString, self.bookReferenceCode ) )
                     continue
                 try:
                     verseText = text.split( None, 1 )[0]
@@ -227,7 +228,7 @@ class USFMBibleBook:
                 for char in 'abcdefghijklmnopqrstuvwxyz[]()\\':
                     if char in verseText:
                         if not doneWarning:
-                            logging.info( "Removing letter(s) from USFM verse number {} in Bible book {} {}".format( verseText, self.bookReferenceCode, chapterText ) )
+                            logging.info( _("Removing letter(s) from USFM verse number {} in Bible book {} {}").format( verseText, self.bookReferenceCode, chapterText ) )
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
@@ -235,21 +236,21 @@ class USFMBibleBook:
                     verseNumberString = bits[0]
                     endVerseNumber = bits[1]
                     if int(verseNumberString) >= int(endVerseNumber):
-                        logging.error( "USFM verse range out of sequence in Bible book {} {} ({}-{})".format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
+                        logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
                 elif ',' in verseText: # we have a range like 7,8
                     bits = verseText.split( ',', 1 )
                     verseNumberString = bits[0]
                     endVerseNumber = bits[1]
                     if int(verseNumberString) >= int(endVerseNumber):
-                        logging.error( "USFM verse range out of sequence in Bible book {} {} ({}-{})".format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
+                        logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
                 else: # Should be just a single verse number
                     verseNumberString = verseText
                     endVerseNumber = verseNumberString
                 if int(verseNumberString) != int(lastVerseNumber)+1:
                     if int(verseNumberString) <= int(lastVerseNumber):
-                        logging.warning( "USFM verse numbers out of sequence in Bible book {} {} ({} after {})".format( self.bookReferenceCode, chapterText, verseText, lastVerseNumber ) )
+                        logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after {})").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumber ) )
                     else: # Must be missing some verse numbers
-                        logging.info( "Missing USFM verse number(s) between {} and {} in Bible book {} {}".format( lastVerseNumber, verseNumberString, self.bookReferenceCode, chapterText ) )
+                        logging.info( _("Missing USFM verse number(s) between {} and {} in Bible book {} {}").format( lastVerseNumber, verseNumberString, self.bookReferenceCode, chapterText ) )
                         for number in range( int(lastVerseNumber)+1, int(verseNumberString) ):
                             omittedVerses.append( (chapterText, str(number),) )
                 lastVerseNumber = endVerseNumber
@@ -296,7 +297,7 @@ class USFMBible:
         import USFMFilenames
         fileList = USFMFilenames.USFMFilenames( folder ).actualFiles()
 
-        logging.info( "Loading {} from {}...".format( self.name, folder ) )
+        logging.info( _("Loading {} from {}...").format( self.name, folder ) )
         self.sourceFolder = folder
         for bookReferenceCode,filename in fileList:
             book = USFMBibleBook()
@@ -343,7 +344,7 @@ class USFMBible:
         for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
             if BBB in MediaWikiControls and MediaWikiControls[BBB]:
                 bits = MediaWikiControls[BBB].split(',')
-                if len(bits)!=2: logging.error( "Unrecognized language book abbreviation and name for {}: '%'".format( BBB, MediaWikiControls[BBB] ) )
+                if len(bits)!=2: logging.error( _("Unrecognized language book abbreviation and name for {}: '{}'").format( BBB, MediaWikiControls[BBB] ) )
                 bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
                 bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
                 bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
@@ -378,7 +379,7 @@ class USFMBible:
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -388,7 +389,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -399,11 +400,11 @@ class USFMBible:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} xref '{}'".format(token, toOSISGlobals["vRef"], USFMxref) )
+                            logging.warning( _("Unprocessed '{}' token in {} xref '{}'").format(token, toOSISGlobals["vRef"], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of processXRef
@@ -432,7 +433,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Footnote at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Footnote at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif token.startswith('fq '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -440,7 +441,7 @@ class USFMBible:
                         elif token in ('ft*','fq*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} footnote '{}'".format(token, toWikiMediaGlobals["vRef"], USFMfootnote) )
+                            logging.warning( _("Unprocessed '{}' token in {} footnote '{}'").format(token, toWikiMediaGlobals["vRef"], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -452,7 +453,7 @@ class USFMBible:
                     if ix2 == -1: # Didn't find it so must be no space after the asterisk
                         ix2 = verse.index('\\x*')
                         ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( 'No space after xref entry in {}'.format(toWikiMediaGlobals["vRef"]) )
+                        logging.warning( _("No space after xref entry in {}").format(toWikiMediaGlobals["vRef"]) )
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
@@ -526,7 +527,7 @@ class USFMBible:
         BOS = BibleOrganizationalSystem( MediaWikiControls["PublicationCode"] )
         BRL = BibleReferenceList( self.BibleBooksCodes, BOS )
 
-        if Globals.verbosityLevel>1: print( "Exporting to MediaWiki format..." )
+        if Globals.verbosityLevel>1: print( _("Exporting to MediaWiki format...") )
         outputFolder = "OutputFiles"
         if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
         xw = XMLWriter().setOutputFilePath( os.path.join( outputFolder, MediaWikiControls["MediaWikiOutputFilename"] ) )
@@ -535,7 +536,7 @@ class USFMBible:
         for BBB,bookData in self.books.items():
             writeBook( xw, BBB, bookData )
         xw.close()
-        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were {}".format(unhandledMarkers) )
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
     # end of toMediaWiki
 
 
@@ -600,7 +601,7 @@ class USFMBible:
         BOS = BibleOrganizationalSystem( ZefaniaControls["PublicationCode"] )
         BRL = BibleReferenceList( self.BibleBooksCodes, BOS )
 
-        if Globals.verbosityLevel>1: print( "Exporting to Zefania format..." )
+        if Globals.verbosityLevel>1: print( _("Exporting to Zefania format...") )
         outputFolder = "OutputFiles"
         if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
         xw = XMLWriter().setOutputFilePath( os.path.join( outputFolder, ZefaniaControls["ZefaniaOutputFilename"] ) )
@@ -614,7 +615,7 @@ class USFMBible:
                 writeBook( xw, BBB, bookData )
         xw.writeLineClose( 'XMLBible' )
         xw.close()
-        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were {}".format(unhandledMarkers) )
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
     # end of toZefania_XML
 
 
@@ -644,7 +645,7 @@ class USFMBible:
 
         # Let's write a Sword locale while we're at it
         SwLocFilepath = os.path.join( outputFolder, "SwLocale.conf" )
-        print( "Writing Sword locale file {}...".format(SwLocFilepath) )
+        print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         with open( SwLocFilepath, 'wt' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format(OSISControls["xmlLanguage"]) )
             SwLocFile.write( 'Description={}\n'.format(OSISControls["LanguageName"]) )
@@ -704,7 +705,7 @@ class USFMBible:
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -714,7 +715,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -725,11 +726,11 @@ class USFMBible:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} xref '{}'".format(token, toOSISGlobals["vRef"], USFMxref) )
+                            logging.warning( _("Unprocessed '{}' token in {} xref '{}'").format(token, toOSISGlobals["vRef"], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of processXRef
@@ -758,7 +759,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISfootnote += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Footnote at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Footnote at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif token.startswith('fq '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -766,7 +767,7 @@ class USFMBible:
                         elif token in ('ft*','fq*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} footnote '{}'".format(token, toOSISGlobals["vRef"], USFMfootnote) )
+                            logging.warning( _("Unprocessed '{}' token in {} footnote '{}'").format(token, toOSISGlobals["vRef"], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -778,7 +779,7 @@ class USFMBible:
                     if ix2 == -1: # Didn't find it so must be no space after the asterisk
                         ix2 = verse.index('\\x*')
                         ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( 'No space after xref entry in {}'.format(toOSISGlobals["vRef"]) )
+                        logging.warning( _("No space after xref entry in {}").format(toOSISGlobals["vRef"]) )
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
@@ -804,12 +805,12 @@ class USFMBible:
             def checkText( textToCheck ):
                 """Handle some general backslash codes and warn about any others still unprocessed."""
                 if '<<' in textToCheck or '>>' in textToCheck:
-                    logging.warning( "Unexpected double angle brackets in {}: '{}' field is '{}'".format(toOSISGlobals["vRef"],marker,textToCheck) )
+                    logging.warning( _("Unexpected double angle brackets in {}: '{}' field is '{}'").format(toOSISGlobals["vRef"],marker,textToCheck) )
                     textToCheck = textToCheck.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in textToCheck and '\\bk*' in textToCheck:
                     textToCheck = textToCheck.replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\' in textToCheck:
-                    logging.error( "We still have some unprocessed backslashes in {}: '{}' field is '{}'".format(toOSISGlobals["vRef"],marker,textToCheck) )
+                    logging.error( _("We still have some unprocessed backslashes in {}: '{}' field is '{}'").format(toOSISGlobals["vRef"],marker,textToCheck) )
                     textToCheck = textToCheck.replace('\\','ENCODING ERROR HERE ' )
                 return textToCheck
             # end of checkText
@@ -830,7 +831,7 @@ class USFMBible:
                 verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '{}' yet for {}".format(verseNumberString,cRef) )
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,cRef) )
                     toOSISGlobals["vRef"]  = cRef + '.' + bits[0]
                     vRef2 = cRef + '.' + bits[1]
                     sID    = toOSISGlobals["vRef"] + '-' + vRef2
@@ -839,7 +840,7 @@ class USFMBible:
                     raise Exception( "not written yet for comma in versenumber" )
                 elif verseNumberString.isdigit():
                     sID = osisID = toOSISGlobals["vRef"] = cRef + '.' + verseNumberString
-                else: logging.critical( "Don't handle verse number of form '{}' yet for {}".format(verseNumberString,cRef) )
+                else: logging.critical( _("Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,cRef) )
                 adjText = processXRefsAndFootnotes( verseText )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] )
                 writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -944,7 +945,7 @@ class USFMBible:
                     if needChapterEID:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',cRef) ) # This is an end milestone marker
                     currentChapterNumberString, verseNumberString = text, '0'
-                    if not currentChapterNumberString.isdigit(): logging.critical( "Can't handle non-digit '{}' chapter number yet".format(text) )
+                    if not currentChapterNumberString.isdigit(): logging.critical( _("Can't handle non-digit '{}' chapter number yet").format(text) )
                     cRef = bRef + '.' + checkText(currentChapterNumberString)
                     writerObject.writeLineOpenSelfclose( 'chapter', [('sID',cRef), ('osisID',cRef)] ) # This is a milestone marker
                     needChapterEID = True
@@ -977,11 +978,11 @@ class USFMBible:
                     haveOpenSubsection = True
                 elif marker=='mr':
                     # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( "Didn't expect major reference 'mr' marker after {}".format(toOSISGlobals["vRef"]) )
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["vRef"]) )
                     writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
                 elif marker=='r':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( "Didn't expect reference 'r' marker after {}".format(toOSISGlobals["vRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("Didn't expect reference 'r' marker after {}").format(toOSISGlobals["vRef"]) )
                     writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
                 elif marker=='p':
                     closeOpenLG()
@@ -1028,7 +1029,7 @@ class USFMBible:
             writerObject.writeNewLine()
         # end of writeBook
 
-        if Globals.verbosityLevel>1: print( "Exporting to OSIS XML format..." )
+        if Globals.verbosityLevel>1: print( _("Exporting to OSIS XML format...") )
         xw = XMLWriter().setOutputFilePath( os.path.join( outputFolder, OSISControls["osisOutputFilename"] ) )
         xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
         xw.start()
@@ -1043,7 +1044,7 @@ class USFMBible:
         xw.writeLineClose( 'osisText' )
         xw.writeLineClose( 'osis' )
         xw.close()
-        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were {}".format(unhandledMarkers) )
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
         print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
     # end of toOSIS_XML
 
@@ -1070,7 +1071,7 @@ class USFMBible:
             for BBB in self.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
                 if BBB in SwordControls and SwordControls[BBB]:
                     bits = SwordControls[BBB].split(',')
-                    if len(bits)!=2: logging.error( "Unrecognized language book abbreviation and name for {}: '%'".format( BBB, OSISControls[BBB] ) )
+                    if len(bits)!=2: logging.error( _("Unrecognized language book abbreviation and name for {}: '{}'").format( BBB, OSISControls[BBB] ) )
                     bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
                     bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
                     bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
@@ -1081,7 +1082,7 @@ class USFMBible:
         outputFolder = "OutputFiles"
         if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
         SwLocFilepath = os.path.join( outputFolder, "SwLocale.conf" )
-        print( "Writing Sword locale file {}...".format(SwLocFilepath) )
+        print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         with open( SwLocFilepath, 'wt' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format(SwordControls["xmlLanguage"]) )
             SwLocFile.write( 'Description={}\n'.format(SwordControls["LanguageName"]) )
@@ -1140,7 +1141,7 @@ class USFMBible:
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -1150,7 +1151,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -1161,11 +1162,11 @@ class USFMBible:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
-                            if rest != '-': logging.warning( "We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'".format(cRef, token, text) )
+                            if rest != '-': logging.warning( _("We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(cRef, token, text) )
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} xref '{}'".format(token, toOSISGlobals["vRef"], USFMxref) )
+                            logging.warning( _("Unprocessed '{}' token in {} xref '{}'").format(token, toOSISGlobals["vRef"], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of processXRef
@@ -1194,7 +1195,7 @@ class USFMBible:
                             if osisRef is not None:
                                 OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format(osisRef,token[3:])
                                 if wantErrorMessages and not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( "Footnote at {} {}:{} seems to contain the wrong self-reference '{}'".format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("Footnote at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif token.startswith('fq '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -1202,7 +1203,7 @@ class USFMBible:
                         elif token in ('ft*','fq*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( "Unprocessed '{}' token in {} footnote '{}'".format(token, toSwordGlobals["vRef"], USFMfootnote) )
+                            logging.warning( _("Unprocessed '{}' token in {} footnote '{}'").format(token, toSwordGlobals["vRef"], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -1214,7 +1215,7 @@ class USFMBible:
                     if ix2 == -1: # Didn't find it so must be no space after the asterisk
                         ix2 = verse.index('\\x*')
                         ix2b = ix2 + 3 # Where the xref ends
-                        logging.warning( 'No space after xref entry in {}'.format(toSwordGlobals["vRef"]) )
+                        logging.warning( _("No space after xref entry in {}").format(toSwordGlobals["vRef"]) )
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
@@ -1240,12 +1241,12 @@ class USFMBible:
             def checkText( textToCheck ):
                 """Handle some general backslash codes and warn about any others still unprocessed."""
                 if '<<' in textToCheck or '>>' in textToCheck:
-                    logging.warning( "Unexpected double angle brackets in {}: '{}' field is '{}'".format(toSwordGlobals["vRef"],marker,textToCheck) )
+                    logging.warning( _("Unexpected double angle brackets in {}: '{}' field is '{}'").format(toSwordGlobals["vRef"],marker,textToCheck) )
                     textToCheck = textToCheck.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in textToCheck and '\\bk*' in textToCheck:
                     textToCheck = textToCheck.replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\' in textToCheck:
-                    logging.error( "We still have some unprocessed backslashes in {}: '{}' field is '{}'".format(toSwordGlobals["vRef"],marker,textToCheck) )
+                    logging.error( _("We still have some unprocessed backslashes in {}: '{}' field is '{}'").format(toSwordGlobals["vRef"],marker,textToCheck) )
                     textToCheck = textToCheck.replace('\\','ENCODING ERROR HERE ' )
                 return textToCheck
             # end of checkText
@@ -1265,7 +1266,7 @@ class USFMBible:
                 verseText = text[len(verseNumberString)+1:].lstrip() # Get the rest of the string which is the verse text
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( "Don't handle verse number of form '{}' yet for {}".format(verseNumberString,cRef) )
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,cRef) )
                     toSwordGlobals["vRef"]  = cRef + '.' + bits[0]
                     vRef2 = cRef + '.' + bits[1]
                     sID    = toSwordGlobals["vRef"] + '-' + vRef2
@@ -1274,7 +1275,7 @@ class USFMBible:
                     raise Exception( "not written yet for comma in versenumber" )
                 elif verseNumberString.isdigit():
                     sID = osisID = toSwordGlobals["vRef"] = cRef + '.' + verseNumberString
-                else: logging.critical( "Don't handle verse number of form '{}' yet for {}".format(verseNumberString,cRef) )
+                else: logging.critical( _("Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,cRef) )
                 adjText = processXRefsAndFootnotes( verseText )
                 writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 writeIndexEntry( writerObject, indexFile )
@@ -1393,7 +1394,7 @@ class USFMBible:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',cRef) ) # This is an end milestone marker
                     writeIndexEntry( writerObject, ix )
                     currentChapterNumberString = text
-                    if not currentChapterNumberString.isdigit(): logging.critical( "Can't handle non-digit '{}' chapter number yet".format(text) )
+                    if not currentChapterNumberString.isdigit(): logging.critical( _("Can't handle non-digit '{}' chapter number yet").format(text) )
                     cRef = bRef + '.' + checkText(currentChapterNumberString)
                     writerObject.writeLineOpenSelfclose( 'chapter', [('osisID',cRef), ('sID',cRef)] ) # This is a milestone marker
                     needChapterEID = True
@@ -1427,11 +1428,11 @@ class USFMBible:
                     haveOpenSubsection = True
                 elif marker=='mr':
                     # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( "Didn't expect major reference 'mr' marker after {}".format(toSwordGlobals["vRef"]) )
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["vRef"]) )
                     writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
                 elif marker=='r':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( "Didn't expect reference 'r' marker after {}".format(toSwordGlobals["vRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("Didn't expect reference 'r' marker after {}").format(toSwordGlobals["vRef"]) )
                     writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
                 elif marker=='p':
                     closeOpenLG()
@@ -1481,7 +1482,7 @@ class USFMBible:
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
-        if Globals.verbosityLevel>1: print( "Exporting to Sword modified-OSIS XML format..." )
+        if Globals.verbosityLevel>1: print( _("Exporting to Sword modified-OSIS XML format...") )
         xwOT = XMLWriter().setOutputFilePath( os.path.join( lgFolder, 'ot' ) )
         xwNT = XMLWriter().setOutputFilePath( os.path.join( lgFolder, 'nt' ) )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
@@ -1503,7 +1504,7 @@ class USFMBible:
                 else: raise Exception( "Unexpected {} Bible book".format(BBB) )
                 writeBook( xw, ix, BBB, bookData )
         xwOT.close(); xwNT.close()
-        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were {}".format(unhandledMarkers) )
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
     #end of toSwordModule
 
 
@@ -1533,7 +1534,7 @@ class USFMBible:
                 #else: print( "Doesn't handle {} marker yet".format(marker )
             #print( bk)
         if outputFilepath: B.write( outputFilepath )
-        if unhandledMarkers and Globals.verbosityLevel>0: print( "  WARNING: Unhandled USFM markers were {}".format(unhandledMarkers) )
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
     # end of toBible
 # end of class USFMBible
 
