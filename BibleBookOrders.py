@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-18 (also update versionString below)
+#   Last modified: 2011-01-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.55"
+versionString = "0.56"
 
 
 import os, logging
@@ -437,7 +437,7 @@ class _BibleBookOrdersConverter:
             myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 
-    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False, debugFlag=False ):
+    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False ):
         """
         Check the given book order scheme against all the loaded systems.
         Create a new book order file if it doesn't match any.
@@ -452,35 +452,34 @@ class _BibleBookOrdersConverter:
         for bookOrderSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #print( "  Matches '{}' book order system".format( bookOrderSystemCode ) )
+                #print( "  {} matches '{}' book order system".format( systemName, bookOrderSystemCode ) )
                 systemMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             else:
                 if len(self.Lists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[bookOrderSystemCode],bookOrderSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match '{}' system (Both have{} books, but{} instead of{})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
+                    thisError = "    Doesn't match '{}' system (Both have {} books, but{} instead of {})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
                 else:
-                    thisError = "    Doesn't match '{}' system ({} books instead of{})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
+                    thisError = "    Doesn't match '{}' system ({} books instead of {})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.Lists[bookOrderSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( _("  Matched {} book order (with these {} books)").format( matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                if debugFlag: print( errorSummary )
+                print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                if Globals.commandLineOptions.debug: print( errorSummary )
             else:
-                print( _("  Matched {} book order system(s): {} (with these {} books)").format( systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                if debugFlag: print( errorSummary )
+                print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                if Globals.commandLineOptions.debug: print( errorSummary )
         else:
-            print( _("  Mismatched {} book order systems (with these {} books)").format( systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            if debugFlag: print( allErrors )
-            else: print( errorSummary)
+            print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            print( allErrors if Globals.commandLineOptions.debug else errorSummary )
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
-            print( _("Writing {} books to {}...").format( len(bookOrderSchemeToCheck), outputFilepath ) )
+            print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -564,6 +563,55 @@ class BibleBookOrderSystems:
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__DataLists[systemName]
     # end of getBookList
+
+    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False ):
+        """
+        Check the given book order scheme against all the loaded systems.
+        Create a new book order file if it doesn't match any.
+        """
+        assert( systemName )
+        assert( bookOrderSchemeToCheck )
+        assert( self.__DataLists )
+        #print( systemName, bookOrderSchemeToCheck )
+
+        matchedBookOrderSystemCodes = []
+        systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
+        for bookOrderSystemCode in self.__DataLists: # Step through the various reference schemes
+            theseErrors = ''
+            if self.__DataLists[bookOrderSystemCode] == bookOrderSchemeToCheck:
+                #print( "  {} matches '{}' book order system".format( systemName, bookOrderSystemCode ) )
+                systemMatchCount += 1
+                matchedBookOrderSystemCodes.append( bookOrderSystemCode )
+            else:
+                if len(self.__DataLists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
+                    for BBB1,BBB2 in zip(self.__DataLists[bookOrderSystemCode],bookOrderSchemeToCheck):
+                        if BBB1 != BBB2: break
+                    thisError = "    Doesn't match '{}' system (Both have {} books, but {} instead of {})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, BBB2 )
+                else:
+                    thisError = "    Doesn't match '{}' system ({} books instead of {})".format( bookOrderSystemCode, len(bookOrderSchemeToCheck), len(self.__DataLists[bookOrderSystemCode]) )
+                theseErrors += ("\n" if theseErrors else "") + thisError
+                errorSummary += ("\n" if errorSummary else "") + thisError
+                systemMismatchCount += 1
+
+        if systemMatchCount:
+            if systemMatchCount == 1: # What we hope for
+                print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                if Globals.commandLineOptions.debug: print( errorSummary )
+            else:
+                print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                if Globals.commandLineOptions.debug: print( errorSummary )
+        else:
+            print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            print( allErrors if Globals.commandLineOptions.debug else errorSummary )
+
+        if exportFlag and not systemMatchCount: # Write a new file
+            outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
+            print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
+            with open( outputFilepath, 'wt' ) as myFile:
+                for n,BBB in enumerate(bookOrderSchemeToCheck):
+                    myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
+                myFile.write( "</BibleBookOrderSystem>" )
+    # end of checkBookOrderSystem
 # end of BibleBookOrderSystems class
 
 
@@ -686,8 +734,9 @@ def main():
         print( "Number of books in {} is {}".format( systemName, bbos.numBooks(systemName) ) )
         systemName = "Septuagint"; BBB="ROM"
         print( "{} is in {}:{}".format( BBB, systemName, bbos.containsBook(systemName,BBB) ) )
-        systemName = "ModernJewish"
-        print( "Booklist for {} is {}".format( systemName, bbos.getBookList(systemName) ) )
+        for systemName in ("ModernJewish", "EuropeanProtestantNewTestament", ):
+            print( "Booklist for {} is {}".format( systemName, bbos.getBookList(systemName) ) )
+        bbos.checkBookOrderSystem( "myTest", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'ReV'] )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
         bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )

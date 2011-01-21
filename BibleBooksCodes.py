@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-01-18 (also update versionString below)
+#   Last modified: 2011-01-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.95"
+versionString = "0.96"
 
 
 import logging, os.path
@@ -575,6 +575,10 @@ class BibleBooksCodes:
         """ Return the Byzantine abbreviation string for the given book code (referenceAbbreviation). """
         return self._dataDicts["referenceAbbreviationDict"][BBB]["ByzantineAbbreviation"]
 
+    def getBBBFromOSIS( self, osisAbbreviation ):
+        """ Return the reference abbreviation strin for the given OSIS book code string. """
+        return self._dataDicts["OSISAbbreviationDict"][osisAbbreviation][1]
+
     def getExpectedChaptersList( self, BBB ):
         """
         Gets a list with the number of expected chapters for the given book code (referenceAbbreviation).
@@ -612,6 +616,13 @@ class BibleBooksCodes:
             if osisAbbrev is not None: results.append( osisAbbrev )
         return results
     # end of getOSISSingleChapterBooksList
+
+    def getAllOSISBooksCodes( self ):
+        """
+        Return a list of all available OSIS book codes.
+        """
+        return [bk for bk in self._dataDicts["OSISAbbreviationDict"]]
+    #end of getAllOSISBooksCodes
 
     def getAllParatextBooksCodeNumberTriples( self ):
         """
