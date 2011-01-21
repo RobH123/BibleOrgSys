@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-20 (also update versionString below)
+#   Last modified: 2011-01-21 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -81,8 +81,8 @@ class _BibleBookOrdersConverter:
         """
         if not self.XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
-            self.XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.XMLFolder ) )
+            self.__XMLFolder = XMLFolder
+            if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
@@ -122,6 +122,8 @@ class _BibleBookOrdersConverter:
 
                 if Globals.strictCheckingFlag:
                     self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+        else: # The data must have been already loaded
+            if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systesm are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
         return self
     # end of loadSystems
 
@@ -509,7 +511,6 @@ class BibleBookOrderSystems:
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
-            if XMLFolder is not None: logging.warning( _("Bible book order systems are already loaded -- your given XMLFolder of '{}' was ignored").format( XMLFolder ) )
             self.__bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__DataLists = self.__bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
             assert( len(self.__DataDicts) == len(self.__DataLists) )
@@ -662,7 +663,7 @@ class BibleBookOrderSystem:
     # end of __contains__
 
     def containsBook( self, BBB ):
-        """ Return True if the book is in this system. """
+        """ Return True/False if the book is in this system. """
         return BBB in self.__BookOrderList
     # end of containsBook
 

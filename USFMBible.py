@@ -3,7 +3,7 @@
 # USFMBible.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-01-18 by RJH (also update versionString below)
+#   Last modified: 2011-01-21 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible markers.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import os, logging, datetime
@@ -43,7 +43,7 @@ from XMLWriter import XMLWriter
 
 
 # Globals
-USFMVersion = "2.2"
+USFMVersion = "2.3" # July 2010 at http://paratext.ubs-translations.org/about/usfm
 
 
 # Line markers

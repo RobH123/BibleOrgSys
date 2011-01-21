@@ -4,7 +4,7 @@
 # BibleBooksCodesTest.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-01-20 (also update versionString below)
+#   Last modified: 2011-01-21 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -34,12 +34,13 @@ versionString = "0.96"
 import sys, os.path
 import unittest
 
-sourceFolder = ".."
+sourceFolder = "."
 sys.path.append( sourceFolder )
 import BibleBooksCodes
 
 
 class BibleBooksCodesTests(unittest.TestCase):
+    """ Unit tests for the BibleBooksCodes object. """
 
     def setUp( self ):
         # Create the BibleBooksCodes object
