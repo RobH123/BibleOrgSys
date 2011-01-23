@@ -743,7 +743,8 @@ class BibleVersificationSystems:
             for BBB in versificationSchemeToCheck.keys():
                 #print( BBB )
                 if BBB in CVData:
-                    for chapterToCheck,numVersesToCheck in versificationSchemeToCheck[BBB].items():
+                    myContainer = versificationSchemeToCheck[BBB] if isinstance(versificationSchemeToCheck[BBB],list) else versificationSchemeToCheck[BBB].items() # Handles both lists and dictionaries
+                    for chapterToCheck,numVersesToCheck in myContainer:
                         if not isinstance(chapterToCheck,str): raise Exception( "Chapter programming error" )
                         if not isinstance(numVersesToCheck,str): raise Exception( "Verse programming error" )
                         if chapterToCheck in CVData[BBB]: # That chapter number is in our scheme

@@ -3,7 +3,7 @@
 # USFMBible.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-01-21 by RJH (also update versionString below)
+#   Last modified: 2011-01-23 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible markers.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.17"
+versionString = "0.18"
 
 
 import os, logging, datetime
@@ -231,7 +231,7 @@ class USFMBibleBook:
                             logging.info( _("Removing letter(s) from USFM verse number {} in Bible book {} {}").format( verseText, self.bookReferenceCode, chapterText ) )
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
-                if '-' or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
+                if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString = bits[0]
                     endVerseNumber = bits[1]
