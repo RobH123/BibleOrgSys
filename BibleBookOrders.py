@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-21 (also update versionString below)
+#   Last modified: 2011-01-23 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.56"
+versionString = "0.57"
 
 
 import os, logging
@@ -123,7 +123,7 @@ class _BibleBookOrdersConverter:
                 if Globals.strictCheckingFlag:
                     self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
         else: # The data must have been already loaded
-            if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systesm are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
+            if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systems are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
         return self
     # end of loadSystems
 
@@ -439,7 +439,7 @@ class _BibleBookOrdersConverter:
             myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 
-    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False ):
+    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck ):
         """
         Check the given book order scheme against all the loaded systems.
         Create a new book order file if it doesn't match any.
@@ -479,7 +479,7 @@ class _BibleBookOrdersConverter:
             print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
             print( allErrors if Globals.commandLineOptions.debug else errorSummary )
 
-        if exportFlag and not systemMatchCount: # Write a new file
+        if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
@@ -536,6 +536,11 @@ class BibleBookOrderSystems:
         return len( self.__DataDicts )
     # end of __len__
 
+    def __contains__( self, name ):
+        """ Returns True/False if the name is in this system. """
+        return name in self.__DataLists
+    # end of __contains__
+
     def getAvailableBookOrderSystemNames( self ):
         """ Returns a list of available system name strings. """
         return [x for x in self.__DataLists]
@@ -565,7 +570,7 @@ class BibleBookOrderSystems:
         return self.__DataLists[systemName]
     # end of getBookList
 
-    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck, exportFlag=False ):
+    def checkBookOrderSystem( self, systemName, bookOrderSchemeToCheck ):
         """
         Check the given book order scheme against all the loaded systems.
         Create a new book order file if it doesn't match any.
@@ -605,7 +610,7 @@ class BibleBookOrderSystems:
             print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
             print( allErrors if Globals.commandLineOptions.debug else errorSummary )
 
-        if exportFlag and not systemMatchCount: # Write a new file
+        if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
@@ -659,11 +664,13 @@ class BibleBookOrderSystem:
 
     def __contains__( self, BBB ):
         """ Returns True/False if the book is in this system. """
+        assert( len(BBB) == 3 )
         return BBB in self.__BookOrderList
     # end of __contains__
 
     def containsBook( self, BBB ):
         """ Return True/False if the book is in this system. """
+        assert( len(BBB) == 3 )
         return BBB in self.__BookOrderList
     # end of containsBook
 
@@ -674,6 +681,7 @@ class BibleBookOrderSystem:
 
     def getBookPosition( self, BBB ):
         """ Returns the book position number (1..n). """
+        assert( len(BBB) == 3 )
         return self.__BookOrderBookDict[BBB]
     # end of getBookPosition
 
@@ -689,7 +697,7 @@ class BibleBookOrderSystem:
 
     def getNextBook( self, BBB ):
         """ Returns the book (if any) after the given one. """
-        assert( BBB and len(BBB)==3 )
+        assert( len(BBB)==3 )
         nextPosition = self.__BookOrderBookDict[BBB] + 1
         if nextPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[nextPosition]
     # end of getNextBook
@@ -727,30 +735,30 @@ def main():
         print( bbosc ) # Just print a summary
 
         # Demo the BibleBookOrders object
-        bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        print( bbos ) # Just print a summary
-        print( _("Number of loaded systems: {}").format( len(bbos) ) )
-        print( _("Available system names are: {}").format( bbos.getAvailableBookOrderSystemNames() ) )
+        bboss = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        print( bboss ) # Just print a summary
+        print( _("Number of loaded systems: {}").format( len(bboss) ) )
+        print( _("Available system names are: {}").format( bboss.getAvailableBookOrderSystemNames() ) )
         systemName = "VulgateBible"
-        print( "Number of books in {} is {}".format( systemName, bbos.numBooks(systemName) ) )
+        print( "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
         systemName = "Septuagint"; BBB="ROM"
-        print( "{} is in {}:{}".format( BBB, systemName, bbos.containsBook(systemName,BBB) ) )
+        print( "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
         for systemName in ("ModernJewish", "EuropeanProtestantNewTestament", ):
-            print( "Booklist for {} is {}".format( systemName, bbos.getBookList(systemName) ) )
-        bbos.checkBookOrderSystem( "myTest", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'ReV'] )
+            print( "Booklist for {} is {}".format( systemName, bboss.getBookList(systemName) ) )
+        bboss.checkBookOrderSystem( "myTest", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'ReV'] )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
-        bbo = BibleBookOrderSystem( "EuropeanProtestantBible" )
-        if bbo is not None:
-            print( bbo ) # Just print a summary
-            print( "Num books is {} or {}".format(len(bbo), bbo.numBooks()) )
-            print( "The 3rd book is {}".format( bbo.getBookAtPosition(3) ) )
-            print( "Contains Psalms: {}".format( bbo.containsBook("PSA") ) )
-            print( "Luke is book #{}".format( bbo.getBookPosition("LUK") ) )
-            print( "Book list is: {}".format( bbo.getBookList() ) )
+        bbos = BibleBookOrderSystem( "EuropeanProtestantBible" )
+        if bbos is not None:
+            print( bbos ) # Just print a summary
+            print( "Num books is {} or {}".format(len(bbos), bbos.numBooks()) )
+            print( "The 3rd book is {}".format( bbos.getBookAtPosition(3) ) )
+            print( "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
+            print( "Luke is book #{}".format( bbos.getBookPosition("LUK") ) )
+            print( "Book list is: {}".format( bbos.getBookList() ) )
             BBB = "TI1"
             while True:
-                BBB2 = bbo.getNextBook( BBB )
+                BBB2 = bbos.getNextBook( BBB )
                 if BBB2 is None: break
                 print( " Next book after {} is {}".format(BBB,BBB2) )
                 BBB = BBB2

@@ -36,7 +36,7 @@ import unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import BibleBooksCodes
+import Globals, BibleBooksCodes
 
 
 class BibleBooksCodesTests(unittest.TestCase):
@@ -250,5 +250,12 @@ class BibleBooksCodesTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # Handle command line parameters (for compatibility)
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
+    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksCodesTest.py

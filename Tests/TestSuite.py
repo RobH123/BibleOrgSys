@@ -4,7 +4,7 @@
 # TestSuite.py
 #
 # Suite for testing BibleOrgSys
-#   Last modified: 2011-01-21 (also update versionString below)
+#   Last modified: 2011-01-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,13 +27,27 @@
 Suite testing BibleOrgSys.
 """
 
-progName = "Bible Org Sys test suite"
-versionString = "0.02"
+progName = "Bible Organisational System test suite"
+versionString = "0.03"
 
 
-import unittest
+import sys, unittest
 
+
+sourceFolder = "."
+sys.path.append( sourceFolder )
+
+import Globals
 import BibleBooksCodesTest, BibleBookOrdersTest
+
+
+# Handle command line parameters (for compatibility)
+from optparse import OptionParser
+parser = OptionParser( version="v{}".format( versionString ) )
+parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+Globals.addStandardOptionsAndProcess( parser )
+
+if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
 
 # Create the test suite
@@ -44,7 +58,7 @@ suite3 = unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTest.BibleB
 allTests = unittest.TestSuite( suiteList )
 
 
-# Now run all the tests
+# Now run all the tests in the suite
 unittest.TextTestRunner(verbosity=2).run( allTests )
 
 
