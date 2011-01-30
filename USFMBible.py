@@ -3,7 +3,7 @@
 # USFMBible.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-01-23 by RJH (also update versionString below)
+#   Last modified: 2011-01-27 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible markers.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.18"
+versionString = "0.19"
 
 
 import os, logging, datetime
@@ -197,7 +197,7 @@ class USFMBibleBook:
         """
         assert( self.lines )
 
-        versification, omittedVerses = [], []
+        versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumberString, lastChapterNumber = '0', 0, 0
         verseText, verseNumberString, lastVerseNumber = '0', 0, 0
         for marker,text in self.lines:
@@ -206,8 +206,8 @@ class USFMBibleBook:
                 if chapterNumberString > 0:
                     versification.append( (chapterText, str(lastVerseNumber),) )
                 chapterText = text.strip()
-                if ' ' in chapterText:
-                    logging.warning( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
+                if ' ' in chapterText: # Seems that we can have footnotes here :)
+                    logging.info( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #print( "{} chapter {}".format( self.bookReferenceCode, chapterText ) )
                 chapterNumberString = int( chapterText)
@@ -215,6 +215,8 @@ class USFMBibleBook:
                     logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.bookReferenceCode, chapterNumberString, lastChapterNumber ) )
                 lastChapterNumber = chapterNumberString
                 verseText, verseNumberString, lastVerseNumber = '0', 0, 0
+            elif marker == 'cp':
+                logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumberString, lastVerseNumber, self.bookReferenceCode ) )
             elif marker == 'v':
                 if not text:
                     logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumber, chapterNumberString, self.bookReferenceCode ) )
@@ -232,17 +234,23 @@ class USFMBibleBook:
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
+                    logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumberString, lastVerseNumber, self.bookReferenceCode ) )
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString = bits[0]
                     endVerseNumber = bits[1]
                     if int(verseNumberString) >= int(endVerseNumber):
                         logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
+                    #else:
+                    combinedVerses.append( (chapterText, verseText,) )
                 elif ',' in verseText: # we have a range like 7,8
+                    logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumberString, lastVerseNumber, self.bookReferenceCode ) )
                     bits = verseText.split( ',', 1 )
                     verseNumberString = bits[0]
                     endVerseNumber = bits[1]
                     if int(verseNumberString) >= int(endVerseNumber):
                         logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumber ) )
+                    #else:
+                    combinedVerses.append( (chapterText, verseText,) )
                 else: # Should be just a single verse number
                     verseNumberString = verseText
                     endVerseNumber = verseNumberString
@@ -255,7 +263,8 @@ class USFMBibleBook:
                             omittedVerses.append( (chapterText, str(number),) )
                 lastVerseNumber = endVerseNumber
         versification.append( (chapterText, str(lastVerseNumber),) ) # Append the verse count for the final chapter
-        return versification, omittedVerses
+        if reorderedVerses: print( reorderedVerses ); halt
+        return versification, omittedVerses, combinedVerses, reorderedVerses
     # end of getVersification
 # end of class USFMBibleBook
 
@@ -315,13 +324,17 @@ class USFMBible:
             The second list contains an entry for each missing verse in the book (not including verses that are missing at the END of a chapter).
         """
         assert( self.books )
-        totalVersification, totalOmittedVerses = OrderedDict(), OrderedDict()
+        totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for bookReferenceCode in self.books.keys():
-            versification, omittedVerses = self.books[bookReferenceCode].getVersification()
+            versification, omittedVerses, combinedVerses, reorderedVerses = self.books[bookReferenceCode].getVersification()
             totalVersification[bookReferenceCode] = versification
             if omittedVerses:
                 totalOmittedVerses[bookReferenceCode] = omittedVerses
-        return totalVersification, totalOmittedVerses
+            if combinedVerses:
+                totalCombinedVerses[bookReferenceCode] = combinedVerses
+            if reorderedVerses:
+                totalReorderedVerses[bookReferenceCode] = reorderedVerses
+        return totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses
     # end of getVersification
 
 

@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-01-18 (also update versionString below)
+#   Last modified: 2011-01-25 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.27"
+versionString = "0.28"
 
 
 import os, logging
@@ -815,7 +815,7 @@ def main():
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
-    sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
+    sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     if Globals.commandLineOptions.export:
         bbnsc = _BibleBooksNamesSystemsConverter().loadSystems() # Load the XML
         if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
@@ -843,7 +843,7 @@ def main():
         # Demo the BibleBooksNamesSystem object with a book list
         bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
         print( bbns2 ) # Just print a summary
-        for bookAbbrev in ('Gen', 'GEN', 'Gn', 'Exo', '1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M' ):
+        for bookAbbrev in ('Gen', 'GEN', 'Gn', 'Exo', '1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac' ):
             # NOTE: '1S' is ambiguous with '1st' :(
             print( "Searching for '{}' got {}".format(bookAbbrev, bbns2.getBBB(bookAbbrev)) )
 # end of main

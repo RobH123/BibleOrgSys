@@ -46,8 +46,8 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.22</version>
-      <date>2010-12-01</date>
+      <version>0.23</version>
+      <date>2011-01-27</date>
       <title>1989 NRS Bible versification system</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -281,7 +281,7 @@ See the supplied ReadMe.txt for more details.
     <numVerses chapter="9">27</numVerses>
     <numVerses chapter="10">43</numVerses>
     <numVerses chapter="11">23</numVerses>
-    <numVerses chapter="12">8</numVerses>
+    <numVerses chapter="12">24</numVerses>
     <numVerses chapter="13">33</numVerses>
     <numVerses chapter="14">15</numVerses>
     <numVerses chapter="15">63</numVerses>
